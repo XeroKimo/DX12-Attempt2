@@ -24,9 +24,9 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 		else
 		{
 			clock.Update();
-			//shared_ptr<DX12CommandList> cl = renderer.GetDevice()->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-			//cl->Close();
-			//renderer.GetSwapChain()->ClearBackBuffer(cl);
+			shared_ptr<DX12CommandList> cl = renderer.GetDevice()->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+			renderer.GetSwapChain()->ClearBackBuffer(cl);
+			cl->Close();
 			renderer.Present();
 		}
 	}

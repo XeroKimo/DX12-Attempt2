@@ -10,7 +10,7 @@ void DX12Device::Initialize(DX12Renderer* renderer, DX12CommandAllocatorManager*
 {
 
 	HRESULT hr;
-	ComPtr<IDXGIFactory7> factory;
+	ComPtr<IDXGIFactory2> factory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
 	if (FAILED(hr))
 		assert(false);

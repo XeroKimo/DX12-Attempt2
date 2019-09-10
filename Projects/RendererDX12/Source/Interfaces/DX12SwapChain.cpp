@@ -9,7 +9,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 {
 	m_device = device;
 	HRESULT hr;
-	ComPtr<IDXGIFactory7> factory;
+	ComPtr<IDXGIFactory2> factory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
 	if (FAILED(hr))
 		assert(false);
@@ -86,7 +86,7 @@ void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += m_descriptorHeapSize * m_swapChain->GetCurrentBackBufferIndex();
-	float color[4] = { 1.0f,1.0f,1.0f,1.0 };
+	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 1, &m_rect);
 }

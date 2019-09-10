@@ -17,11 +17,11 @@ public:
 	DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT index = 0);
 	
 	shared_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type);
-	inline ID3D12Device5* GetDevice() { return m_device.Get(); }
+	inline ID3D12Device2* GetDevice() { return m_device.Get(); }
 	inline UINT GetNodeMask() { return m_nodeMask; }
 private:
-	ComPtr<ID3D12Device5> m_device;
-	ComPtr<IDXGIAdapter4> m_adapter;
+	ComPtr<ID3D12Device2> m_device;
+	ComPtr<IDXGIAdapter3> m_adapter;
 	UINT m_nodeMask;
 
 	std::vector<DX12CommandQueue> m_directQueue;
