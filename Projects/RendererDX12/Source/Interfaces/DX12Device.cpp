@@ -12,22 +12,18 @@ void DX12Device::Initialize(DX12CommandAllocatorManager* manager, UINT directQue
 	HRESULT hr;
 	ComPtr<IDXGIFactory2> factory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 
 	ComPtr<IDXGIAdapter1> adapter;
 	hr = factory->EnumAdapters1(adapterID, adapter.GetAddressOf());
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	hr = adapter->QueryInterface(m_adapter.GetAddressOf());
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	hr = D3D12CreateDevice(m_adapter.Get(), featureLevel, IID_PPV_ARGS(m_device.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	m_nodeMask = nodeMask;
 

@@ -11,8 +11,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	HRESULT hr;
 	ComPtr<IDXGIFactory2> factory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 
 	DXGI_SAMPLE_DESC sampleDesc = {};
@@ -33,12 +32,10 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 
 	DX12CommandQueue* queue = device->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	hr = factory->CreateSwapChainForHwnd(queue->GetCommandQueue(), windowHandle, &desc, nullptr, nullptr, tempSwapChain.GetAddressOf());
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
-	hr = tempSwapChain->QueryInterface(m_swapChain.GetAddressOf());	
-	if (FAILED(hr))
-		assert(false);
+	hr = tempSwapChain->QueryInterface(m_swapChain.GetAddressOf());
+	assert(SUCCEEDED(hr));
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc;
 	rtvHeapDesc.NumDescriptors = desc.BufferCount;
@@ -47,8 +44,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	rtvHeapDesc.NodeMask = device->GetNodeMask();
 
 	hr = device->GetDevice()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	m_descriptorHeapSize = m_device->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -63,8 +59,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	for (int i = 0; i < desc.BufferCount; i++)
 	{
 		hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_frameBuffers[i].GetAddressOf()));
-		if (FAILED(hr))
-			assert(false);
+		assert(SUCCEEDED(hr));
 		
 		m_device->GetDevice()->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
 		rtvHandle.ptr += m_descriptorHeapSize;

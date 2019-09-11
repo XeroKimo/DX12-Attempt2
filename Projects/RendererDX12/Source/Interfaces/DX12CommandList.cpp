@@ -6,8 +6,9 @@ DX12CommandList::DX12CommandList()
 
 void DX12CommandList::Initialize(DX12Device* device, DX12CommandListManager* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
 {
-	if (FAILED(device->GetDevice()->CreateCommandList(device->GetNodeMask(), type, allocator->GetAllocator().Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()))))
-		assert(false);
+	HRESULT hr = device->GetDevice()->CreateCommandList(device->GetNodeMask(), type, allocator->GetAllocator().Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
+
+	assert(SUCCEEDED(hr));
 	m_allocator = allocator;
 	m_manager = manager;
 	m_device = device;

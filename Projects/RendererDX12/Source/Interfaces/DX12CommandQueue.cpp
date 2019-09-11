@@ -49,12 +49,10 @@ void DX12CommandQueue::Initialize(DX12Device* device, DX12CommandAllocatorManage
 	cqDesc.Type = commandListType;
 
 	hr = device->GetDevice()->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	hr = device->GetDevice()->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
