@@ -8,10 +8,10 @@ class DX12Device
 {
 public:
 	DX12Device();
-	void Initialize(DX12Renderer* renderer, DX12CommandAllocatorManager* manager, UINT directQueues = 1, UINT copyQueues = 0, UINT computeQueues = 0, D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_12_0, UINT adapterID = 0, UINT nodeMask = 0);
+	void Initialize(DX12CommandAllocatorManager* manager, UINT directQueues = 1, UINT copyQueues = 0, UINT computeQueues = 0, D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_12_0, UINT adapterID = 0, UINT nodeMask = 0);
 
 	void ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList*const* commandLists, UINT queueIndex);
-	void ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+	void ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT queueIndex = 0);
 	void ExecuteAllCommandListManager();
 	void SignalAllQueues();
 	void SyncAllQueues();

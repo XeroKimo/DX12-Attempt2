@@ -10,7 +10,12 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 	if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
 		return 1;
 
-	//GameInstance game(&application, &renderer);
+
+	std::vector<int> test{ 1,2,3,4 };
+	std::vector<int> copied;
+
+	std::copy(test.begin(), test.end(), std::back_inserter(copied));
+
 	PlatformClock clock;
 
 	MSG msg;
@@ -25,8 +30,8 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 		{
 			clock.Update();
 			shared_ptr<DX12CommandList> cl = renderer.GetDevice()->GetCommandList();
-			//renderer.GetSwapChain()->ClearBackBuffer(cl);
-			cl->Close();
+			renderer.GetSwapChain()->ClearBackBuffer(cl);
+			DX12CommandList::CloseAndExecuteAll(cl);
 			renderer.Present();
 		}
 	}

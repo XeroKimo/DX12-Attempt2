@@ -11,6 +11,7 @@ void DX12CommandListManager::Initialize(DX12Device* device, DX12CommandAllocator
 	m_allocatorManager = allocatorManager;
 	m_type = type;
 	m_waitingLists.resize(commandQueueAmount);
+	m_waitingAllocators.resize(commandQueueAmount);
 }
 
 shared_ptr<DX12CommandList> DX12CommandListManager::GetCommandList(UINT queuePreference)
@@ -36,22 +37,30 @@ shared_ptr<DX12CommandAllocator> DX12CommandListManager::RequestNewAllocator()
 }
 
 
-void DX12CommandListManager::ExecuteList()
+void DX12CommandListManager::ExecuteList(UINT queueIndex)
+{
+	std::vector<shared_ptr<DX12CommandList>>& listToExecute = m_waitingLists[queueIndex];
+	if (listToExecute.empty())
+		return;
+
+	std::vector<ID3D12CommandList*> commandLists;
+	for (int v = 0; v < listToExecute.size(); v++)
+	{
+		commandLists.push_back(listToExecute[v]->GetCommandList());
+		m_inactiveLists.push_back(listToExecute[v]);
+	}
+
+	m_device->ExecuteCommandLists(commandLists.size(), commandLists.data(), queueIndex);
+	m_device->GetCommandQueue(m_type, queueIndex)->SetActiveAllocator(m_waitingAllocators[queueIndex]);
+	m_waitingAllocators[queueIndex].clear();
+	listToExecute.clear();
+}
+
+void DX12CommandListManager::ExecuteAllLists()
 {
 	for (int i = 0; i < m_waitingLists.size(); i++)
 	{
-		if (m_waitingLists[i].empty())
-			continue;
-		std::vector<shared_ptr<DX12CommandList>>& currentWaitList = m_waitingLists[i];
-		std::vector<ID3D12CommandList*> commandLists;
-		for (int v = 0; v < currentWaitList.size(); v++)
-		{
-			commandLists.push_back(currentWaitList[v]->GetCommandList());
-			m_inactiveLists.push_back(currentWaitList[v]);
-		}
-
-		m_device->ExecuteCommandLists(commandLists.size(), commandLists.data(), i);
-		currentWaitList.clear();
+		ExecuteList(i);
 	}
 }
 
@@ -68,4 +77,5 @@ void DX12CommandListManager::ReEnlistCommandList(shared_ptr<DX12CommandList> com
 void DX12CommandListManager::CloseList(shared_ptr<DX12CommandList> list)
 {
 	m_waitingLists[list->GetQueuePreference()].push_back(list);
+	m_waitingAllocators[list->GetQueuePreference()].push_back(list->GetCommandAllocator());
 }

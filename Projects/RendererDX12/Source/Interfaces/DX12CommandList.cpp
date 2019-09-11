@@ -21,44 +21,45 @@ void DX12CommandList::Reset(shared_ptr<DX12CommandAllocator> allocator, UINT que
 	m_queuePreference = queuePreference;
 }
 
-void DX12CommandList::LocalReset(UINT queuePreference)
+void DX12CommandList::Close(shared_ptr<DX12CommandList>& commandList)
 {
-	Reset(m_manager->RequestNewAllocator(), queuePreference);
-}
-
-void DX12CommandList::ReEnlistCommandList(shared_ptr<DX12CommandList>& commandList)
-{
-	commandList->LocalReEnlist();
+	CloseList(commandList);
 	commandList = nullptr;
 }
 
-void DX12CommandList::LocalReEnlist()
+void DX12CommandList::CloseAndExecute(shared_ptr<DX12CommandList>& commandList)
 {
-	m_manager->ReEnlistCommandList(shared_from_this());
+	Execute(commandList);
+	commandList = nullptr;
 }
 
-void DX12CommandList::Close()
+void DX12CommandList::CloseAndExecuteAll(shared_ptr<DX12CommandList>& commandList)
 {
-	if (FAILED(m_commandList->Close()))
-		return;
-	m_manager->CloseList(shared_from_this());
-	m_device->GetCommandQueue(m_commandList->GetType(), m_queuePreference)->SetActiveAllocator(m_allocator);
-	m_allocator = nullptr;
+	CloseList(commandList);
+	commandList->m_manager->ExecuteList(commandList->m_queuePreference);
+	commandList = nullptr;
 }
 
-void DX12CommandList::ExecuteAll()
+void DX12CommandList::CloseExecuteReset(shared_ptr<DX12CommandList>& commandList, UINT queuePreference)
 {
-	m_manager->ExecuteList();
+	Execute(commandList);
+	commandList->Reset(commandList->m_manager->RequestNewAllocator(), queuePreference);
 }
 
-void DX12CommandList::CloseAndExecuteThis()
+void DX12CommandList::CloseList(shared_ptr<DX12CommandList> commandList)
 {
-	if (FAILED(m_commandList->Close()))
-		return;
-	ID3D12CommandList* list[] = { m_commandList.Get() };
-	m_device->ExecuteCommandLists(1, list, m_queuePreference);
-	m_device->GetCommandQueue(m_commandList->GetType(), m_queuePreference)->SetActiveAllocator(m_allocator);
-	m_allocator = nullptr;
+	commandList->m_commandList->Close();
+	commandList->m_manager->CloseList(commandList);
+	commandList->m_allocator = nullptr;
 }
 
+void DX12CommandList::Execute(shared_ptr<DX12CommandList> commandList)
+{
+	commandList->m_commandList->Close();
+	commandList->m_manager->ReEnlistCommandList(commandList);
+	ID3D12CommandList* list[] = { commandList->m_commandList.Get() };
+	commandList->m_device->ExecuteCommandLists(1, list, commandList->m_queuePreference);
+	commandList->m_device->GetCommandQueue(commandList->m_commandList->GetType(), commandList->m_queuePreference)->SetActiveAllocator(commandList->m_allocator);
+	commandList->m_allocator = nullptr;
+}
 

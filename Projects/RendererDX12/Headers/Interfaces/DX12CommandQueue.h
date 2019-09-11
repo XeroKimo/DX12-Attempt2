@@ -16,6 +16,7 @@ public:
 	void SyncQueue(DWORD milliseconds);
 
 	inline void SetActiveAllocator(shared_ptr<DX12CommandAllocator> allocator) { m_runningAllocators.push_back(allocator); }
+	void SetActiveAllocator(std::vector<shared_ptr<DX12CommandAllocator>> allocator);
 	inline void ResetFenceValue() { m_fenceValue = 0; }
 	inline ID3D12CommandQueue* GetCommandQueue() { return m_commandQueue.Get(); }
 	inline ID3D12Fence* GetFence() { return m_fence.Get(); }

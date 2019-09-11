@@ -30,7 +30,10 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 	m_fenceValue++;
 }
 
-
+void DX12CommandQueue::SetActiveAllocator(std::vector<shared_ptr<DX12CommandAllocator>> allocator)
+{
+	std::copy(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators)); 
+}
 
 void DX12CommandQueue::Initialize(DX12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
 {

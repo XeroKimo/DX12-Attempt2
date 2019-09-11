@@ -9,7 +9,7 @@ bool DX12Renderer::Initialize(HWND windowHandle, UINT windowWidth, UINT windowHe
 	m_allocatorManager = make_unique<DX12CommandAllocatorManager>();
 	m_device = make_unique<DX12Device>();
 
-	m_device->Initialize(this, m_allocatorManager.get());
+	m_device->Initialize(m_allocatorManager.get());
 	m_allocatorManager->Initialize(m_device.get());
 
 	m_swapChain = make_unique<DX12SwapChain>();

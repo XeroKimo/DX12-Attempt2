@@ -17,12 +17,11 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
 		if (m_directAllocators.empty())
-			allocator =CreateCommandAllocator(type);
-		else
 		{
-			allocator = m_directAllocators.back();
-			m_directAllocators.pop_back();
+			m_directAllocators.push_back(CreateCommandAllocator(type));
 		}
+		allocator = m_directAllocators.back();
+		m_directAllocators.pop_back();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_BUNDLE:
 		//if (m_bundleAllocators.empty())
@@ -35,21 +34,19 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 		//break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 		if (m_computeAllocators.empty())
-			allocator = CreateCommandAllocator(type);
-		else
 		{
-			allocator = m_computeAllocators.back();
-			m_computeAllocators.pop_back();
+			m_computeAllocators.push_back(CreateCommandAllocator(type));
 		}
+		allocator = m_computeAllocators.back();
+		m_computeAllocators.pop_back();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
 		if (m_copyAllocators.empty())
-			allocator = CreateCommandAllocator(type);
-		else
 		{
-			allocator = m_copyAllocators.back();
-			m_copyAllocators.pop_back();
+			m_copyAllocators.push_back(CreateCommandAllocator(type));
 		}
+		allocator = m_copyAllocators.back();
+		m_copyAllocators.pop_back();
 		break;
 	default:
 		break;
@@ -62,13 +59,13 @@ void DX12CommandAllocatorManager::ResetAllocators(std::vector<shared_ptr<DX12Com
 	switch (allocators[0]->GetType())
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
-		std::copy(allocators.begin(), allocators.end() - 1, m_directAllocators.begin());
+		std::copy(allocators.begin(), allocators.end(), std::back_inserter(m_directAllocators));
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-		std::copy(allocators.begin(), allocators.end() - 1, m_computeAllocators.begin());
+		std::copy(allocators.begin(), allocators.end(), std::back_inserter(m_computeAllocators));
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
-		std::copy(allocators.begin(), allocators.end() - 1, m_copyAllocators.begin());
+		std::copy(allocators.begin(), allocators.end(), std::back_inserter(m_copyAllocators));
 		break;
 	}
 }
