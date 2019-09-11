@@ -48,7 +48,7 @@
     <ClInclude Include="Headers\Helpers\DX12HInputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HRootParameter.h">
+    <ClInclude Include="Headers\Helpers\DX12HRootSignatureDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,10 +77,10 @@
     <ClCompile Include="Source\Interfaces\DX12SwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Helpers\DX12HRootParameter.cpp">
+    <ClCompile Include="Source\Helpers\DX12HInputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Helpers\DX12HInputLayout.cpp">
+    <ClCompile Include="Source\Helpers\DX12HRootSignatureDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

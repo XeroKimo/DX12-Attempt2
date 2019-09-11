@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Helpers/DX12HInputLayout.h"
-#include "Helpers/DX12HRootParameter.h"
+#include "Helpers/DX12HRootSignatureDesc.h"
 
 #include "Interfaces/DX12Device.h"
 #include "Interfaces/DX12CommandQueue.h"
