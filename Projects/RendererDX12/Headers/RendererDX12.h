@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Helpers/DX12HInputLayout.h"
+#include "Helpers/DX12HRootParameter.h"
+
 #include "Interfaces/DX12Device.h"
 #include "Interfaces/DX12CommandQueue.h"
 #include "Interfaces/DX12CommandAllocator.h"

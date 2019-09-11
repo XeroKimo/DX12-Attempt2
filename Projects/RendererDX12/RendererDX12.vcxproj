@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\DX12Header.h" />
+    <ClInclude Include="Headers\Helpers\DX12HInputLayout.h" />
+    <ClInclude Include="Headers\Helpers\DX12HRootParameter.h" />
     <ClInclude Include="Headers\Interfaces\DX12CommandAllocator.h" />
     <ClInclude Include="Headers\Interfaces\DX12CommandAllocatorManager.h" />
     <ClInclude Include="Headers\Interfaces\DX12CommandList.h" />
@@ -31,6 +33,8 @@
     <ClInclude Include="Headers\RendererDX12.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Helpers\DX12HInputLayout.cpp" />
+    <ClCompile Include="Source\Helpers\DX12HRootParameter.cpp" />
     <ClCompile Include="Source\Interfaces\DX12SwapChain.cpp" />
     <ClCompile Include="Source\Interfaces\DX12CommandList.cpp" />
     <ClCompile Include="Source\Interfaces\DX12CommandListManager.cpp" />

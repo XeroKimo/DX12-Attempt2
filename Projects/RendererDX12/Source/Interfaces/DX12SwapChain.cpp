@@ -46,18 +46,19 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	rtvHeapDesc.NodeMask = device->GetNodeMask();
 
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
-	rtvDesc.Format = desc.Format;
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2D.MipSlice = 0;
-	rtvDesc.Texture2D.PlaneSlice = 0;
-
 	hr = device->GetDevice()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
 	if (FAILED(hr))
 		assert(false);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	m_descriptorHeapSize = m_device->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
+	rtvDesc.Format = desc.Format;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Texture2D.MipSlice = 0;
+	rtvDesc.Texture2D.PlaneSlice = 0;
+
 	m_frameBuffers.resize(desc.BufferCount);
 	for (int i = 0; i < desc.BufferCount; i++)
 	{

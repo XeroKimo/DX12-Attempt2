@@ -7,8 +7,11 @@
 #include <assert.h>
 #include <vector>
 #include <memory>
+#include <string>
 
 using Microsoft::WRL::ComPtr;
+using std::string;
+using std::wstring;
 using std::shared_ptr;
 using std::make_shared;
 using std::unique_ptr;
