@@ -9,38 +9,33 @@ DX12CommandQueue::DX12CommandQueue() :
 
 void DX12CommandQueue::SignalGPU()
 {
-	if (!m_isSynced)
-		return;
 	m_commandQueue->Signal(m_fence.Get(), m_fenceValue);
-	m_isSynced = false;
 }
 
 void DX12CommandQueue::SignalCPU()
 {
-	if (!m_isSynced)
-		return;
 	m_fence->Signal(m_fenceValue);
-	m_isSynced = false;
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 {
-	if (m_isSynced)
-		return;
 	if (m_fence->GetCompletedValue() < m_fenceValue)
 	{
 		m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent);
 		WaitForSingleObject(m_fenceEvent, milliseconds);
 	}
+	if (!m_runningAllocators.empty())
+		m_allocatorManager->ResetAllocators(m_runningAllocators);
+	m_runningAllocators.clear();
 	m_fenceValue++;
-	m_isSynced = true;
 }
 
 
 
-void DX12CommandQueue::Initialize(DX12Device* device, D3D12_COMMAND_LIST_TYPE commandListType)
+void DX12CommandQueue::Initialize(DX12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
 {
 	m_device = device;
+	m_allocatorManager = allocatorManager;
 
 	HRESULT hr;
 

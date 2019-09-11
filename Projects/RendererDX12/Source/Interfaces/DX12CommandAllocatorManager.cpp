@@ -17,7 +17,7 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
 		if (m_directAllocators.empty())
-			allocator = CreateCommandAllocator(type);
+			allocator =CreateCommandAllocator(type);
 		else
 		{
 			allocator = m_directAllocators.back();
@@ -57,40 +57,27 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 	return allocator;
 }
 
-void DX12CommandAllocatorManager::SetAllocatorActive(shared_ptr<DX12CommandAllocator>  commandAllocator)
+void DX12CommandAllocatorManager::ResetAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocators)
 {
-	m_activeAllocators.push_back(commandAllocator);
-}
-
-void DX12CommandAllocatorManager::ResetAllocators()
-{
-	for (shared_ptr<DX12CommandAllocator>& allocator : m_activeAllocators)
+	switch (allocators[0]->GetType())
 	{
-		allocator->GetAllocator()->Reset();
-		switch (allocator->GetType())
-		{
-		case D3D12_COMMAND_LIST_TYPE_DIRECT:
-			m_directAllocators.push_back(allocator);
-			break;
-		case D3D12_COMMAND_LIST_TYPE_BUNDLE:
-			//m_bundleAllocators.push_back(allocator);
-			//break;
-		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-			m_computeAllocators.push_back(allocator);
-			break;
-		case D3D12_COMMAND_LIST_TYPE_COPY:
-			m_copyAllocators.push_back(allocator);
-			break;
-		}
+	case D3D12_COMMAND_LIST_TYPE_DIRECT:
+		std::copy(allocators.begin(), allocators.end() - 1, m_directAllocators.begin());
+		break;
+	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+		std::copy(allocators.begin(), allocators.end() - 1, m_computeAllocators.begin());
+		break;
+	case D3D12_COMMAND_LIST_TYPE_COPY:
+		std::copy(allocators.begin(), allocators.end() - 1, m_copyAllocators.begin());
+		break;
 	}
-	m_activeAllocators.clear();
 }
 
 
 shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
 {
 	shared_ptr<DX12CommandAllocator> allocator = make_shared<DX12CommandAllocator>();
-	allocator->Initialize(m_device, this, type);
+	allocator->Initialize(m_device, type);
 	
 	return allocator;
 }

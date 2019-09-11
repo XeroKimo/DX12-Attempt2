@@ -35,52 +35,56 @@ void DX12Device::Initialize(DX12Renderer* renderer, DX12CommandAllocatorManager*
 	m_copyQueue.reserve(copyQueues);
 	m_computeQueue.reserve(computeQueues);
 
-	for (int i = 0; i < directQueues; i++)
+	if (directQueues)
 	{
-		m_directQueue.push_back(DX12CommandQueue());
-		m_directQueue[i].Initialize(this, D3D12_COMMAND_LIST_TYPE_DIRECT);
-	}
-	for (int i = 0; i < copyQueues; i++)
-	{
-		m_copyQueue.push_back(DX12CommandQueue());
-		m_copyQueue[i].Initialize(this, D3D12_COMMAND_LIST_TYPE_COPY);
-	}
-	for (int i = 0; i < computeQueues; i++)
-	{
-		m_computeQueue.push_back(DX12CommandQueue());
-		m_computeQueue[i].Initialize(this, D3D12_COMMAND_LIST_TYPE_COMPUTE);
+		m_directList = make_unique<DX12CommandListManager>();
+		m_directList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, directQueues);
+
+		for (int i = 0; i < directQueues; i++)
+		{
+			m_directQueue.push_back(make_unique<DX12CommandQueue>());
+			m_directQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT);
+		}
 	}
 
-	m_computeList.Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COMPUTE);
-	m_directList.Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT);
-	m_copyList.Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COPY);
+	if (computeQueues)
+	{
+		m_computeList = make_unique<DX12CommandListManager>();
+		m_computeList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, computeQueues);
+		for (int i = 0; i < copyQueues; i++)
+		{
+			m_copyQueue.push_back(make_unique<DX12CommandQueue>());
+			m_copyQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COPY);
+		}
+	}
+	if (copyQueues)
+	{
+		m_copyList = make_unique<DX12CommandListManager>();
+		m_copyList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, copyQueues);
+		for (int i = 0; i < computeQueues; i++)
+		{
+			m_computeQueue.push_back(make_unique<DX12CommandQueue>());
+			m_computeQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COMPUTE);
+		}
+	}
 
 }
 
-void DX12Device::ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList*const* commandLists)
+void DX12Device::ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList*const* commandLists, UINT queueIndex)
 {
 	switch (commandLists[0]->GetType())
 	{
 	case D3D12_COMMAND_LIST_TYPE_BUNDLE:
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
-		for (DX12CommandQueue& queue : m_directQueue)
-		{
-			if (queue.IsSynced())
-				queue.GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
-		}
+		if (m_directQueue.size() <= queueIndex - 1)
+			m_directQueue[queueIndex]->GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
 		break;
-	case D3D12_COMMAND_LIST_TYPE_COMPUTE:		
-		for (DX12CommandQueue& queue : m_computeQueue)
-		{
-			if (queue.IsSynced())
-				queue.GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
-		}
+	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+		if (m_computeQueue.size() <= queueIndex - 1)
+			m_computeQueue[queueIndex]->GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
 	case D3D12_COMMAND_LIST_TYPE_COPY:
-		for (DX12CommandQueue& queue : m_copyQueue)
-		{
-			if (queue.IsSynced())
-				queue.GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
-		}
+		if (m_computeQueue.size() <= queueIndex - 1)
+			m_computeQueue[queueIndex]->GetCommandQueue()->ExecuteCommandLists(numCommandLists, commandLists);
 		break;
 	default:
 		break;
@@ -88,43 +92,46 @@ void DX12Device::ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList*con
 
 }
 
-void DX12Device::ExecuteAllLists()
+void DX12Device::ExecuteAllCommandListManager()
 {
-	m_directList.ExecuteList();
-	m_copyList.ExecuteList();
-	m_computeList.ExecuteList();
+	if (m_directList)
+		m_directList->ExecuteList();
+	if (m_computeList)
+		m_computeList->ExecuteList();
+	if (m_copyList)
+		m_copyList->ExecuteList();
 }
 
 void DX12Device::SignalAllQueues()
 {
-	for (DX12CommandQueue& queue : m_directQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
 	{
-		queue.SignalGPU();
+		queue->SignalGPU();
 	}
-	for (DX12CommandQueue& queue : m_computeQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_computeQueue)
 	{
-		queue.SignalGPU();
+		queue->SignalGPU();
 	}
-	for (DX12CommandQueue& queue : m_copyQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_copyQueue)
 	{
-		queue.SignalGPU();
+		queue->SignalGPU();
 	}
 }
 
 
 void DX12Device::SyncAllQueues()
 {
-	for (DX12CommandQueue& queue : m_directQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
 	{
-		queue.SyncQueue(INFINITE);
+		queue->SyncQueue(INFINITE);
 	}
-	for (DX12CommandQueue& queue : m_computeQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_computeQueue)
 	{
-		queue.SyncQueue(INFINITE);
+		queue->SyncQueue(INFINITE);
 	}
-	for (DX12CommandQueue& queue : m_copyQueue)
+	for (const unique_ptr<DX12CommandQueue>& queue : m_copyQueue)
 	{
-		queue.SyncQueue(INFINITE);
+		queue->SyncQueue(INFINITE);
 	}
 }
 
@@ -135,33 +142,54 @@ DX12CommandQueue* DX12Device::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT
 	switch (type)
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
-		queue = &m_directQueue[index];
+		queue = m_directQueue[index].get();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-		queue = &m_computeQueue[index];
+		queue = m_computeQueue[index].get();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
-		queue = &m_copyQueue[index];
+		queue = m_copyQueue[index].get();
 		break;
 	}
 	return queue;
 }
 
-shared_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
+void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type)
 {
-	shared_ptr<DX12CommandList> list;
 	switch (type)
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
-		list = m_directList.GetCommandList();
+		return m_directList->ExecuteList();
+		break;
+	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+		return m_computeList->ExecuteList();
+		break;
+	case D3D12_COMMAND_LIST_TYPE_COPY:
+		return m_copyList->ExecuteList();
+		break;
+	default:
+		break;
+	}
+}
+
+shared_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
+{
+	shared_ptr<DX12CommandList> list = nullptr;
+	switch (type)
+	{
+	case D3D12_COMMAND_LIST_TYPE_DIRECT:
+		if (m_directList)
+			list = m_directList->GetCommandList(queuePreference);
 		break;
 	case D3D12_COMMAND_LIST_TYPE_BUNDLE:
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-		list = m_computeList.GetCommandList();
+		if (m_computeList)
+			list = m_computeList->GetCommandList(queuePreference);
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
-		list = m_copyList.GetCommandList();
+		if (m_copyList)
+			list = m_copyList->GetCommandList(queuePreference);
 		break;
 	default:
 		break;

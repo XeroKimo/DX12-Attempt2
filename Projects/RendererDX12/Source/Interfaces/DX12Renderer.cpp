@@ -20,12 +20,10 @@ bool DX12Renderer::Initialize(HWND windowHandle, UINT windowWidth, UINT windowHe
 
 void DX12Renderer::Present()
 {
-	m_device->ExecuteAllLists();
-	m_device->SignalAllQueues();
-	m_device->SyncAllQueues();
+	m_device->ExecuteCommandListManager();
+	m_device->GetCommandQueue()->SignalGPU();
+	m_device->GetCommandQueue()->SyncQueue(INFINITE);
 
 	m_swapChain->GetSwapChain()->Present(0, 0);
-
-	m_allocatorManager->ResetAllocators();
-	m_device->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->ResetFenceValue();
+	m_device->GetCommandQueue()->ResetFenceValue();
 }
