@@ -1,6 +1,6 @@
 #include "PCH.h"
 
-int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	WinApp application;
 	if (!application.Initialize(hInstance, 1280, 720))
@@ -9,12 +9,6 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 	DX12Renderer renderer;
 	if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
 		return 1;
-
-
-	std::vector<int> test{ 1,2,3,4 };
-	std::vector<int> copied;
-
-	std::copy(test.begin(), test.end(), std::back_inserter(copied));
 
 	PlatformClock clock;
 

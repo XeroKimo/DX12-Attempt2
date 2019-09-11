@@ -1,7 +1,11 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12SwapChain.h"
 
-DX12SwapChain::DX12SwapChain()
+DX12SwapChain::DX12SwapChain() :
+    m_descriptorHeapSize(0),
+    m_device(nullptr),
+    m_rect({}),
+    m_viewPort({})
 {
 }
 
@@ -56,7 +60,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	rtvDesc.Texture2D.PlaneSlice = 0;
 
 	m_frameBuffers.resize(desc.BufferCount);
-	for (int i = 0; i < desc.BufferCount; i++)
+	for (UINT i = 0; i < desc.BufferCount; i++)
 	{
 		hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_frameBuffers[i].GetAddressOf()));
 		assert(SUCCEEDED(hr));
@@ -65,8 +69,8 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 		rtvHandle.ptr += m_descriptorHeapSize;
 	}
 
-	m_viewPort.Width = windowWidth;
-	m_viewPort.Height = windowHeight;
+	m_viewPort.Width = static_cast<FLOAT>(windowWidth);
+	m_viewPort.Height = static_cast<FLOAT>(windowHeight);
 	m_viewPort.TopLeftX = 0;
 	m_viewPort.TopLeftY = 0;
 	m_viewPort.MinDepth = 0;
@@ -81,7 +85,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-	handle.ptr += m_descriptorHeapSize * m_swapChain->GetCurrentBackBufferIndex();
+	handle.ptr += (static_cast<SIZE_T>(m_descriptorHeapSize) * static_cast<SIZE_T>(m_swapChain->GetCurrentBackBufferIndex()));
 	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 1, &m_rect);

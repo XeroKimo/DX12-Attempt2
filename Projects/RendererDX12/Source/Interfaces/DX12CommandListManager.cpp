@@ -1,7 +1,10 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12CommandListManager.h"
 
-DX12CommandListManager::DX12CommandListManager()
+DX12CommandListManager::DX12CommandListManager() :
+    m_allocatorManager(nullptr),
+    m_device(nullptr),
+    m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
 {
 }
 
@@ -50,7 +53,7 @@ void DX12CommandListManager::ExecuteList(UINT queueIndex)
 		m_inactiveLists.push_back(listToExecute[v]);
 	}
 
-	m_device->ExecuteCommandLists(commandLists.size(), commandLists.data(), queueIndex);
+	m_device->ExecuteCommandLists(static_cast<UINT>(commandLists.size()), commandLists.data(), queueIndex);
 	m_device->GetCommandQueue(m_type, queueIndex)->SetActiveAllocator(m_waitingAllocators[queueIndex]);
 	m_waitingAllocators[queueIndex].clear();
 	listToExecute.clear();

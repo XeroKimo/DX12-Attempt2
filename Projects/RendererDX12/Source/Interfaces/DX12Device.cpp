@@ -1,7 +1,8 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12Device.h"
 
-DX12Device::DX12Device()
+DX12Device::DX12Device() :
+    m_nodeMask(0)
 {
 }
 
@@ -36,7 +37,7 @@ void DX12Device::Initialize(DX12CommandAllocatorManager* manager, UINT directQue
 		m_directList = make_unique<DX12CommandListManager>();
 		m_directList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, directQueues);
 
-		for (int i = 0; i < directQueues; i++)
+		for (UINT i = 0; i < directQueues; i++)
 		{
 			m_directQueue.push_back(make_unique<DX12CommandQueue>());
 			m_directQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -47,7 +48,7 @@ void DX12Device::Initialize(DX12CommandAllocatorManager* manager, UINT directQue
 	{
 		m_computeList = make_unique<DX12CommandListManager>();
 		m_computeList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, computeQueues);
-		for (int i = 0; i < copyQueues; i++)
+		for (UINT i = 0; i < copyQueues; i++)
 		{
 			m_copyQueue.push_back(make_unique<DX12CommandQueue>());
 			m_copyQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COPY);
@@ -57,7 +58,7 @@ void DX12Device::Initialize(DX12CommandAllocatorManager* manager, UINT directQue
 	{
 		m_copyList = make_unique<DX12CommandListManager>();
 		m_copyList->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, copyQueues);
-		for (int i = 0; i < computeQueues; i++)
+		for (UINT i = 0; i < computeQueues; i++)
 		{
 			m_computeQueue.push_back(make_unique<DX12CommandQueue>());
 			m_computeQueue[i]->Initialize(this, manager, D3D12_COMMAND_LIST_TYPE_COMPUTE);
