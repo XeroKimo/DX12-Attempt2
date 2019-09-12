@@ -1,7 +1,7 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12HShaderByteCode
+struct DX12HShaderByteCode
 {
 public:
 	DX12HShaderByteCode();

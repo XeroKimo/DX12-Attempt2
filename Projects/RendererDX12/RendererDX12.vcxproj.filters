@@ -57,6 +57,12 @@
     <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Interfaces\DX12DeviceInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Objects\DX12OMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Interfaces\DX12Device.cpp">
@@ -92,7 +98,10 @@
     <ClCompile Include="Source\Helpers\DX12HShaderByteCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
+    <ClCompile Include="Source\Interfaces\DX12DeviceInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,15 +3,13 @@
 
 DX12SwapChain::DX12SwapChain() :
     m_descriptorHeapSize(0),
-    m_device(nullptr),
     m_rect({}),
     m_viewPort({})
 {
 }
 
-void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windowWidth, UINT windowHeight)
+void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
 {
-	m_device = device;
 	HRESULT hr;
 	ComPtr<IDXGIFactory2> factory;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
@@ -34,8 +32,7 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 
 	ComPtr<IDXGISwapChain1> tempSwapChain;
 
-	DX12CommandQueue* queue = device->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	hr = factory->CreateSwapChainForHwnd(queue->GetCommandQueue(), windowHandle, &desc, nullptr, nullptr, tempSwapChain.GetAddressOf());
+	hr = factory->CreateSwapChainForHwnd(commandQueue, windowHandle, &desc, nullptr, nullptr, tempSwapChain.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
 	hr = tempSwapChain->QueryInterface(m_swapChain.GetAddressOf());
@@ -45,13 +42,13 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 	rtvHeapDesc.NumDescriptors = desc.BufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvHeapDesc.NodeMask = device->GetNodeMask();
+	rtvHeapDesc.NodeMask = device->GetNodeCount();
 
-	hr = device->GetDevice()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
+	hr = device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-	m_descriptorHeapSize = m_device->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	m_descriptorHeapSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
 	rtvDesc.Format = desc.Format;
@@ -65,12 +62,12 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 		hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_frameBuffers[i].GetAddressOf()));
 		assert(SUCCEEDED(hr));
 		
-		m_device->GetDevice()->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
+		device->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
 		rtvHandle.ptr += m_descriptorHeapSize;
 	}
 
-	m_viewPort.Width = static_cast<FLOAT>(windowWidth);
-	m_viewPort.Height = static_cast<FLOAT>(windowHeight);
+	m_viewPort.Width = static_cast<float>(windowWidth);
+	m_viewPort.Height = static_cast<float>(windowHeight);
 	m_viewPort.TopLeftX = 0;
 	m_viewPort.TopLeftY = 0;
 	m_viewPort.MinDepth = 0;
@@ -85,9 +82,9 @@ void DX12SwapChain::Initialize(DX12Device* device, HWND windowHandle, UINT windo
 void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-	handle.ptr += (static_cast<SIZE_T>(m_descriptorHeapSize) * static_cast<SIZE_T>(m_swapChain->GetCurrentBackBufferIndex()));
+	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
 	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 1, &m_rect);
-	//commandList->GetCommandList()->RSSetViewports(1, &m_viewPort);
+	commandList->GetCommandList()->RSSetViewports(1, &m_viewPort);
 }

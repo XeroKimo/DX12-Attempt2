@@ -2,8 +2,7 @@
 #include "Interfaces/DX12CommandQueue.h"
 
 DX12CommandQueue::DX12CommandQueue() :
-	m_fenceValue(0),
-	m_device(nullptr)
+	m_fenceValue(0)
 {
 }
 
@@ -35,23 +34,22 @@ void DX12CommandQueue::SetActiveAllocator(std::vector<shared_ptr<DX12CommandAllo
 	std::copy(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators)); 
 }
 
-void DX12CommandQueue::Initialize(DX12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
+void DX12CommandQueue::Initialize(ID3D12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
 {
-	m_device = device;
 	m_allocatorManager = allocatorManager;
 
 	HRESULT hr;
 
 	D3D12_COMMAND_QUEUE_DESC cqDesc;
 	cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	cqDesc.NodeMask = device->GetNodeMask();
+	cqDesc.NodeMask = device->GetNodeCount();
 	cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	cqDesc.Type = commandListType;
 
-	hr = device->GetDevice()->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
+	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	hr = device->GetDevice()->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
+	hr = device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);

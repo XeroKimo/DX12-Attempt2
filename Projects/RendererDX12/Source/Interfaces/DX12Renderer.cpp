@@ -7,14 +7,13 @@ DX12Renderer::DX12Renderer()
 bool DX12Renderer::Initialize(HWND windowHandle, UINT windowWidth, UINT windowHeight)
 {
 	m_allocatorManager = make_unique<DX12CommandAllocatorManager>();
-	m_device = make_unique<DX12Device>();
+	m_device = make_unique<DX12DeviceInterface>();
 
-	m_device->Initialize(m_allocatorManager.get());
-	m_allocatorManager->Initialize(m_device.get());
+	m_device->Initialize(m_allocatorManager.get(), D3D_FEATURE_LEVEL_12_0, 0);
+	m_allocatorManager->Initialize(m_device->GetDevice()->GetDevice());
 
 	m_swapChain = make_unique<DX12SwapChain>();
-	m_swapChain->Initialize(m_device.get(), windowHandle, windowWidth, windowHeight);
-
+	m_swapChain->Initialize(m_device->GetDevice()->GetDevice(), m_device->GetCommandQueue()->GetCommandQueue(), windowHandle, windowWidth, windowHeight);
 
 	return true;
 }

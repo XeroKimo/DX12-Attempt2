@@ -1,7 +1,7 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12HRootSignatureDesc
+struct DX12HRootSignatureDesc
 {
 public:
     class DescriptorTable

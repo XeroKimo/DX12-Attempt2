@@ -6,12 +6,11 @@ class DX12SwapChain
 {
 public:
 	DX12SwapChain();
-	void Initialize(DX12Device* device, HWND windowHandle, UINT windowWidth, UINT windowHeight);
+	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
 	void ClearBackBuffer(shared_ptr<DX12CommandList>& commandList);
 	inline IDXGISwapChain3* GetSwapChain() { return m_swapChain.Get(); }
 private:
-	DX12Device* m_device;
 	ComPtr<IDXGISwapChain3> m_swapChain;
 	ComPtr<ID3D12DescriptorHeap> m_renderTargetHeap;
 	std::vector<ComPtr<ID3D12Resource1>> m_frameBuffers;

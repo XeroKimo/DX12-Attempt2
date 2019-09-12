@@ -1,7 +1,7 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12HInputLayout
+struct DX12HInputLayout
 {
 public:
 	DX12HInputLayout();

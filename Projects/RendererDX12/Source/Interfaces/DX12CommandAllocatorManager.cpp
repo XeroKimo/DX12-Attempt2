@@ -6,7 +6,7 @@ DX12CommandAllocatorManager::DX12CommandAllocatorManager() :
 {
 }
 
-void DX12CommandAllocatorManager::Initialize(DX12Device* device)
+void DX12CommandAllocatorManager::Initialize(ID3D12Device* device)
 {
 	m_device = device;
 }

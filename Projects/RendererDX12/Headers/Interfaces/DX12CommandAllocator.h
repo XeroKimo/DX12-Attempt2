@@ -7,7 +7,7 @@ class DX12CommandAllocator : public std::enable_shared_from_this<DX12CommandAllo
 {
 public:
 	DX12CommandAllocator();
-	void Initialize(DX12Device* device, const D3D12_COMMAND_LIST_TYPE& type);
+	void Initialize(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type);
 
 	inline ComPtr<ID3D12CommandAllocator> GetAllocator() { return m_allocator; }
 	inline D3D12_COMMAND_LIST_TYPE GetType() { return m_type; }

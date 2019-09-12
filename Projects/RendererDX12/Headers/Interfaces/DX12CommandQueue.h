@@ -9,7 +9,7 @@ class DX12CommandQueue
 {
 public:
 	DX12CommandQueue();
-	void Initialize(DX12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType);
+	void Initialize(ID3D12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType);
 
 	void SignalGPU();
 	void SignalCPU();
@@ -22,7 +22,6 @@ public:
 	inline ID3D12Fence* GetFence() { return m_fence.Get(); }
 	inline UINT GetFenceValue() { return m_fenceValue; }
 private:
-	DX12Device* m_device;
 	DX12CommandAllocatorManager* m_allocatorManager;
 
 	ComPtr<ID3D12CommandQueue> m_commandQueue;

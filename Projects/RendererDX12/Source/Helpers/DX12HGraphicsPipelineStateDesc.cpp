@@ -1,8 +1,9 @@
 #include "RendererDX12.h"
-#include "DX12HGraphicsPipelineStateDesc.h"
+#include "Helpers/DX12HGraphicsPipelineStateDesc.h"
 
 DX12HGraphicsPipelineStateDesc::DX12HGraphicsPipelineStateDesc()
 {
+    desc = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
 	D3D12_RASTERIZER_DESC rasterDesc;
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
@@ -30,12 +31,26 @@ DX12HGraphicsPipelineStateDesc::DX12HGraphicsPipelineStateDesc()
 	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask	= D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	m_desc.RasterizerState = rasterDesc;
-	m_desc.BlendState = blendDesc;
-	m_desc.NumRenderTargets = 1;
-	m_desc.NodeMask = 0;
-	m_desc.SampleDesc.Count = 1;
-	m_desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	m_desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	m_desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.SampleDesc.Quality = 0;
+    desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+    desc.RasterizerState = rasterDesc;
+    desc.BlendState = blendDesc;
+    desc.NumRenderTargets = 1;
+}
+
+void DX12HGraphicsPipelineStateDesc::SetShaders(D3D12_SHADER_BYTECODE* VS, D3D12_SHADER_BYTECODE* PS, D3D12_SHADER_BYTECODE* DS, D3D12_SHADER_BYTECODE* HS, D3D12_SHADER_BYTECODE* GS)
+{
+    if (VS)
+        desc.VS = *VS;
+    if (PS)
+        desc.PS = *PS;
+    if (DS)
+        desc.DS = *DS;
+    if (HS)
+        desc.HS = *HS;
+    if (GS)
+        desc.GS = *GS;
 }
