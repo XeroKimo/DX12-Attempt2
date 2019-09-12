@@ -71,7 +71,7 @@ void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* command
 	m_viewPort.TopLeftX = 0;
 	m_viewPort.TopLeftY = 0;
 	m_viewPort.MinDepth = 0;
-	m_viewPort.MaxDepth = 1;
+	m_viewPort.MaxDepth = 0;
 
 	m_rect.top = 0;
 	m_rect.left = 0;
@@ -83,8 +83,9 @@ void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
-	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+	float color[4] = { 0.1f,0.0f,0.6f,1.0f };
 	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
-	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 1, &m_rect);
+	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 0, nullptr);
 	commandList->GetCommandList()->RSSetViewports(1, &m_viewPort);
+	commandList->GetCommandList()->RSSetScissorRects(1, &m_rect);
 }

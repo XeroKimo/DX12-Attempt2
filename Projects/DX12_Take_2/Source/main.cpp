@@ -13,7 +13,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	PlatformClock clock;
 
     DX12HInputLayout layout;
-    layout.AddElement("POSITION", DXGI_FORMAT_R32G32B32A32_FLOAT);
+    layout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT,0);
 
 
     ID3D12Device* device = renderer.GetDeviceInterface()->GetDevice()->GetDevice();
@@ -46,9 +46,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     struct Vertex { float x; float y; float z; };
     Vertex vertices[] =
     {
-        { 0.0f, 0.5f, 0.5f },
-        { 0.5f, -0.5f, 0.5f },
-        { -0.5f, -0.5f, 0.5f },
+		{ 0.0f, 0.5f, 0.0f },
+		{ 0.5f, -0.5f, 0.0f },
+        { -0.5f, -0.5f, 0.0f },
     };
 
     ComPtr<ID3D12Resource> vertexResource;
@@ -82,19 +82,41 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     hr = device->CreateCommittedResource(&copyProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(copyBuffer.GetAddressOf()));
     assert(SUCCEEDED(hr));
 
+	D3D12_SUBRESOURCE_DATA data;
+	data.pData = &vertices;
+	data.RowPitch = sizeof(vertices);
+	data.SlicePitch = sizeof(vertices);
+
     shared_ptr<DX12CommandList> cl = renderer.GetDeviceInterface()->GetCommandList();
+
+	//UpdateSubresources(cl->GetCommandList(), vertexResource.Get(), copyBuffer.Get(), 0, 0, 1, &data);
+
     D3D12_RANGE range = { 0, sizeof(vertices) };
-    BYTE* address;
-    hr= copyBuffer->Map(0, nullptr, nullptr);
+    Vertex* address;
+    hr= copyBuffer->Map(0, &range, reinterpret_cast<void**>(&address));
     assert(SUCCEEDED(hr));
 
-    D3D12_SUBRESOURCE_DATA data;
-    data.pData = &vertices;
-    data.RowPitch = sizeof(vertices);
-    data.SlicePitch = sizeof(vertices);
+	*address = vertices[0];
+	address += 1;
 
+	*address = vertices[1];
+	address += 1;
+
+	*address = vertices[2];
+
+	D3D12_VERTEX_BUFFER_VIEW vBufferView;
+	vBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	vBufferView.SizeInBytes = sizeof(vertices);
+	vBufferView.StrideInBytes = sizeof(Vertex);
+
+
+
+	//memcpy(address, &vBufferView, sizeof(vertices));
+
+	copyBuffer->Unmap(0, &range);
 
     cl->GetCommandList()->CopyResource(vertexResource.Get(), copyBuffer.Get());
+
     DX12CommandList::CloseAndExecute(cl);
     renderer.GetDeviceInterface()->SignalAllQueues();
     renderer.GetDeviceInterface()->SyncAllQueues();
@@ -111,8 +133,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{
 			clock.Update();
 			cl = renderer.GetDeviceInterface()->GetCommandList();
-            cl->GetCommandList()->SetPipelineState(pipelineState.Get());
 			renderer.GetSwapChain()->ClearBackBuffer(cl);
+			cl->GetCommandList()->SetPipelineState(pipelineState.Get());
+			cl->GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			cl->GetCommandList()->IASetVertexBuffers(0, 1, &vBufferView);
+			cl->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 			////cl->Close();
 			//DX12CommandList::Close(cl);
 			DX12CommandList::CloseAndExecute(cl);
