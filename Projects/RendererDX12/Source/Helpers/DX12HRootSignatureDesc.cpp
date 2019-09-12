@@ -1,5 +1,5 @@
 #include "RendererDX12.h"
-#include "Helpers/DX12HRootParameter.h"
+#include "Helpers/DX12HRootSignatureDesc.h"
 
 void DX12HRootSignatureDesc::CreateRootConstant(UINT numValues, UINT shaderRegister, UINT registerSpace, D3D12_SHADER_VISIBILITY shaderVisiblity)
 {
