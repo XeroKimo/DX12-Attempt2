@@ -45,7 +45,7 @@ void DX12HRootSignatureDesc::CreateRootDescriptorTable(DX12HRootSignatureDesc::D
 
 }
 
-HRESULT DX12HRootSignatureDesc::GetSerializedRootSignature(D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version, ID3DBlob** ppBlob, ID3DBlob** ppErrorBlob)
+HRESULT DX12HRootSignatureDesc::SerializeSignature(D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version)
 {
     D3D12_ROOT_SIGNATURE_DESC desc;
     desc.NumParameters = static_cast<UINT>(m_parameters.size());
@@ -54,7 +54,7 @@ HRESULT DX12HRootSignatureDesc::GetSerializedRootSignature(D3D12_ROOT_SIGNATURE_
     desc.pStaticSamplers = m_staticSamplers.data();
     desc.Flags = flags;
 
-    return D3D12SerializeRootSignature(&desc, version, ppBlob, ppErrorBlob);
+    return D3D12SerializeRootSignature(&desc, version, &m_signatureBlob, &m_errorBlob);
 }
 
 void DX12HRootSignatureDesc::DescriptorTable::AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister, UINT registerSpace, UINT offsetDescriptorsFromTableStart)

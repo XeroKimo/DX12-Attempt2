@@ -1,7 +1,8 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12CommandAllocatorManager.h"
 
-DX12CommandAllocatorManager::DX12CommandAllocatorManager()
+DX12CommandAllocatorManager::DX12CommandAllocatorManager() :
+	m_device(nullptr)
 {
 }
 
@@ -17,11 +18,12 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
 		if (m_directAllocators.empty())
+			allocator = CreateCommandAllocator(type);
+		else
 		{
-			m_directAllocators.push_back(CreateCommandAllocator(type));
+			allocator = m_directAllocators.back();
+			m_directAllocators.pop_back();
 		}
-		allocator = m_directAllocators.back();
-		m_directAllocators.pop_back();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_BUNDLE:
 		//if (m_bundleAllocators.empty())
@@ -34,23 +36,27 @@ shared_ptr<DX12CommandAllocator> DX12CommandAllocatorManager::GetAllocator(const
 		//break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 		if (m_computeAllocators.empty())
+			allocator = CreateCommandAllocator(type);
+		else
 		{
-			m_computeAllocators.push_back(CreateCommandAllocator(type));
+			allocator = m_computeAllocators.back();
+			m_computeAllocators.pop_back();
 		}
-		allocator = m_computeAllocators.back();
-		m_computeAllocators.pop_back();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
 		if (m_copyAllocators.empty())
+			allocator = CreateCommandAllocator(type);
+		else
 		{
-			m_copyAllocators.push_back(CreateCommandAllocator(type));
+			allocator = m_copyAllocators.back();
+			m_copyAllocators.pop_back();
 		}
-		allocator = m_copyAllocators.back();
-		m_copyAllocators.pop_back();
 		break;
 	default:
 		break;
 	}
+
+	allocator->GetAllocator()->Reset();
 	return allocator;
 }
 

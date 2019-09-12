@@ -20,8 +20,8 @@ public:
 	static void CloseAndExecuteAll(shared_ptr<DX12CommandList>& commandList);
 	static void CloseExecuteReset(shared_ptr<DX12CommandList>& commandList, UINT queuePreference = 0);
 private:
-	static void CloseList(shared_ptr<DX12CommandList> commandList);
-	static void Execute(shared_ptr<DX12CommandList> commandList);
+	static void CloseList(shared_ptr<DX12CommandList>& commandList);
+	static void Execute(shared_ptr<DX12CommandList>& commandList);
 private:
 	DX12Device* m_device;
 	DX12CommandListManager* m_manager;

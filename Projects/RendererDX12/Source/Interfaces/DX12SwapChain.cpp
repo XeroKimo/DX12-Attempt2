@@ -89,4 +89,5 @@ void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
 	float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 1, &m_rect);
+	//commandList->GetCommandList()->RSSetViewports(1, &m_viewPort);
 }

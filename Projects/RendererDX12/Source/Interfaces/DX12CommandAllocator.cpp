@@ -1,7 +1,8 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12CommandAllocator.h"
 
-DX12CommandAllocator::DX12CommandAllocator()
+DX12CommandAllocator::DX12CommandAllocator() :
+	m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
 {
 }
 

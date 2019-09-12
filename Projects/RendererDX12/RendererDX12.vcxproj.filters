@@ -51,6 +51,12 @@
     <ClInclude Include="Headers\Helpers\DX12HRootSignatureDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Helpers\DX12HShaderByteCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Interfaces\DX12Device.cpp">
@@ -81,6 +87,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Helpers\DX12HRootSignatureDesc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\DX12HShaderByteCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

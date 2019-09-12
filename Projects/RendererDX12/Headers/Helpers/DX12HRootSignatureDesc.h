@@ -18,11 +18,16 @@ public:
 	void CreateRootConstant(UINT numValues, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
     void CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE paramType, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
     void CreateRootDescriptorTable(DX12HRootSignatureDesc::DescriptorTable table, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
-    void AddStaticsSampler(D3D12_STATIC_SAMPLER_DESC sampler) { m_staticSamplers.push_back(sampler); }
+    void AddStaticSampler(D3D12_STATIC_SAMPLER_DESC sampler) { m_staticSamplers.push_back(sampler); }
 
-    HRESULT GetSerializedRootSignature(D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version, ID3DBlob** ppBlob, ID3DBlob** ppErrorBlob = nullptr);
+    HRESULT SerializeSignature(D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version);
+	ID3DBlob* GetSerializedSignature() { return m_signatureBlob.Get(); }
+	ID3DBlob* GetError() { return m_errorBlob.Get(); }
 private:
 	std::vector<D3D12_ROOT_PARAMETER> m_parameters;
     std::vector<D3D12_STATIC_SAMPLER_DESC> m_staticSamplers;
+
+	ComPtr<ID3DBlob> m_signatureBlob;
+	ComPtr<ID3DBlob> m_errorBlob;
 	UINT DWORDRemaining = 64;
 };

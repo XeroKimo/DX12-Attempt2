@@ -1,6 +1,9 @@
 #include "RendererDX12.h"
 
-DX12CommandList::DX12CommandList()
+DX12CommandList::DX12CommandList() :
+	m_device(nullptr),
+	m_manager(nullptr),
+	m_queuePreference(0)
 {
 }
 
@@ -47,14 +50,14 @@ void DX12CommandList::CloseExecuteReset(shared_ptr<DX12CommandList>& commandList
 	commandList->Reset(commandList->m_manager->RequestNewAllocator(), queuePreference);
 }
 
-void DX12CommandList::CloseList(shared_ptr<DX12CommandList> commandList)
+void DX12CommandList::CloseList(shared_ptr<DX12CommandList>& commandList)
 {
 	commandList->m_commandList->Close();
 	commandList->m_manager->CloseList(commandList);
 	commandList->m_allocator = nullptr;
 }
 
-void DX12CommandList::Execute(shared_ptr<DX12CommandList> commandList)
+void DX12CommandList::Execute(shared_ptr<DX12CommandList>& commandList)
 {
 	commandList->m_commandList->Close();
 	commandList->m_manager->ReEnlistCommandList(commandList);

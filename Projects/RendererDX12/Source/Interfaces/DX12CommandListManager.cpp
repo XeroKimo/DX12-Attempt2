@@ -47,7 +47,7 @@ void DX12CommandListManager::ExecuteList(UINT queueIndex)
 		return;
 
 	std::vector<ID3D12CommandList*> commandLists;
-	for (int v = 0; v < listToExecute.size(); v++)
+	for (size_t v = 0; v < listToExecute.size(); v++)
 	{
 		commandLists.push_back(listToExecute[v]->GetCommandList());
 		m_inactiveLists.push_back(listToExecute[v]);
@@ -61,7 +61,7 @@ void DX12CommandListManager::ExecuteList(UINT queueIndex)
 
 void DX12CommandListManager::ExecuteAllLists()
 {
-	for (int i = 0; i < m_waitingLists.size(); i++)
+	for (size_t i = 0; i < m_waitingLists.size(); i++)
 	{
 		ExecuteList(i);
 	}
@@ -69,11 +69,6 @@ void DX12CommandListManager::ExecuteAllLists()
 
 void DX12CommandListManager::ReEnlistCommandList(shared_ptr<DX12CommandList> commandList)
 {
-	for (int i = 0; i < m_inactiveLists.size(); i++)
-	{
-		if (m_inactiveLists[i] == commandList)
-			return;
-	}
 	m_inactiveLists.push_back(commandList);
 }
 
