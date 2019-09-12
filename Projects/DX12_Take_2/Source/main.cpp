@@ -1,5 +1,7 @@
 #include "PCH.h"
-
+#include <iostream>
+double deltaTime;
+bool running;
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	WinApp application;
@@ -14,6 +16,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     DX12HInputLayout layout;
     layout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT,0);
+	layout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 
     ID3D12Device* device = renderer.GetDeviceInterface()->GetDevice()->GetDevice();
@@ -43,12 +46,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	hr = device->CreateGraphicsPipelineState(&pipelineDesc.desc, IID_PPV_ARGS(pipelineState.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-    struct Vertex { float x; float y; float z; };
+	struct Vertex { float x; float y; float z; float r; float g; float b; float a; };
     Vertex vertices[] =
     {
-		{ 0.0f, 0.5f, 0.0f },
-		{ 0.5f, -0.5f, 0.0f },
-        { -0.5f, -0.5f, 0.0f },
+		{ 0.0f, 0.5f, 0.0f,0.0f,1.0f,0.0f,1.0f },
+		{ 0.5f, -0.5f, 0.0f,0.0f,0.0f,1.0f,1.0f },
+        { -0.5f, -0.5f, 0.0f,1.0f,0.0f,0.0f,1.0f },
     };
 
     ComPtr<ID3D12Resource> vertexResource;
@@ -132,6 +135,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		else
 		{
 			clock.Update();
+			deltaTime = clock.GetDeltaTime();
+			running = application.IsRunning();
 			cl = renderer.GetDeviceInterface()->GetCommandList();
 			renderer.GetSwapChain()->ClearBackBuffer(cl);
 			cl->GetCommandList()->SetPipelineState(pipelineState.Get());
@@ -146,4 +151,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	return 0;
+}
+
+
+int main()
+{
+	while (running)
+	{
+		std::cout << deltaTime << "\n";
+		system("clear");
+	}
 }

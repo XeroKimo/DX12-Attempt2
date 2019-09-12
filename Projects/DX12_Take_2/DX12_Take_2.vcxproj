@@ -109,6 +109,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
+    <Link />
+    <Link />
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
