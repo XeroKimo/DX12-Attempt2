@@ -1,12 +1,12 @@
 #pragma once
 #include "DX12Header.h"
-#include "DX12CommandAllocator.h"
+#include "Interfaces/DX12CommandAllocator.h"
 class DX12Device;
 
-class DX12CommandAllocatorManager
+class DX12MCommandAllocatorManager
 {
 public:
-	DX12CommandAllocatorManager();
+	DX12MCommandAllocatorManager();
 
 	void Initialize(ID3D12Device* device);
 

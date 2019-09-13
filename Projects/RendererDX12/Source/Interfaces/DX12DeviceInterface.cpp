@@ -5,7 +5,7 @@ DX12DeviceInterface::DX12DeviceInterface()
 {
 }
 
-void DX12DeviceInterface::Initialize(DX12CommandAllocatorManager* manager, D3D_FEATURE_LEVEL featureLevel, UINT adapterID, UINT directQueues, UINT copyQueues, UINT computeQueues)
+void DX12DeviceInterface::Initialize(DX12MCommandAllocatorManager* manager, D3D_FEATURE_LEVEL featureLevel, UINT adapterID, UINT directQueues, UINT copyQueues, UINT computeQueues)
 {
     m_device = make_unique<DX12Device>();
     m_device->Initialize(featureLevel, adapterID);
@@ -16,7 +16,7 @@ void DX12DeviceInterface::Initialize(DX12CommandAllocatorManager* manager, D3D_F
 
     if (directQueues)
     {
-        m_directList = make_unique<DX12CommandListManager>();
+        m_directList = make_unique<DX12MCommandListManager>();
         m_directList->Initialize(m_device->GetDevice(),&m_directQueue, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, directQueues);
 
         for (UINT i = 0; i < directQueues; i++)
@@ -28,7 +28,7 @@ void DX12DeviceInterface::Initialize(DX12CommandAllocatorManager* manager, D3D_F
 
     if (computeQueues)
     {
-        m_computeList = make_unique<DX12CommandListManager>();
+        m_computeList = make_unique<DX12MCommandListManager>();
         m_computeList->Initialize(m_device->GetDevice(), &m_computeQueue, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, computeQueues);
         for (UINT i = 0; i < copyQueues; i++)
         {
@@ -38,7 +38,7 @@ void DX12DeviceInterface::Initialize(DX12CommandAllocatorManager* manager, D3D_F
     }
     if (copyQueues)
     {
-        m_copyList = make_unique<DX12CommandListManager>();
+        m_copyList = make_unique<DX12MCommandListManager>();
         m_copyList->Initialize(m_device->GetDevice(), &m_copyQueue, manager, D3D12_COMMAND_LIST_TYPE_DIRECT, copyQueues);
         for (UINT i = 0; i < computeQueues; i++)
         {

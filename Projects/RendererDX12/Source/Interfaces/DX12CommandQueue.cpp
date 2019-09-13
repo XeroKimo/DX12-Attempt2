@@ -34,7 +34,7 @@ void DX12CommandQueue::SetActiveAllocator(std::vector<shared_ptr<DX12CommandAllo
 	std::copy(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators)); 
 }
 
-void DX12CommandQueue::Initialize(ID3D12Device* device, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
+void DX12CommandQueue::Initialize(ID3D12Device* device, DX12MCommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
 {
 	m_allocatorManager = allocatorManager;
 

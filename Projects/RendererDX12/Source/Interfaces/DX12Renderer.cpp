@@ -6,7 +6,7 @@ DX12Renderer::DX12Renderer()
 
 bool DX12Renderer::Initialize(HWND windowHandle, UINT windowWidth, UINT windowHeight)
 {
-	m_allocatorManager = make_unique<DX12CommandAllocatorManager>();
+	m_allocatorManager = make_unique<DX12MCommandAllocatorManager>();
 	m_device = make_unique<DX12DeviceInterface>();
 
 	m_device->Initialize(m_allocatorManager.get(), D3D_FEATURE_LEVEL_12_0, 0);

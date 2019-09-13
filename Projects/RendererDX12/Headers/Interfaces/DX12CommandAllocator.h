@@ -1,6 +1,6 @@
 #pragma once
 #include "DX12Header.h"
-class DX12CommandAllocatorManager;
+class DX12MCommandAllocatorManager;
 class DX12Device;
 
 class DX12CommandAllocator : public std::enable_shared_from_this<DX12CommandAllocator>

@@ -1,5 +1,5 @@
 #include "RendererDX12.h"
-#include "Interfaces/DX12CommandAllocatorManager.h"
+#include "Managers/DX12MCommandAllocatorManager.h"
 
 DX12MCommandAllocatorManager::DX12MCommandAllocatorManager() :
 	m_device(nullptr)

@@ -29,6 +29,7 @@ void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* command
 	desc.BufferCount = 2;
 	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	desc.Scaling = DXGI_SCALING_NONE;
+	desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	ComPtr<IDXGISwapChain1> tempSwapChain;
 
@@ -79,7 +80,7 @@ void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* command
 	m_rect.right = windowWidth;
 }
 
-void DX12SwapChain::ClearBackBuffer(shared_ptr<DX12CommandList>& commandList)
+void DX12SwapChain::ClearBackBuffer(DX12CommandList* commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));

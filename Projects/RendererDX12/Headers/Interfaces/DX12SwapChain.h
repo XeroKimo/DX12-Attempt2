@@ -8,7 +8,7 @@ public:
 	DX12SwapChain();
 	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
-	void ClearBackBuffer(shared_ptr<DX12CommandList>& commandList);
+	void ClearBackBuffer(DX12CommandList* commandList);
 	inline IDXGISwapChain3* GetSwapChain() { return m_swapChain.Get(); }
 private:
 	ComPtr<IDXGISwapChain3> m_swapChain;

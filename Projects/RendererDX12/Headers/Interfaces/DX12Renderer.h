@@ -10,9 +10,9 @@ public:
 
 	inline DX12SwapChain* GetSwapChain() { return m_swapChain.get(); }
 	inline DX12DeviceInterface* GetDeviceInterface() { return m_device.get(); }
-	inline DX12CommandAllocatorManager* GetCommandAllocatorManager() { return m_allocatorManager.get(); }
+	inline DX12MCommandAllocatorManager* GetCommandAllocatorManager() { return m_allocatorManager.get(); }
 private:
 	unique_ptr<DX12DeviceInterface> m_device;
-	unique_ptr<DX12CommandAllocatorManager> m_allocatorManager;
+	unique_ptr<DX12MCommandAllocatorManager> m_allocatorManager;
 	unique_ptr<DX12SwapChain> m_swapChain;
 };

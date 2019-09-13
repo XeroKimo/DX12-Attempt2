@@ -6,7 +6,7 @@ class DX12DeviceInterface
 public:
     DX12DeviceInterface();
 
-    void Initialize(DX12CommandAllocatorManager* manager, D3D_FEATURE_LEVEL featureLevel, UINT adapterID, UINT directQueues = 1, UINT copyQueues = 0, UINT computeQueues = 0);
+    void Initialize(DX12MCommandAllocatorManager* manager, D3D_FEATURE_LEVEL featureLevel, UINT adapterID, UINT directQueues = 1, UINT copyQueues = 0, UINT computeQueues = 0);
 
     void ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList* const* commandLists, UINT queueIndex);
     void ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT queueIndex = 0);
@@ -24,7 +24,7 @@ private:
     std::vector<unique_ptr<DX12CommandQueue>> m_computeQueue;
     std::vector<unique_ptr<DX12CommandQueue>> m_copyQueue;
 
-    unique_ptr<DX12CommandListManager> m_directList;
-    unique_ptr<DX12CommandListManager> m_computeList;
-    unique_ptr<DX12CommandListManager> m_copyList;
+    unique_ptr<DX12MCommandListManager> m_directList;
+    unique_ptr<DX12MCommandListManager> m_computeList;
+    unique_ptr<DX12MCommandListManager> m_copyList;
 };

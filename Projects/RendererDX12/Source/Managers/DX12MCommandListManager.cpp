@@ -1,14 +1,14 @@
 #include "RendererDX12.h"
-#include "Interfaces/DX12CommandListManager.h"
+#include "Managers/DX12MCommandListManager.h"
 
-DX12CommandListManager::DX12CommandListManager() :
+DX12MCommandListManager::DX12MCommandListManager() :
     m_allocatorManager(nullptr),
     m_device(nullptr),
     m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
 {
 }
 
-void DX12CommandListManager::Initialize(ID3D12Device* device, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12CommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE type, UINT commandQueueAmount)
+void DX12MCommandListManager::Initialize(ID3D12Device* device, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12MCommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE type, UINT commandQueueAmount)
 {
     m_device = device;
 	m_pCommandQueues = commandQueues;
@@ -18,7 +18,7 @@ void DX12CommandListManager::Initialize(ID3D12Device* device, std::vector<unique
 	m_waitingAllocators.resize(commandQueueAmount);
 }
 
-shared_ptr<DX12CommandList> DX12CommandListManager::GetCommandList(UINT queuePreference)
+shared_ptr<DX12CommandList> DX12MCommandListManager::GetCommandList(UINT queuePreference)
 {
 	shared_ptr<DX12CommandList> list;
 	if (m_inactiveLists.empty())
@@ -35,13 +35,13 @@ shared_ptr<DX12CommandList> DX12CommandListManager::GetCommandList(UINT queuePre
 	return list;
 }
 
-shared_ptr<DX12CommandAllocator> DX12CommandListManager::RequestNewAllocator()
+shared_ptr<DX12CommandAllocator> DX12MCommandListManager::RequestNewAllocator()
 {
 	return m_allocatorManager->GetAllocator(m_type);
 }
 
 
-void DX12CommandListManager::ExecuteList(UINT queueIndex)
+void DX12MCommandListManager::ExecuteList(UINT queueIndex)
 {
 	std::vector<shared_ptr<DX12CommandList>>& listToExecute = m_waitingLists[queueIndex];
 	if (listToExecute.empty())
@@ -60,7 +60,7 @@ void DX12CommandListManager::ExecuteList(UINT queueIndex)
 	listToExecute.clear();
 }
 
-void DX12CommandListManager::ExecuteAllLists()
+void DX12MCommandListManager::ExecuteAllLists()
 {
 	for (size_t i = 0; i < m_waitingLists.size(); i++)
 	{
@@ -68,19 +68,19 @@ void DX12CommandListManager::ExecuteAllLists()
 	}
 }
 
-void DX12CommandListManager::ExecuteDirect(shared_ptr<DX12CommandList> commandList)
+void DX12MCommandListManager::ExecuteDirect(shared_ptr<DX12CommandList> commandList)
 {
     ID3D12CommandList* list[] = { commandList->GetCommandList() };
     (*m_pCommandQueues)[commandList->GetQueuePreference()]->GetCommandQueue()->ExecuteCommandLists(1, list);
     (*m_pCommandQueues)[commandList->GetQueuePreference()]->SetActiveAllocator(commandList->GetCommandAllocator());
 }
 
-void DX12CommandListManager::ReEnlistCommandList(shared_ptr<DX12CommandList> commandList)
+void DX12MCommandListManager::ReEnlistCommandList(shared_ptr<DX12CommandList> commandList)
 {
 	m_inactiveLists.push_back(commandList);
 }
 
-void DX12CommandListManager::CloseList(shared_ptr<DX12CommandList> list)
+void DX12MCommandListManager::CloseList(shared_ptr<DX12CommandList> list)
 {
 	m_waitingLists[list->GetQueuePreference()].push_back(list);
 	m_waitingAllocators[list->GetQueuePreference()].push_back(list->GetCommandAllocator());

@@ -6,7 +6,7 @@ DX12CommandList::DX12CommandList() :
 {
 }
 
-void DX12CommandList::Initialize(ID3D12Device* device, DX12CommandListManager* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
+void DX12CommandList::Initialize(ID3D12Device* device, DX12MCommandListManager* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
 {
 	HRESULT hr = device->CreateCommandList(device->GetNodeCount(), type, allocator->GetAllocator().Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
 
@@ -55,6 +55,5 @@ void DX12CommandList::CloseList(shared_ptr<DX12CommandList>& commandList)
 {
 	commandList->m_commandList->Close();
 	commandList->m_manager->CloseList(commandList);
-	commandList->m_allocator = nullptr;
 }
 
