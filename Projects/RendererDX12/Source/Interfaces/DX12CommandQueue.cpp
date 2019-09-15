@@ -1,56 +1,38 @@
 #include "RendererDX12.h"
 #include "Interfaces/DX12CommandQueue.h"
 
-DX12CommandQueue::DX12CommandQueue() :
-	m_fenceValue(0)
+DX12CommandQueue::DX12CommandQueue()
 {
+}
+
+void DX12CommandQueue::Initialize(ID3D12Device* device, DX12ManagerCommandAllocator* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
+{
+	m_commandQueue.Initialize(device, commandListType);
+	m_allocatorManager = allocatorManager;
 }
 
 void DX12CommandQueue::SignalGPU()
 {
-	m_commandQueue->Signal(m_fence.Get(), m_fenceValue);
+	if (m_runningAllocators.empty())
+		return;
+	m_commandQueue.SignalGPU();
 }
 
-void DX12CommandQueue::SignalCPU()
+void DX12CommandQueue::StallQueue(DX12BaseCommandQueue* queue)
 {
-	m_fence->Signal(m_fenceValue);
+	m_commandQueue.GetCommandQueue()->Wait(queue->GetFence(), queue->GetFenceValue());
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 {
-	if (m_fence->GetCompletedValue() < m_fenceValue)
-	{
-		m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent);
-		WaitForSingleObject(m_fenceEvent, milliseconds);
-	}
-	if (!m_runningAllocators.empty())
-		m_allocatorManager->ResetAllocators(m_runningAllocators);
+	if (m_runningAllocators.empty())
+		return;
+	m_commandQueue.SyncQueue(milliseconds);
+	m_allocatorManager->ResetAllocators(m_runningAllocators);
 	m_runningAllocators.clear();
-	m_fenceValue++;
 }
 
-void DX12CommandQueue::SetActiveAllocator(std::vector<shared_ptr<DX12CommandAllocator>> allocator)
+void DX12CommandQueue::SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocator)
 {
-	std::copy(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators)); 
-}
-
-void DX12CommandQueue::Initialize(ID3D12Device* device, DX12MCommandAllocatorManager* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType)
-{
-	m_allocatorManager = allocatorManager;
-
-	HRESULT hr;
-
-	D3D12_COMMAND_QUEUE_DESC cqDesc;
-	cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	cqDesc.NodeMask = device->GetNodeCount();
-	cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-	cqDesc.Type = commandListType;
-
-	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-	hr = device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	std::copy(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators));
 }

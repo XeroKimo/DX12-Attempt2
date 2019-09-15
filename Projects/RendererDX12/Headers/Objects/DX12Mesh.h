@@ -1,12 +1,12 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12OMesh
+class DX12Mesh
 {
 public:
-	DX12OMesh();
+	DX12Mesh();
 
-	void CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount, ID3D12Resource** uploadBuffer);
+	void CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
 
 	void Set(shared_ptr<DX12CommandList>& commandList);
 	void Draw(shared_ptr<DX12CommandList>& commandList);

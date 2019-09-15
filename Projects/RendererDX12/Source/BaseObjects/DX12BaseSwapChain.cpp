@@ -1,14 +1,14 @@
 #include "RendererDX12.h"
-#include "Interfaces/DX12SwapChain.h"
+#include "BaseObjects/DX12BaseSwapChain.h"
 
-DX12SwapChain::DX12SwapChain() :
+DX12BaseSwapChain::DX12BaseSwapChain() :
     m_descriptorHeapSize(0),
     m_rect({}),
     m_viewPort({})
 {
 }
 
-void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
+void DX12BaseSwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
 {
 	HRESULT hr;
 	ComPtr<IDXGIFactory2> factory;
@@ -80,13 +80,13 @@ void DX12SwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* command
 	m_rect.right = windowWidth;
 }
 
-void DX12SwapChain::ClearBackBuffer(DX12CommandList* commandList)
+void DX12BaseSwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
 	float color[4] = { 0.1f,0.0f,0.6f,1.0f };
-	commandList->GetCommandList()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
-	commandList->GetCommandList()->ClearRenderTargetView(handle, color, 0, nullptr);
-	commandList->GetCommandList()->RSSetViewports(1, &m_viewPort);
-	commandList->GetCommandList()->RSSetScissorRects(1, &m_rect);
+	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+	commandList->ClearRenderTargetView(handle, color, 0, nullptr);
+	commandList->RSSetViewports(1, &m_viewPort);
+	commandList->RSSetScissorRects(1, &m_rect);
 }

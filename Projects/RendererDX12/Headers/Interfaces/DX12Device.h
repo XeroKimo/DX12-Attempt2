@@ -1,21 +1,30 @@
 #pragma once
 #include "DX12Header.h"
-#include "DX12CommandQueue.h"
-#include "Managers/DX12MCommandListManager.h"
 
-class DX12Renderer;
 class DX12Device
 {
 public:
-	DX12Device();
-	void Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID);
+    DX12Device();
 
-	inline ID3D12Device2* GetDevice() { return m_device.Get(); }
-    inline IDXGIAdapter3* GetAdapter() { return m_adapter.Get(); }
-	inline UINT GetNodeMask() { return m_nodeMask; }
+    void Initialize(DX12ManagerCommandAllocator* manager, D3D_FEATURE_LEVEL featureLevel, UINT adapterID, UINT directQueues = 1, UINT copyQueues = 0, UINT computeQueues = 0);
+
+    void ExecuteCommandLists(UINT numCommandLists, ID3D12CommandList* const* commandLists, UINT queueIndex);
+    void ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT queueIndex = 0);
+    void ExecuteAllCommandListManager();
+    void SignalAllQueues();
+    void SyncAllQueues();
+
+    DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT index = 0);
+    shared_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT queuePreference = 0);
+    inline DX12BaseDevice* GetDevice() { return m_device.get(); }
 private:
-	ComPtr<ID3D12Device2> m_device;
-	ComPtr<IDXGIAdapter3> m_adapter;
-	UINT m_nodeMask;
+    unique_ptr<DX12BaseDevice> m_device;
 
+    std::vector<unique_ptr<DX12CommandQueue>> m_directQueue;
+    std::vector<unique_ptr<DX12CommandQueue>> m_computeQueue;
+    std::vector<unique_ptr<DX12CommandQueue>> m_copyQueue;
+
+    unique_ptr<DX12ManagerCommandList> m_directList;
+    unique_ptr<DX12ManagerCommandList> m_computeList;
+    unique_ptr<DX12ManagerCommandList> m_copyList;
 };

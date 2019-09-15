@@ -1,14 +1,13 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12Device;
-class DX12SwapChain
+class DX12BaseSwapChain
 {
 public:
-	DX12SwapChain();
+	DX12BaseSwapChain();
 	void Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
-	void ClearBackBuffer(DX12CommandList* commandList);
+	void ClearBackBuffer(ID3D12GraphicsCommandList* commandList);
 	inline IDXGISwapChain3* GetSwapChain() { return m_swapChain.Get(); }
 private:
 	ComPtr<IDXGISwapChain3> m_swapChain;

@@ -31,6 +31,17 @@ DX12HGraphicsPipelineStateDesc::DX12HGraphicsPipelineStateDesc()
 	blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask	= D3D12_COLOR_WRITE_ENABLE_ALL;
 
+	D3D12_DEPTH_STENCIL_DESC depthDesc;
+	depthDesc.DepthEnable = TRUE;
+	depthDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	depthDesc.StencilEnable = FALSE;
+	depthDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	depthDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+	depthDesc.FrontFace = defaultStencilOp;
+	depthDesc.BackFace = defaultStencilOp;
+
     desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     desc.SampleDesc.Count = 1;
@@ -39,6 +50,7 @@ DX12HGraphicsPipelineStateDesc::DX12HGraphicsPipelineStateDesc()
     desc.RasterizerState = rasterDesc;
     desc.BlendState = blendDesc;
     desc.NumRenderTargets = 1;
+	desc.DepthStencilState = depthDesc;
 }
 
 void DX12HGraphicsPipelineStateDesc::SetShaders(D3D12_SHADER_BYTECODE* VS, D3D12_SHADER_BYTECODE* PS, D3D12_SHADER_BYTECODE* DS, D3D12_SHADER_BYTECODE* HS, D3D12_SHADER_BYTECODE* GS)

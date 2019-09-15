@@ -1,7 +1,5 @@
 #include "PCH.h"
 #include <iostream>
-double deltaTime;
-bool running;
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	WinApp application;
@@ -22,6 +20,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     ID3D12Device* device = renderer.GetDeviceInterface()->GetDevice()->GetDevice();
 
 	DX12HRootSignatureDesc desc;
+	desc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	//desc.CreateRootConstant(3, 0);
 	HRESULT hr = desc.SerializeSignature(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
 	assert(SUCCEEDED(hr));
 
@@ -55,14 +55,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 	shared_ptr<DX12CommandList> cl = renderer.GetDeviceInterface()->GetCommandList();
-	ComPtr<ID3D12Resource> copyBuffer;
-	DX12OMesh mesh;
-	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), 3,copyBuffer.GetAddressOf());
+	DX12Mesh mesh;
+	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), 3);
   
     DX12CommandList::CloseAndExecute(cl);
     renderer.GetDeviceInterface()->SignalAllQueues();
     renderer.GetDeviceInterface()->SyncAllQueues();
-    renderer.GetDeviceInterface()->GetCommandQueue()->ResetFenceValue();
+    renderer.GetDeviceInterface()->GetCommandQueue()->GetBaseCommandQueue()->ResetFenceValue();
+
+
+	struct Vector3 { float x; float y; float z; };
+	Vector3 pos = { 1.0f, 0.0f,0.0f };
+	D3D12_GPU_VIRTUAL_ADDRESS address;
 
 	MSG msg;
 	while (application.IsRunning())
@@ -75,11 +79,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		else
 		{
 			clock.Update();
-			deltaTime = clock.GetDeltaTime();
-			running = application.IsRunning();
+
 			cl = renderer.GetDeviceInterface()->GetCommandList();
-			renderer.GetSwapChain()->ClearBackBuffer(cl.get());
+			renderer.GetSwapChain()->ClearBackBuffer(cl->GetCommandList());
+			cl->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 			cl->GetCommandList()->SetPipelineState(pipelineState.Get());
+			address = cl->GetCommandAllocator()->UploadCBVSRVUAV(&pos, sizeof(pos));
+			//cl->GetCommandList()->SetGraphicsRoot32BitConstants(0, 3, &pos, 0);
+			cl->GetCommandList()->SetGraphicsRootConstantBufferView(0, address);
 			cl->GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);
 			mesh.Draw(cl);
@@ -93,14 +100,4 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	return 0;
-}
-
-
-int main()
-{
-	while (running)
-	{
-		std::cout << deltaTime << "\n";
-		system("clear");
-	}
 }

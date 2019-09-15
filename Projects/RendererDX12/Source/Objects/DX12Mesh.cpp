@@ -1,11 +1,11 @@
 #include "RendererDX12.h"
-#include "Objects/DX12OMesh.h"
+#include "Objects/DX12Mesh.h"
 
-DX12OMesh::DX12OMesh()
+DX12Mesh::DX12Mesh()
 {
 }
 
-void DX12OMesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount,	ID3D12Resource** uploadBuffer)
+void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
 {
 
 	ComPtr<ID3D12Device> device;
@@ -24,9 +24,6 @@ void DX12OMesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexDat
 	heapProperties.VisibleNodeMask = heapProperties.CreationNodeMask;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
-	D3D12_HEAP_PROPERTIES copyProperties = heapProperties;
-	copyProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
@@ -42,15 +39,14 @@ void DX12OMesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexDat
 	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	hr = device->CreateCommittedResource(&copyProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(uploadBuffer));
-	assert(SUCCEEDED(hr));
-
 	D3D12_SUBRESOURCE_DATA data;
 	data.pData = vertexData;
 	data.RowPitch = totalVertexSize;
 	data.SlicePitch = 1;
 
-	UINT64 result = UpdateSubresources<1>(commandList->GetCommandList(), m_vertexBuffer.Get(), *uploadBuffer, 0, 0, 1, &data);
+	commandList->GetCommandAllocator()->UploadData(commandList->GetCommandList(), m_vertexBuffer.Get(), &data, 0, 1);
+
+	//UINT64 result = UpdateSubresources<1>(commandList->GetCommandList(), m_vertexBuffer.Get(), *uploadBuffer, 0, 0, 1, &data);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -66,12 +62,12 @@ void DX12OMesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexDat
 	m_vertexCount = vertexCount;
 }
 
-void DX12OMesh::Set(shared_ptr<DX12CommandList>& commandList)
+void DX12Mesh::Set(shared_ptr<DX12CommandList>& commandList)
 {
 	commandList->GetCommandList()->IASetVertexBuffers(0, 1, &m_vertexView);
 }
 
-void DX12OMesh::Draw(shared_ptr<DX12CommandList>& commandList)
+void DX12Mesh::Draw(shared_ptr<DX12CommandList>& commandList)
 {
 	commandList->GetCommandList()->DrawInstanced(m_vertexCount, 1, 0, 0);
 }

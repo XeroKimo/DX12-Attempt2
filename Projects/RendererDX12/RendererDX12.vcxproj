@@ -23,36 +23,42 @@
     <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h" />
     <ClInclude Include="Headers\Helpers\DX12HInputLayout.h" />
     <ClInclude Include="Headers\Helpers\DX12HRootSignatureDesc.h" />
+    <ClInclude Include="Headers\BaseObjects\DX12BaseCommandAllocator.h" />
+    <ClInclude Include="Headers\Objects\DX12UploadBuffer.h" />
     <ClInclude Include="Headers\Interfaces\DX12CommandAllocator.h" />
-    <ClInclude Include="Headers\Interfaces\DX12UploadBuffer.h" />
-    <ClInclude Include="Headers\Managers\DX12MCommandAllocatorManager.h" />
-    <ClInclude Include="Headers\Interfaces\DX12CommandList.h" />
-    <ClInclude Include="Headers\Managers\DX12MCommandListManager.h" />
     <ClInclude Include="Headers\Interfaces\DX12CommandQueue.h" />
+    <ClInclude Include="Headers\Managers\DX12ManagerCommandAllocator.h" />
+    <ClInclude Include="Headers\Interfaces\DX12CommandList.h" />
+    <ClInclude Include="Headers\Managers\DX12ManagerCommandList.h" />
+    <ClInclude Include="Headers\BaseObjects\DX12BaseCommandQueue.h" />
+    <ClInclude Include="Headers\BaseObjects\DX12BaseDevice.h" />
     <ClInclude Include="Headers\Interfaces\DX12Device.h" />
-    <ClInclude Include="Headers\Interfaces\DX12DeviceInterface.h" />
     <ClInclude Include="Headers\Interfaces\DX12Renderer.h" />
-    <ClInclude Include="Headers\Interfaces\DX12SwapChain.h" />
-    <ClInclude Include="Headers\Objects\DX12OMesh.h" />
+    <ClInclude Include="Headers\BaseObjects\DX12BaseSwapChain.h" />
+    <ClInclude Include="Headers\Managers\DX12ManagerUploadBuffer.h" />
+    <ClInclude Include="Headers\Objects\DX12Mesh.h" />
     <ClInclude Include="Headers\RendererDX12.h" />
     <ClInclude Include="Headers\Helpers\DX12HShaderByteCode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\Interfaces\DX12UploadBuffer.cpp" />
-    <ClCompile Include="Source\Objects\DX12OMesh.cpp" />
+    <ClCompile Include="Source\Interfaces\DX12CommandAllocator.cpp" />
+    <ClCompile Include="Source\Interfaces\DX12CommandQueue.cpp" />
+    <ClCompile Include="Source\Objects\DX12UploadBuffer.cpp" />
+    <ClCompile Include="Source\Managers\DX12ManagerUploadBuffer.cpp" />
+    <ClCompile Include="Source\Objects\DX12Mesh.cpp" />
     <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp" />
-    <ClCompile Include="Source\Interfaces\DX12DeviceInterface.cpp" />
+    <ClCompile Include="Source\Interfaces\DX12Device.cpp" />
     <ClCompile Include="Source\Helpers\DX12HInputLayout.cpp" />
     <ClCompile Include="Source\Helpers\DX12HRootSignatureDesc.cpp" />
     <ClCompile Include="Source\Helpers\DX12HShaderByteCode.cpp" />
-    <ClCompile Include="Source\Interfaces\DX12SwapChain.cpp" />
+    <ClCompile Include="Source\BaseObjects\DX12BaseSwapChain.cpp" />
     <ClCompile Include="Source\Interfaces\DX12CommandList.cpp" />
-    <ClCompile Include="Source\Managers\DX12MCommandListManager.cpp" />
+    <ClCompile Include="Source\Managers\DX12ManagerCommandList.cpp" />
     <ClCompile Include="Source\Interfaces\DX12Renderer.cpp" />
-    <ClCompile Include="Source\Interfaces\DX12CommandAllocator.cpp" />
-    <ClCompile Include="Source\Managers\DX12MCommandAllocatorManager.cpp" />
-    <ClCompile Include="Source\Interfaces\DX12CommandQueue.cpp" />
-    <ClCompile Include="Source\Interfaces\DX12Device.cpp">
+    <ClCompile Include="Source\BaseObjects\DX12BaseCommandAllocator.cpp" />
+    <ClCompile Include="Source\Managers\DX12ManagerCommandAllocator.cpp" />
+    <ClCompile Include="Source\BaseObjects\DX12BaseCommandQueue.cpp" />
+    <ClCompile Include="Source\BaseObjects\DX12BaseDevice.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

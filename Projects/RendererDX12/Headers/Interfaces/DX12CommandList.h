@@ -1,13 +1,13 @@
 #pragma once
 #include "DX12Header.h"
-class DX12CommandAllocator;
-class DX12MCommandListManager;
+class DX12BaseCommandAllocator;
+class DX12ManagerCommandList;
 
 class DX12CommandList : public std::enable_shared_from_this<DX12CommandList>
 {
 public:
 	DX12CommandList();
-	void Initialize(ID3D12Device* device, DX12MCommandListManager* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference);
+	void Initialize(ID3D12Device* device, DX12ManagerCommandList* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference);
 
 	void Reset(shared_ptr<DX12CommandAllocator> allocator, UINT queuePreference );
 
@@ -22,7 +22,7 @@ public:
 private:
 	static void CloseList(shared_ptr<DX12CommandList>& commandList);
 private:
-	DX12MCommandListManager* m_manager;
+	DX12ManagerCommandList* m_manager;
 	shared_ptr<DX12CommandAllocator> m_allocator;
 	ComPtr<ID3D12GraphicsCommandList1> m_commandList;
 	UINT m_queuePreference;
