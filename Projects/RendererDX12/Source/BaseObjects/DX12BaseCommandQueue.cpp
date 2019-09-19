@@ -1,18 +1,15 @@
 #include "RendererDX12.h"
 
 DX12BaseCommandQueue::DX12BaseCommandQueue() :
-	m_fenceValue(0)
+	m_fenceValue(0),
+    m_fenceEvent(nullptr)
 {
 }
 
-void DX12BaseCommandQueue::SignalGPU()
+void DX12BaseCommandQueue::Signal()
 {
+    m_fenceValue++;
 	m_commandQueue->Signal(m_fence.Get(), m_fenceValue);
-}
-
-void DX12BaseCommandQueue::SignalCPU()
-{
-	m_fence->Signal(m_fenceValue);
 }
 
 void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds)
@@ -22,7 +19,6 @@ void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds)
 		m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent);
 		WaitForSingleObject(m_fenceEvent, milliseconds);
 	}
-	m_fenceValue++;
 }
 
 void DX12BaseCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE commandListType)
@@ -38,7 +34,7 @@ void DX12BaseCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_T
 	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	hr = device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
+	hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);

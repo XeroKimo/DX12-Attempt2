@@ -10,12 +10,11 @@ public:
 	DX12CommandQueue();
 	void Initialize(ID3D12Device* device, DX12ManagerCommandAllocator* allocatorManager, D3D12_COMMAND_LIST_TYPE commandListType);
 
-	void SignalGPU();
+	void Signal();
 	void StallQueue(DX12BaseCommandQueue* queue);
 	void SyncQueue(DWORD milliseconds);
 
 	void SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocator);
-	inline void SignalCPU() { m_commandQueue.SignalCPU(); }
 	inline void SetActiveAllocator(shared_ptr<DX12CommandAllocator> allocator) { m_runningAllocators.push_back(allocator); }
 	inline DX12BaseCommandQueue* GetBaseCommandQueue() { return &m_commandQueue; }
 private:

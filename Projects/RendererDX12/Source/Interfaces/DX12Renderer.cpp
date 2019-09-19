@@ -23,7 +23,7 @@ bool DX12Renderer::Initialize(HWND windowHandle, UINT windowWidth, UINT windowHe
 void DX12Renderer::Present()
 {
 	m_device->ExecuteCommandListManager();
-	m_device->GetCommandQueue()->SignalGPU();
+	m_device->GetCommandQueue()->Signal();
 	m_device->GetCommandQueue()->SyncQueue(INFINITE);
 
 	m_swapChain->GetSwapChain()->Present(1, 0);	

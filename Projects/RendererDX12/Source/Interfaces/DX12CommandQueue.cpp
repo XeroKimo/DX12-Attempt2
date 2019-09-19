@@ -11,11 +11,11 @@ void DX12CommandQueue::Initialize(ID3D12Device* device, DX12ManagerCommandAlloca
 	m_allocatorManager = allocatorManager;
 }
 
-void DX12CommandQueue::SignalGPU()
+void DX12CommandQueue::Signal()
 {
 	if (m_runningAllocators.empty())
 		return;
-	m_commandQueue.SignalGPU();
+	m_commandQueue.Signal();
 }
 
 void DX12CommandQueue::StallQueue(DX12BaseCommandQueue* queue)

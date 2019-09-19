@@ -2,7 +2,8 @@
 #include "Managers/DX12ManagerCommandAllocator.h"
 
 DX12ManagerCommandAllocator::DX12ManagerCommandAllocator() :
-	m_device(nullptr)
+	m_device(nullptr),
+    m_bufferManager(nullptr)
 {
 }
 
@@ -34,7 +35,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 		//	allocator = m_bundleAllocators.back();
 		//	m_bundleAllocators.pop_back();
 		//}
-		//break;
+		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 		if (m_computeAllocators.empty())
 			allocator = CreateCommandAllocator(type);
@@ -54,6 +55,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 		}
 		break;
 	default:
+        assert(false);
 		break;
 	}
 

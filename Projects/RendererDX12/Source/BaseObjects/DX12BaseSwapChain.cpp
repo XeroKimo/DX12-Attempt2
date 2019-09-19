@@ -15,9 +15,9 @@ void DX12BaseSwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* com
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-
 	DXGI_SAMPLE_DESC sampleDesc = {};
 	sampleDesc.Count = 1;	//How many samples per pixel are we drawing
+    sampleDesc.Quality = 0;
 
 	DXGI_SWAP_CHAIN_DESC1 desc = {};
 	desc.Width = windowWidth;
@@ -53,7 +53,7 @@ void DX12BaseSwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* com
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
 	rtvDesc.Format = desc.Format;
-	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+    rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2D.MipSlice = 0;
 	rtvDesc.Texture2D.PlaneSlice = 0;
 
@@ -84,7 +84,8 @@ void DX12BaseSwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
-	float color[4] = { 0.1f,0.0f,0.6f,1.0f };
+    //float color[4] = { 0.1f,0.0f,0.6f,1.0f };
+    float color[4] = { 0.5f,0.5f,0.5f,1.0f };
 	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
 	commandList->ClearRenderTargetView(handle, color, 0, nullptr);
 	commandList->RSSetViewports(1, &m_viewPort);

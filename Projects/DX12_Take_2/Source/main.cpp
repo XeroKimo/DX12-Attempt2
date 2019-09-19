@@ -84,7 +84,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			renderer.GetSwapChain()->ClearBackBuffer(cl->GetCommandList());
 			cl->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 			cl->GetCommandList()->SetPipelineState(pipelineState.Get());
-			cl->SetConstantBuffer(0, &pos, sizeof(pos));
+			//cl->SetConstantBuffer(0, &pos, sizeof(pos));
 			//cl->GetCommandList()->SetGraphicsRoot32BitConstants(0, 3, &pos, 0);
 			cl->GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);

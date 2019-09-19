@@ -85,15 +85,15 @@ void DX12Device::SignalAllQueues()
 {
     for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
     {
-        queue->SignalGPU();
+        queue->Signal();
     }
     for (const unique_ptr<DX12CommandQueue>& queue : m_computeQueue)
     {
-        queue->SignalGPU();
+        queue->Signal();
     }
     for (const unique_ptr<DX12CommandQueue>& queue : m_copyQueue)
     {
-        queue->SignalGPU();
+        queue->Signal();
     }
 }
 

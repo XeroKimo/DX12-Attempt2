@@ -3,7 +3,8 @@
 
 DX12UploadBuffer::DX12UploadBuffer() :
 	m_totalSize(0),
-	m_usedSize(0)
+	m_usedSize(0),
+    m_mappedAddress(nullptr)
 {
 }
 
@@ -58,5 +59,6 @@ void DX12UploadBuffer::UploadData(ID3D12GraphicsCommandList* commandList, ID3D12
 
 void DX12UploadBuffer::Reset()
 {
+    ZeroMemory(m_mappedAddress, m_totalSize);
 	m_usedSize = 0;
 }

@@ -4,12 +4,17 @@
 DX12ManagerCommandList::DX12ManagerCommandList() :
     m_allocatorManager(nullptr),
     m_device(nullptr),
-    m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
+    m_type(D3D12_COMMAND_LIST_TYPE_DIRECT),
+    m_pCommandQueues()
 {
 }
 
 void DX12ManagerCommandList::Initialize(ID3D12Device* device, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager, D3D12_COMMAND_LIST_TYPE type, UINT commandQueueAmount)
 {
+    assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE);
+    assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
+    assert(type != D3D12_COMMAND_LIST_TYPE_BUNDLE);
+
     m_device = device;
 	m_pCommandQueues = commandQueues;
 	m_allocatorManager = allocatorManager;
