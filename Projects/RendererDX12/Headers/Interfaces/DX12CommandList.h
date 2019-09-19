@@ -9,7 +9,11 @@ public:
 	DX12CommandList();
 	void Initialize(ID3D12Device* device, DX12ManagerCommandList* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference);
 
-	void Reset(shared_ptr<DX12CommandAllocator> allocator, UINT queuePreference );
+	void Reset(shared_ptr<DX12CommandAllocator> allocator, UINT queuePreference);
+	void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);
+	void SetShaderResource(UINT rootParamIndex, void* data, UINT64 size);
+	void SetUnorderedAccess(UINT rootParamIndex, void* data, UINT64 size);
+	void UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
 
 	inline ID3D12GraphicsCommandList1* GetCommandList() { return m_commandList.Get(); }
 	inline shared_ptr<DX12CommandAllocator> GetCommandAllocator() { return m_allocator; }

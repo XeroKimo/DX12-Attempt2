@@ -9,13 +9,10 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 {
 
 	ComPtr<ID3D12Device> device;
-	//ComPtr<ID3D12Resource> uploadBuffer;
 	HRESULT hr = commandList->GetCommandList()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	size_t totalVertexSize = sizeOfVertex * vertexCount;
-
-	//ComPtr<ID3D12Resource> copyBuffer;
 
 	D3D12_HEAP_PROPERTIES heapProperties = {};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -44,9 +41,7 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 	data.RowPitch = totalVertexSize;
 	data.SlicePitch = 1;
 
-	commandList->GetCommandAllocator()->UploadData(commandList->GetCommandList(), m_vertexBuffer.Get(), &data, 0, 1);
-
-	//UINT64 result = UpdateSubresources<1>(commandList->GetCommandList(), m_vertexBuffer.Get(), *uploadBuffer, 0, 0, 1, &data);
+	commandList->UploadData(m_vertexBuffer.Get(), &data, 0, 1);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

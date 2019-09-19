@@ -23,6 +23,26 @@ void DX12CommandList::Reset(shared_ptr<DX12CommandAllocator> allocator, UINT que
 	m_queuePreference = queuePreference;
 }
 
+void DX12CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootConstantBufferView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::SetShaderResource(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootShaderResourceView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::SetUnorderedAccess(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootUnorderedAccessView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
+{
+	m_allocator->UploadData(m_commandList.Get(), destination, data, intermediateOffset, numSubResources, firstSubResource);
+}
+
 void DX12CommandList::Close(shared_ptr<DX12CommandList>& commandList)
 {
 	CloseList(commandList);
