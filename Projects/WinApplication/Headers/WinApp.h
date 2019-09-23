@@ -8,7 +8,7 @@ public:
 	~WinApp();
 	bool Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height);
 
-	bool PeekMsg(MSG& msg);
+	inline bool PeekMsg(MSG& msg) {	return (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)); }
 	void ReadMessage(MSG& msg);
 	void Quit();
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

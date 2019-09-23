@@ -25,7 +25,7 @@ bool WinApp::Initialize(HINSTANCE hInstance, unsigned int width, unsigned int he
 bool WinApp::InitWindow(HINSTANCE hInstance, unsigned int width, unsigned  int height)
 {
     // Register the window class.
-    const wchar_t CLASS_NAME[] = L"DX11 Practice";
+    const wchar_t CLASS_NAME[] = L"DX12 Practice";
     WNDCLASS wc = {};
 
 	//m_hInstance = GetModuleHandle(nullptr);
@@ -68,7 +68,11 @@ bool WinApp::InitWindow(HINSTANCE hInstance, unsigned int width, unsigned  int h
         return false;
     }
 
+	SetWindowLongPtr(m_windowHandle, GWL_USERDATA, (LONG_PTR)this);
+
     ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
     return true;
 }
 
@@ -78,16 +82,6 @@ void WinApp::ReadMessage(MSG& msg)
 	DispatchMessage(&msg);
 }
 
-bool WinApp::PeekMsg(MSG& msg)
-{
-	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	{
-		ReadMessage(msg);
-		return true;
-	}
-	return false;
-}
-
 void WinApp::Quit()
 {
 	m_running = false;
@@ -95,19 +89,28 @@ void WinApp::Quit()
 
 LRESULT WinApp::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	WinApp* pWinApp = (WinApp*)(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 	// Get a pointer to the framework object associated with this window.
     switch (uMsg)
     {
+	case WM_NCCREATE:
+	{
+		// Set the user data for this hWnd to the Framework* we passed in, used on first line of this method above.
+		//CREATESTRUCT* pcs = (CREATESTRUCT*)(lParam);
+		//WinApp* pFramework = (WinApp*)(pcs->lpCreateParams);
+		//SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)(pFramework));
+		return 1;
+	}
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
-    case WM_KEYDOWN:
+	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE)
 		{
 			if (MessageBox(0, L"Are you sure you want to exit?", L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
 				DestroyWindow(hwnd);
 		}
-		return 0;
+		break;
 	}
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

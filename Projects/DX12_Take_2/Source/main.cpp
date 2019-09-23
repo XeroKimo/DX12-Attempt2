@@ -17,7 +17,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	layout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 
-    ID3D12Device* device = renderer.GetDeviceInterface()->GetDevice()->GetDevice();
+    ID3D12Device* device = renderer.GetDeviceInterface()->GetBase()->GetInterface();
 
 	DX12HRootSignatureDesc desc;
 	desc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	assert(SUCCEEDED(hr));
 
 	ComPtr<ID3D12RootSignature> rootSignature;
-	hr = device->CreateRootSignature(renderer.GetDeviceInterface()->GetDevice()->GetNodeMask(), desc.GetSerializedSignature()->GetBufferPointer(), desc.GetSerializedSignature()->GetBufferSize(), IID_PPV_ARGS(rootSignature.GetAddressOf()));
+	hr = device->CreateRootSignature(renderer.GetDeviceInterface()->GetBase()->GetNodeMask(), desc.GetSerializedSignature()->GetBufferPointer(), desc.GetSerializedSignature()->GetBufferSize(), IID_PPV_ARGS(rootSignature.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 
@@ -56,37 +56,46 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 	shared_ptr<DX12CommandList> cl = renderer.GetDeviceInterface()->GetCommandList();
 	DX12Mesh mesh;
-	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), 3);
+	mesh.CreateVertexBuffer(cl, &vertices, sizeof(Vertex), 3);
   
     DX12CommandList::CloseAndExecute(cl);
     renderer.GetDeviceInterface()->SignalAllQueues();
     renderer.GetDeviceInterface()->SyncAllQueues();
-    renderer.GetDeviceInterface()->GetCommandQueue()->GetBaseCommandQueue()->ResetFenceValue();
+    renderer.GetDeviceInterface()->GetCommandQueue()->GetBase()->ResetFenceValue();
 
 
 	struct Vector3 { float x; float y; float z; };
 	Vector3 pos = { 1.0f, 0.0f,0.0f };
-	D3D12_GPU_VIRTUAL_ADDRESS address;
 
 	MSG msg;
 	while (application.IsRunning())
 	{
 		if (application.PeekMsg(msg))
 		{
-			if (msg.message == WM_QUIT)
-                application.Quit();
+			switch (msg.message)
+			{
+			case WM_QUIT:
+				application.Quit();
+				break;
+
+			default:
+				//application.ReadMessage(msg);
+				DefWindowProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+				break;
+			}
+
 		}
 		else
 		{
 			clock.Update();
 
 			cl = renderer.GetDeviceInterface()->GetCommandList();
-			renderer.GetSwapChain()->ClearBackBuffer(cl->GetCommandList());
-			cl->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
-			cl->GetCommandList()->SetPipelineState(pipelineState.Get());
+			renderer.GetSwapChain()->ClearBackBuffer(cl->GetInterface());
+			cl->GetInterface()->SetGraphicsRootSignature(rootSignature.Get());
+			cl->GetInterface()->SetPipelineState(pipelineState.Get());
 			//cl->SetConstantBuffer(0, &pos, sizeof(pos));
 			//cl->GetCommandList()->SetGraphicsRoot32BitConstants(0, 3, &pos, 0);
-			cl->GetCommandList()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			cl->GetInterface()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);
 			mesh.Draw(cl);
 			//cl->GetCommandList()->IASetVertexBuffers(0, 1, &vBufferView);

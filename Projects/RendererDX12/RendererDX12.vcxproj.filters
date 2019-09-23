@@ -21,9 +21,6 @@
     <ClInclude Include="Headers\RendererDX12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\DX12Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Helpers\DX12HInputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,86 +33,62 @@
     <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Managers\DX12ManagerUploadBuffer.h">
+    <ClInclude Include="Headers\Level 1\DX12UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Managers\DX12ManagerCommandAllocator.h">
+    <ClInclude Include="Headers\Level 1\DX12ManagerUploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Managers\DX12ManagerCommandList.h">
+    <ClInclude Include="Headers\Level 1\DX12BaseSwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Objects\DX12Mesh.h">
+    <ClInclude Include="Headers\Level 1\DX12BaseCommandAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\DX12CommandList.h">
+    <ClInclude Include="Headers\Level 1\DX12BaseCommandQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\DX12Device.h">
+    <ClInclude Include="Headers\Level 1\DX12BaseDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\DX12CommandQueue.h">
+    <ClInclude Include="Headers\Level 4\DX12Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\BaseObjects\DX12BaseCommandAllocator.h">
+    <ClInclude Include="Headers\Level 3\DX12Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\BaseObjects\DX12BaseCommandQueue.h">
+    <ClInclude Include="Headers\Level 2\DX12Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\BaseObjects\DX12BaseDevice.h">
+    <ClInclude Include="Headers\Level 2\DX12ManagerCommandList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\BaseObjects\DX12BaseSwapChain.h">
+    <ClInclude Include="Headers\Level 2\DX12ManagerCommandAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Interfaces\DX12CommandAllocator.h">
+    <ClInclude Include="Headers\Level 2\DX12CommandQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Objects\DX12UploadBuffer.h">
+    <ClInclude Include="Headers\Level 2\DX12CommandAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 2\DX12CommandList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 1\Level_1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 2\Level_2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 3\Level_3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 4\Level_4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Interfaces\DX12Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Managers\DX12ManagerCommandAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Managers\DX12ManagerCommandList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Managers\DX12ManagerUploadBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Objects\DX12Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Interfaces\DX12CommandList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Interfaces\DX12Device.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseObjects\DX12BaseCommandAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseObjects\DX12BaseCommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseObjects\DX12BaseDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseObjects\DX12BaseSwapChain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Interfaces\DX12CommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Interfaces\DX12CommandAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -128,7 +101,46 @@
     <ClCompile Include="Source\Helpers\DX12HShaderByteCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Objects\DX12UploadBuffer.cpp">
+    <ClCompile Include="Source\Level 4\DX12Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 3\DX12Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12BaseCommandAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12BaseCommandQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12BaseDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12BaseSwapChain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12ManagerUploadBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12UploadBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12ManagerCommandList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12ManagerCommandAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12CommandQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12CommandAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12CommandList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

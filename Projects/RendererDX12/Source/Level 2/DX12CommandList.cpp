@@ -1,0 +1,79 @@
+#include "RendererDX12.h"
+#include "Level 2/DX12CommandList.h"
+
+DX12CommandList::DX12CommandList() :
+	m_manager(nullptr),
+	m_queuePreference(0)
+{
+}
+
+void DX12CommandList::Initialize(ID3D12Device* device, DX12ManagerCommandList* manager, shared_ptr<DX12CommandAllocator> allocator, D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
+{
+	HRESULT hr = device->CreateCommandList(device->GetNodeCount(), type, allocator->GetBase()->GetInterface().Get(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
+
+	assert(SUCCEEDED(hr));
+	m_allocator = allocator;
+	m_manager = manager;
+	m_queuePreference = queuePreference;
+}
+
+void DX12CommandList::Reset(shared_ptr<DX12CommandAllocator> allocator, UINT queuePreference)
+{
+	m_commandList->Reset(allocator->GetBase()->GetInterface().Get(), nullptr);
+	m_allocator = allocator;
+	m_queuePreference = queuePreference;
+}
+
+void DX12CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootConstantBufferView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::SetShaderResource(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootShaderResourceView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::SetUnorderedAccess(UINT rootParamIndex, void* data, UINT64 size)
+{
+	m_commandList->SetGraphicsRootUnorderedAccessView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+}
+
+void DX12CommandList::UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
+{
+	m_allocator->UploadData(m_commandList.Get(), destination, data, intermediateOffset, numSubResources, firstSubResource);
+}
+
+void DX12CommandList::Close(shared_ptr<DX12CommandList>& commandList)
+{
+	CloseList(commandList);
+	commandList = nullptr;
+}
+
+void DX12CommandList::CloseAndExecute(shared_ptr<DX12CommandList>& commandList)
+{
+    commandList->m_commandList->Close();
+    commandList->m_manager->ExecuteDirect(commandList);
+    commandList->m_manager->ReEnlistInactiveCommandList(commandList);
+}
+
+void DX12CommandList::CloseAndExecuteAll(shared_ptr<DX12CommandList>& commandList)
+{
+	CloseList(commandList);
+	commandList->m_manager->ExecuteList(commandList->m_queuePreference);
+	commandList = nullptr;
+}
+
+void DX12CommandList::CloseExecuteReset(shared_ptr<DX12CommandList>& commandList, UINT queuePreference)
+{
+    commandList->m_commandList->Close();
+    commandList->m_manager->ExecuteDirect(commandList);
+	commandList->Reset(commandList->m_manager->RequestNewAllocator(), queuePreference);
+}
+
+void DX12CommandList::CloseList(shared_ptr<DX12CommandList>& commandList)
+{
+	commandList->m_commandList->Close();
+	commandList->m_manager->CloseList(commandList);
+}
+
