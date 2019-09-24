@@ -23,8 +23,10 @@
     <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h" />
     <ClInclude Include="Headers\Helpers\DX12HInputLayout.h" />
     <ClInclude Include="Headers\Helpers\DX12HRootSignatureDesc.h" />
+    <ClInclude Include="Headers\Helpers\Helpers.h" />
     <ClInclude Include="Headers\Level 1\DX12BaseCommandAllocator.h" />
     <ClInclude Include="Headers\Level 1\DX12BaseCommandList.h" />
+    <ClInclude Include="Headers\Level 1\DX12PipelineState.h" />
     <ClInclude Include="Headers\Level 1\DX12UploadBuffer.h" />
     <ClInclude Include="Headers\Level 1\Level_1.h" />
     <ClInclude Include="Headers\Level 2\DX12CommandAllocator.h" />

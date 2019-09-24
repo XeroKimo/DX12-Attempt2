@@ -48,9 +48,6 @@
     <ClInclude Include="Headers\Level 1\DX12BaseDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Level 2\DX12Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Level 2\DX12CommandAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,6 +90,15 @@
     <ClInclude Include="Headers\Level 2\DX12ManagerUploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Level 2\DX12Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 1\DX12PipelineState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
@@ -122,9 +128,6 @@
     <ClCompile Include="Source\Level 1\DX12UploadBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Level 2\DX12Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Level 2\DX12CommandAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -147,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 5\DX12Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

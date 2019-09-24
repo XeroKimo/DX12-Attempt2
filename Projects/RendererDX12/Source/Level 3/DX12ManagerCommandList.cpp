@@ -84,5 +84,6 @@ void DX12ManagerCommandList::WaitingList::ExecuteWaitingList(DX12CommandQueue* c
 	commandQueue->SetActiveAllocators(m_waitingAllocator);
 	std::move(m_waitingList.begin(), m_waitingList.end(), std::back_inserter(inactiveList));
 	m_waitingList.clear();
+	m_waitingAllocator.clear();
 	m_rawList.clear();
 }

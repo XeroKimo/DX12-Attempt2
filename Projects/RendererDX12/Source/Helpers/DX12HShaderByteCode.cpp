@@ -8,7 +8,15 @@ DX12HShaderByteCode::DX12HShaderByteCode()
 D3D12_SHADER_BYTECODE DX12HShaderByteCode::GetByteCode()
 {
 	D3D12_SHADER_BYTECODE byteCode;
-	byteCode.BytecodeLength = m_shaderBlob->GetBufferSize();
-	byteCode.pShaderBytecode = m_shaderBlob->GetBufferPointer();
+	if (m_shaderBlob)
+	{
+		byteCode.BytecodeLength = m_shaderBlob->GetBufferSize();
+		byteCode.pShaderBytecode = m_shaderBlob->GetBufferPointer();
+	}
+	else
+	{
+		byteCode.BytecodeLength = 0;
+		byteCode.pShaderBytecode = nullptr;
+	}
 	return byteCode;
 }

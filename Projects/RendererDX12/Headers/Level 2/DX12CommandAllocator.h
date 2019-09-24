@@ -14,6 +14,7 @@ public:
 	void UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
 	void Reset();
 
+	shared_ptr<DX12UploadBuffer> GetTemporaryBuffer(UINT64 size);
 	inline DX12BaseCommandAllocator* GetBase() { return &m_commandAllocator; }
 private:
 	DX12ManagerUploadBuffer* m_bufferManager;

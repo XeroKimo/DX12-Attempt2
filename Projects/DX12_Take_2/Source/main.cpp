@@ -12,39 +12,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	PlatformClock clock;
 
-    DX12HInputLayout layout;
-    layout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT,0);
-	layout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
+	ID3D12Device* device = renderer.GetDeviceInterface()->GetBase()->GetInterface();
 
+	DX12PipelineState pipeline;
+	{
+		unique_ptr<DX12HGraphicsPipelineStateDesc> pipelineDesc = make_unique<DX12HGraphicsPipelineStateDesc>();
+		pipelineDesc->rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+		pipelineDesc->inputLayout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+		pipelineDesc->inputLayout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
+		pipelineDesc->vsShader.CompileShaderFromFile(L"Resources/Shaders/VertexShader.hlsl", "vs_5_0");
+		pipelineDesc->psShader.CompileShaderFromFile(L"Resources/Shaders/PixelShader.hlsl", "ps_5_0");
+		pipelineDesc->GeneratePipelineState(device, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
 
-    ID3D12Device* device = renderer.GetDeviceInterface()->GetBase()->GetInterface();
-
-	DX12HRootSignatureDesc desc;
-	desc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-	//desc.CreateRootConstant(3, 0);
-	HRESULT hr = desc.SerializeSignature(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
-	assert(SUCCEEDED(hr));
-
-	ComPtr<ID3D12RootSignature> rootSignature;
-	hr = device->CreateRootSignature(renderer.GetDeviceInterface()->GetBase()->GetNodeMask(), desc.GetSerializedSignature()->GetBufferPointer(), desc.GetSerializedSignature()->GetBufferSize(), IID_PPV_ARGS(rootSignature.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-
-	DX12HShaderByteCode vsShader;
-	vsShader.CompileShaderFromFile(L"Resources/Shaders/VertexShader.hlsl", "vs_5_0");
-
-    DX12HShaderByteCode psShader;
-    psShader.CompileShaderFromFile(L"Resources/Shaders/PixelShader.hlsl", "ps_5_0");
-
-    DX12HGraphicsPipelineStateDesc pipelineDesc;
-    pipelineDesc.SetShaders(&vsShader.GetByteCode(), &psShader.GetByteCode());
-
-    pipelineDesc.desc.pRootSignature = rootSignature.Get();
-    pipelineDesc.desc.InputLayout = layout.GetLayout();
-
-    ComPtr<ID3D12PipelineState> pipelineState;
-	hr = device->CreateGraphicsPipelineState(&pipelineDesc.desc, IID_PPV_ARGS(pipelineState.GetAddressOf()));
-	assert(SUCCEEDED(hr));
+		pipeline.Initialize(pipelineDesc->pipelineState, pipelineDesc->rootSiganture);
+	}
+	
 
 	struct Vertex { float x; float y; float z; float r; float g; float b; float a; };
 	Vertex vertices[] =
@@ -92,8 +74,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			cl = renderer.GetDeviceInterface()->GetCommandList();
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 			renderer.GetSwapChain()->ClearBackBuffer(commandList);
-			commandList->SetGraphicsRootSignature(rootSignature.Get());
-			commandList->SetPipelineState(pipelineState.Get());
+			pipeline.SetPipelineState(commandList);
+			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);
 			mesh.Draw(cl);

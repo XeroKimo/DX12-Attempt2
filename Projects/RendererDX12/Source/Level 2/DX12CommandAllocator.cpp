@@ -33,5 +33,12 @@ void DX12CommandAllocator::Reset()
 {
 	m_commandAllocator.GetInterface()->Reset();
 	m_bufferManager->ResetBuffers(m_CBVSRVUAVBuffers);
+	m_CBVSRVUAVBuffers.clear();
 	m_temporaryBuffers.clear();
+}
+
+shared_ptr<DX12UploadBuffer> DX12CommandAllocator::GetTemporaryBuffer(UINT64 size)
+{
+	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(size));
+	return m_temporaryBuffers.back();
 }

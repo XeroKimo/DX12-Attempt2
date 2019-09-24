@@ -58,7 +58,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
         assert(false);
 		break;
 	}
-
+	allocator->Reset();
 	return allocator;
 }
 
@@ -68,18 +68,12 @@ void DX12ManagerCommandAllocator::ResetAllocators(std::vector<shared_ptr<DX12Com
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
 		std::move(allocators.begin(), allocators.end(), std::back_inserter(m_directAllocators));
-		for (shared_ptr<DX12CommandAllocator>& allocator : m_directAllocators)
-			allocator->Reset();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 		std::move(allocators.begin(), allocators.end(), std::back_inserter(m_computeAllocators));
-		for (shared_ptr<DX12CommandAllocator>& allocator : m_computeAllocators)
-			allocator->Reset();
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
 		std::move(allocators.begin(), allocators.end(), std::back_inserter(m_copyAllocators));
-		for (shared_ptr<DX12CommandAllocator>& allocator : m_copyAllocators)
-			allocator->Reset();
 		break;
 	}
 	allocators.clear();

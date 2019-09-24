@@ -7,7 +7,7 @@ class DX12ManagerUploadBuffer
 public:
 	DX12ManagerUploadBuffer();
 	void Initialize(ID3D12Device* device, UINT64 CBVSRVUAVBufferSize);
-	void ResetBuffers(std::vector<shared_ptr<DX12UploadBuffer>>& buffers);
+	void ResetBuffers(std::vector<shared_ptr<DX12UploadBuffer>> buffers);
 
 	shared_ptr<DX12UploadBuffer> GetCBVSRVUAVBuffer();
 	inline shared_ptr<DX12UploadBuffer> GetTemporaryBuffer(UINT64 size) { return CreateBuffer(size); }

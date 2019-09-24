@@ -31,8 +31,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 	m_allocatorManager->ResetAllocators(m_runningAllocators);
 }
 
-void DX12CommandQueue::SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>>& allocator)
+void DX12CommandQueue::SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocator)
 {
 	std::move(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators));
-	allocator.clear();
 }

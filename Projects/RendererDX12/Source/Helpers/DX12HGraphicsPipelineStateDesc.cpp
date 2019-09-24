@@ -53,16 +53,22 @@ DX12HGraphicsPipelineStateDesc::DX12HGraphicsPipelineStateDesc()
 	desc.DepthStencilState = depthDesc;
 }
 
-void DX12HGraphicsPipelineStateDesc::SetShaders(D3D12_SHADER_BYTECODE* VS, D3D12_SHADER_BYTECODE* PS, D3D12_SHADER_BYTECODE* DS, D3D12_SHADER_BYTECODE* HS, D3D12_SHADER_BYTECODE* GS)
+void DX12HGraphicsPipelineStateDesc::GeneratePipelineState(ID3D12Device* device, D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version)
 {
-    if (VS)
-        desc.VS = *VS;
-    if (PS)
-        desc.PS = *PS;
-    if (DS)
-        desc.DS = *DS;
-    if (HS)
-        desc.HS = *HS;
-    if (GS)
-        desc.GS = *GS;
+	HRESULT hr = rootSignatureDesc.SerializeSignature(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
+	assert(SUCCEEDED(hr));
+	hr = device->CreateRootSignature(device->GetNodeCount(), rootSignatureDesc.GetSerializedSignature()->GetBufferPointer(), rootSignatureDesc.GetSerializedSignature()->GetBufferSize(), IID_PPV_ARGS(rootSiganture.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+
+	desc.pRootSignature = rootSiganture.Get();
+	desc.InputLayout = inputLayout.GetLayout();
+	desc.VS = vsShader.GetByteCode();
+	desc.PS = psShader.GetByteCode();
+	desc.DS = dsShader.GetByteCode();
+	desc.HS = hsShader.GetByteCode();
+	desc.GS = gsShader.GetByteCode();
+
+	hr = device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(pipelineState.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+
 }
