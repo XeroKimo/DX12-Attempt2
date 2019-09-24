@@ -1,9 +1,16 @@
 #include "RendererDX12.h"
 #include "Level 1/DX12BaseDevice.h"
 
+
+UINT DX12BaseDevice::activeNodes = 0;
 DX12BaseDevice::DX12BaseDevice() :
     m_nodeMask(0)
 {
+}
+
+DX12BaseDevice::~DX12BaseDevice()
+{
+    DeleteNode();
 }
 
 
@@ -26,5 +33,25 @@ void DX12BaseDevice::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID)
 	hr = D3D12CreateDevice(m_adapter.Get(), featureLevel, IID_PPV_ARGS(m_device.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-    m_nodeMask = m_device->GetNodeCount();
+    CreateNodeMask();
+}
+
+void DX12BaseDevice::CreateNodeMask()
+{
+    for (UINT i = 0; i < 32; i++)
+    {
+        UINT checkMask = 1 << i;
+        if (checkMask & (~activeNodes))
+        {
+            m_nodeMask = checkMask;
+            activeNodes |= checkMask;
+            break;
+        }
+    }
+
+}
+
+void DX12BaseDevice::DeleteNode()
+{
+    activeNodes ^= m_nodeMask;
 }
