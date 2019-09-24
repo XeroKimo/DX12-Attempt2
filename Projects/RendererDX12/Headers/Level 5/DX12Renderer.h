@@ -1,9 +1,9 @@
 #pragma once
 #include "DX12Header.h"
 #include "Level 1/DX12BaseSwapChain.h"
-#include "Level 1/DX12ManagerUploadBuffer.h"
-#include "Level 2/DX12CommandAllocator.h"
-#include "Level 3/DX12Device.h"
+#include "Level 2/DX12ManagerUploadBuffer.h"
+#include "Level 3/DX12ManagerCommandAllocator.h"
+#include "Level 4/DX12Device.h"
 
 class DX12Renderer
 {

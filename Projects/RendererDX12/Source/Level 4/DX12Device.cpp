@@ -1,5 +1,5 @@
 #include "RendererDX12.h"
-#include "Level 3/DX12Device.h"
+#include "Level 4/DX12Device.h"
 
 DX12Device::DX12Device()
 {
@@ -49,11 +49,11 @@ void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12
 void DX12Device::ExecuteAllCommandListManager()
 {
     if (m_directList)
-        m_directList->ExecuteAllLists();
+        m_directList->ExecuteAllWaitingList();
     if (m_computeList)
-        m_computeList->ExecuteAllLists();
+        m_computeList->ExecuteAllWaitingList();
     if (m_copyList)
-        m_copyList->ExecuteAllLists();
+        m_copyList->ExecuteAllWaitingList();
 }
 
 void DX12Device::SignalAllQueues()
@@ -92,20 +92,32 @@ void DX12Device::SyncAllQueues()
 
 DX12CommandQueue* DX12Device::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT index)
 {
-    DX12CommandQueue* queue = nullptr;
     switch (type)
     {
     case D3D12_COMMAND_LIST_TYPE_DIRECT:
-        queue = m_directQueue[index].get();
-        break;
+        return m_directQueue[index].get();
     case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-        queue = m_computeQueue[index].get();
-        break;
+		return m_computeQueue[index].get();
     case D3D12_COMMAND_LIST_TYPE_COPY:
-        queue = m_copyQueue[index].get();
-        break;
+		return m_copyQueue[index].get();
+	default:
+		return nullptr;
     }
-    return queue;
+}
+
+DX12ManagerCommandList* DX12Device::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
+{
+	switch (type)
+	{
+	case D3D12_COMMAND_LIST_TYPE_DIRECT:
+		return m_directList.get();
+	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+		return m_computeList.get();
+	case D3D12_COMMAND_LIST_TYPE_COPY:
+		return m_copyList.get();
+	default:
+		return nullptr;
+	}
 }
 
 void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
@@ -113,13 +125,13 @@ void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type, UINT qu
     switch (type)
     {
     case D3D12_COMMAND_LIST_TYPE_DIRECT:
-        return m_directList->ExecuteList(queueIndex);
+        return m_directList->ExecuteWaitingList(queueIndex);
         break;
     case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-        return m_computeList->ExecuteList(queueIndex);
+        return m_computeList->ExecuteWaitingList(queueIndex);
         break;
     case D3D12_COMMAND_LIST_TYPE_COPY:
-        return m_copyList->ExecuteList(queueIndex);
+        return m_copyList->ExecuteWaitingList(queueIndex);
         break;
     default:
         break;
@@ -128,25 +140,21 @@ void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type, UINT qu
 
 shared_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
 {
-    shared_ptr<DX12CommandList> list = nullptr;
     switch (type)
     {
     case D3D12_COMMAND_LIST_TYPE_DIRECT:
         if (m_directList)
-            list = m_directList->GetCommandList(queuePreference);
-        break;
+            return m_directList->GetCommandList();
     case D3D12_COMMAND_LIST_TYPE_BUNDLE:
+		return nullptr;
         break;
     case D3D12_COMMAND_LIST_TYPE_COMPUTE:
         if (m_computeList)
-            list = m_computeList->GetCommandList(queuePreference);
-        break;
+			return m_computeList->GetCommandList();
     case D3D12_COMMAND_LIST_TYPE_COPY:
         if (m_copyList)
-            list = m_copyList->GetCommandList(queuePreference);
-        break;
+			return m_copyList->GetCommandList();
     default:
-        break;
+		return nullptr;
     }
-    return list;
 }

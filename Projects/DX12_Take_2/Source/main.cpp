@@ -58,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl, &vertices, sizeof(Vertex), 3);
   
-    DX12CommandList::CloseAndExecute(cl);
+	renderer.GetDeviceInterface()->GetCommandListManager()->ExecuteList(cl,0);
     renderer.GetDeviceInterface()->SignalAllQueues();
     renderer.GetDeviceInterface()->SyncAllQueues();
     renderer.GetDeviceInterface()->GetCommandQueue()->GetBase()->ResetFenceValue();
@@ -90,19 +90,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			clock.Update();
 
 			cl = renderer.GetDeviceInterface()->GetCommandList();
-			renderer.GetSwapChain()->ClearBackBuffer(cl->GetInterface());
-			cl->GetInterface()->SetGraphicsRootSignature(rootSignature.Get());
-			cl->GetInterface()->SetPipelineState(pipelineState.Get());
-			//cl->SetConstantBuffer(0, &pos, sizeof(pos));
-			//cl->GetCommandList()->SetGraphicsRoot32BitConstants(0, 3, &pos, 0);
-			cl->GetInterface()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
+			renderer.GetSwapChain()->ClearBackBuffer(commandList);
+			commandList->SetGraphicsRootSignature(rootSignature.Get());
+			commandList->SetPipelineState(pipelineState.Get());
+			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);
 			mesh.Draw(cl);
-			//cl->GetCommandList()->IASetVertexBuffers(0, 1, &vBufferView);
-			//cl->GetCommandList()->DrawInstanced(3, 1, 0, 0);
-			////cl->Close();
-			//DX12CommandList::Close(cl);
-			DX12CommandList::CloseAndExecute(cl);
+			renderer.GetDeviceInterface()->GetCommandListManager()->CloseList(cl, 0);
 			renderer.Present();
 		}
 	}

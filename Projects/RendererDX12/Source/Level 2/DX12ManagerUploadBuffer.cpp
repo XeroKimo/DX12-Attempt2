@@ -1,5 +1,5 @@
 #include "RendererDX12.h"
-#include "Level 1/DX12ManagerUploadBuffer.h"
+#include "Level 2/DX12ManagerUploadBuffer.h"
 
 DX12ManagerUploadBuffer::DX12ManagerUploadBuffer() :
 	m_device(nullptr),
@@ -14,11 +14,12 @@ void DX12ManagerUploadBuffer::Initialize(ID3D12Device* device, UINT64 CBVSRVUAVB
 	m_CBVSRVUAVBufferSize = (CBVSRVUAVBufferSize + power) & ~power;
 }
 
-void DX12ManagerUploadBuffer::ResetBuffers(std::vector<shared_ptr<DX12UploadBuffer>> buffers)
+void DX12ManagerUploadBuffer::ResetBuffers(std::vector<shared_ptr<DX12UploadBuffer>>& buffers)
 {
-	std::copy(buffers.begin(), buffers.end(), std::back_inserter(m_inactiveBuffers));
+	std::move(buffers.begin(), buffers.end(), std::back_inserter(m_inactiveBuffers));
 	for (shared_ptr<DX12UploadBuffer>& buffer : m_inactiveBuffers)
 		buffer->Reset();
+	buffers.clear();
 }
 
 shared_ptr<DX12UploadBuffer> DX12ManagerUploadBuffer::GetCBVSRVUAVBuffer()

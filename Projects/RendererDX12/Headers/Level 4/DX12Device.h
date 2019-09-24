@@ -14,6 +14,7 @@ public:
     void SyncAllQueues();
 
     DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT index = 0);
+	DX12ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
     shared_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT, UINT queuePreference = 0);
     inline DX12BaseDevice* GetBase() { return &m_device; }
 private:

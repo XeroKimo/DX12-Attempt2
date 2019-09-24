@@ -12,7 +12,7 @@ DX12Mesh::DX12Mesh() :
 void DX12Mesh::CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
 {
 	ComPtr<ID3D12Device> device;
-	HRESULT hr = commandList->GetInterface()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
+	HRESULT hr = commandList->GetBase()->GetInterface()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
 	size_t totalVertexSize = sizeOfVertex * vertexCount;
@@ -51,7 +51,7 @@ void DX12Mesh::CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void
 	barrier.Transition.pResource = m_vertexBuffer.Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
-	commandList->GetInterface()->ResourceBarrier(1, &barrier);
+	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
 
 	m_vertexView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
 	m_vertexView.SizeInBytes = totalVertexSize;
@@ -62,10 +62,10 @@ void DX12Mesh::CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void
 
 void DX12Mesh::Set(shared_ptr<DX12CommandList>& commandList)
 {
-	commandList->GetInterface()->IASetVertexBuffers(0, 1, &m_vertexView);
+	commandList->GetBase()->GetInterface()->IASetVertexBuffers(0, 1, &m_vertexView);
 }
 
 void DX12Mesh::Draw(shared_ptr<DX12CommandList>& commandList)
 {
-	commandList->GetInterface()->DrawInstanced(m_vertexCount, 1, 0, 0);
+	commandList->GetBase()->GetInterface()->DrawInstanced(m_vertexCount, 1, 0, 0);
 }

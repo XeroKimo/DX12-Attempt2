@@ -1,5 +1,5 @@
 #include "RendererDX12.h"
-#include "Level 4/DX12Renderer.h"
+#include "Level 5/DX12Renderer.h"
 
 DX12Renderer::DX12Renderer()
 {
@@ -21,7 +21,7 @@ void DX12Renderer::Present()
 	m_device.GetCommandQueue()->Signal();
 	m_device.GetCommandQueue()->SyncQueue(INFINITE);
 
-	m_swapChain.GetInterface()->Present(1, 0);
+	m_swapChain.GetInterface()->Present(0, 0);
 
 	m_device.GetCommandQueue()->GetBase()->ResetFenceValue();
 }
