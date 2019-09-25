@@ -5,7 +5,7 @@ class DX12BaseCommandQueue
 {
 public:
 	DX12BaseCommandQueue();
-	void Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE commandListType);
+	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
 
 	void Signal();
 	void SyncQueue(DWORD milliseconds);

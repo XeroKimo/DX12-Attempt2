@@ -9,7 +9,7 @@ DX12ManagerCommandList::DX12ManagerCommandList() :
 {
 }
 
-void DX12ManagerCommandList::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager)
+void DX12ManagerCommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager)
 {
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE);
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
@@ -20,10 +20,13 @@ void DX12ManagerCommandList::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST
 	m_allocatorManager = allocatorManager;
 	m_type = type;
 	m_waitingLists.resize(commandQueues->size());
+	m_nodeMask = nodeMask;
 }
 
 void DX12ManagerCommandList::CloseList(shared_ptr<DX12CommandList>& list, UINT queueIndex)
 {
+	assert(queueIndex < m_pCommandQueues->size());
+
 	list->Close();
 	m_waitingLists[queueIndex].AddCommandList(list);
 	list = nullptr;
@@ -60,7 +63,7 @@ shared_ptr<DX12CommandList> DX12ManagerCommandList::GetCommandList()
 	if (m_inactiveList.empty())
 	{
 		list = make_shared<DX12CommandList>();
-		list->Initialize(m_device, m_type, m_allocatorManager->GetAllocator(m_type));
+		list->Initialize(m_device, m_nodeMask, m_type, m_allocatorManager->GetAllocator(m_type));
 	}
 	else
 	{

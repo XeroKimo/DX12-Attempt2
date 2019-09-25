@@ -8,13 +8,13 @@ DX12UploadBuffer::DX12UploadBuffer() :
 {
 }
 
-void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT64 size)
+void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, UINT visibleNodeMask, UINT64 size)
 {
 	D3D12_HEAP_PROPERTIES heapProperties;
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.CreationNodeMask = device->GetNodeCount();
-	heapProperties.VisibleNodeMask = heapProperties.CreationNodeMask;
+	heapProperties.CreationNodeMask = creationNodeMask;
+	heapProperties.VisibleNodeMask = visibleNodeMask;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 
 	D3D12_RESOURCE_DESC resourceDesc = {};

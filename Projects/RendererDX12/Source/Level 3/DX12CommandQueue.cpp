@@ -5,9 +5,9 @@ DX12CommandQueue::DX12CommandQueue()
 {
 }
 
-void DX12CommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager)
+void DX12CommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager)
 {
-	m_commandQueue.Initialize(device, commandListType);
+	m_commandQueue.Initialize(device, nodeMask, commandListType);
 	m_allocatorManager = allocatorManager;
 }
 

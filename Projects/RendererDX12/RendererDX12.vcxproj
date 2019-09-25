@@ -39,7 +39,7 @@
     <ClInclude Include="Headers\Level 2\Level_2.h" />
     <ClInclude Include="Headers\Level 4\DX12Device.h" />
     <ClInclude Include="Headers\Level 3\Level_3.h" />
-    <ClInclude Include="Headers\Level 5\DX12Renderer.h" />
+    <ClInclude Include="Headers\Level 5\DX12BasicInterface.h" />
     <ClInclude Include="Headers\Level 1\DX12BaseSwapChain.h" />
     <ClInclude Include="Headers\Level 2\DX12ManagerUploadBuffer.h" />
     <ClInclude Include="Headers\Level 2\DX12Mesh.h" />
@@ -62,7 +62,7 @@
     <ClCompile Include="Source\Level 1\DX12BaseSwapChain.cpp" />
     <ClCompile Include="Source\Level 2\DX12CommandList.cpp" />
     <ClCompile Include="Source\Level 3\DX12ManagerCommandList.cpp" />
-    <ClCompile Include="Source\Level 5\DX12Renderer.cpp" />
+    <ClCompile Include="Source\Level 5\DX12BasicInterface.cpp" />
     <ClCompile Include="Source\Level 1\DX12BaseCommandAllocator.cpp" />
     <ClCompile Include="Source\Level 3\DX12ManagerCommandAllocator.cpp" />
     <ClCompile Include="Source\Level 1\DX12BaseCommandQueue.cpp" />

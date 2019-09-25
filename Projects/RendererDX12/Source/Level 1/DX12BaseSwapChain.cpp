@@ -8,7 +8,7 @@ DX12BaseSwapChain::DX12BaseSwapChain() :
 {
 }
 
-void DX12BaseSwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
+void DX12BaseSwapChain::Initialize(ID3D12Device* device, UINT nodeMask, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
 {
 	HRESULT hr;
 	ComPtr<IDXGIFactory2> factory;
@@ -43,7 +43,7 @@ void DX12BaseSwapChain::Initialize(ID3D12Device* device, ID3D12CommandQueue* com
 	rtvHeapDesc.NumDescriptors = desc.BufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	rtvHeapDesc.NodeMask = device->GetNodeCount();
+	rtvHeapDesc.NodeMask = nodeMask;
 
 	hr = device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
 	assert(SUCCEEDED(hr));
@@ -86,8 +86,9 @@ void DX12BaseSwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList)
 	handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
     //float color[4] = { 0.1f,0.0f,0.6f,1.0f };
     float color[4] = { 0.5f,0.5f,0.5f,1.0f };
-	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
-	commandList->ClearRenderTargetView(handle, color, 0, nullptr);
 	commandList->RSSetViewports(1, &m_viewPort);
 	commandList->RSSetScissorRects(1, &m_rect);
+
+	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+	commandList->ClearRenderTargetView(handle, color, 0, nullptr);
 }

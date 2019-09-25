@@ -6,7 +6,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	if (!application.Initialize(hInstance, 1280, 720))
 		return 1;
 
-	DX12Renderer renderer;
+	DX12BasicInterface renderer;
 	if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
 		return 1;
 
@@ -36,14 +36,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{ -0.5f, -0.5f, 0.0f,1.0f,0.0f,0.0f,1.0f },
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
-	shared_ptr<DX12CommandList> cl = renderer.GetDeviceInterface()->GetCommandList();
+	shared_ptr<DX12CommandList> cl = renderer.GetCommandList();
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl, &vertices, sizeof(Vertex), 3);
   
-	renderer.GetDeviceInterface()->GetCommandListManager()->ExecuteList(cl,0);
-    renderer.GetDeviceInterface()->SignalAllQueues();
-    renderer.GetDeviceInterface()->SyncAllQueues();
-    renderer.GetDeviceInterface()->GetCommandQueue()->GetBase()->ResetFenceValue();
+	renderer.ExecuteCommandList(cl);
+    renderer.SignalCommandQueue();
+    renderer.SyncCommandQueue();
+	renderer.ResetCommandQueue();
 
 
 	struct Vector3 { float x; float y; float z; };
@@ -77,7 +77,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			mesh.Set(cl);
 			mesh.Draw(cl);
-			renderer.GetDeviceInterface()->GetCommandListManager()->CloseList(cl, 0);
+			renderer.ExecuteCommandList(cl);
 			renderer.Present();
 		}
 	}

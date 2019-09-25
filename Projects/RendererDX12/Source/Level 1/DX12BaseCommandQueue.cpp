@@ -22,13 +22,13 @@ void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds)
 	}
 }
 
-void DX12BaseCommandQueue::Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE commandListType)
+void DX12BaseCommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType)
 {
 	HRESULT hr;
 
 	D3D12_COMMAND_QUEUE_DESC cqDesc;
 	cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	cqDesc.NodeMask = device->GetNodeCount();
+	cqDesc.NodeMask = nodeMask;
 	cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	cqDesc.Type = commandListType;
 

@@ -8,7 +8,7 @@ class DX12CommandQueue
 {
 public:
 	DX12CommandQueue();
-	void Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
+	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
 	void Signal();
 	void StallQueue(DX12BaseCommandQueue* queue);

@@ -7,11 +7,13 @@ DX12ManagerUploadBuffer::DX12ManagerUploadBuffer() :
 {
 }
 
-void DX12ManagerUploadBuffer::Initialize(ID3D12Device* device, UINT64 CBVSRVUAVBufferSize)
+void DX12ManagerUploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, UINT visibleNodeMask, UINT64 CBVSRVUAVBufferSize)
 {
 	int power = (1 << 16) - 1;
 	m_device = device;
 	m_CBVSRVUAVBufferSize = (CBVSRVUAVBufferSize + power) & ~power;
+	m_creationNodeMask = creationNodeMask;
+	m_visibleNodeMask = visibleNodeMask;
 }
 
 void DX12ManagerUploadBuffer::ResetBuffers(std::vector<shared_ptr<DX12UploadBuffer>> buffers)
@@ -32,6 +34,6 @@ shared_ptr<DX12UploadBuffer> DX12ManagerUploadBuffer::GetCBVSRVUAVBuffer()
 shared_ptr<DX12UploadBuffer> DX12ManagerUploadBuffer::CreateBuffer(UINT64 size)
 {
 	shared_ptr<DX12UploadBuffer> buffer = make_shared<DX12UploadBuffer>();
-	buffer->Initialize(m_device, size);
+	buffer->Initialize(m_device, m_creationNodeMask, m_visibleNodeMask, size);
 	return buffer;
 }

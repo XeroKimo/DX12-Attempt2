@@ -6,7 +6,7 @@ class DX12CommandList : public std::enable_shared_from_this<DX12CommandList>
 {
 public:
 	DX12CommandList();
-	void Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type, shared_ptr<DX12CommandAllocator> allocator);
+	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, shared_ptr<DX12CommandAllocator> allocator);
 	void Reset(shared_ptr<DX12CommandAllocator> allocator);
 
 	void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);

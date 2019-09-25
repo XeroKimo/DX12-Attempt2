@@ -20,7 +20,7 @@ private:
 
 public:
 	DX12ManagerCommandList();
-	void Initialize(ID3D12Device* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
+	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
 
 	void CloseList(shared_ptr<DX12CommandList>& list, UINT queueIndex);
 	void ExecuteList(shared_ptr<DX12CommandList>& list, UINT queueIndex);
@@ -35,4 +35,5 @@ private:
 	std::vector<shared_ptr<DX12CommandList>> m_inactiveList;
 	std::vector<WaitingList> m_waitingLists;
 	D3D12_COMMAND_LIST_TYPE m_type;
+	UINT m_nodeMask;
 };

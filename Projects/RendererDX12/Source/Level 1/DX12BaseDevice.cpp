@@ -4,7 +4,7 @@
 
 UINT DX12BaseDevice::activeNodes = 0;
 DX12BaseDevice::DX12BaseDevice() :
-    m_nodeMask(0)
+    m_nodeID(0)
 {
 }
 
@@ -43,7 +43,7 @@ void DX12BaseDevice::CreateNodeMask()
         UINT checkMask = 1 << i;
         if (checkMask & (~activeNodes))
         {
-            m_nodeMask = checkMask;
+            m_nodeID = i;
             activeNodes |= checkMask;
             break;
         }
@@ -53,5 +53,5 @@ void DX12BaseDevice::CreateNodeMask()
 
 void DX12BaseDevice::DeleteNode()
 {
-    activeNodes ^= m_nodeMask;
+    activeNodes ^= GetNodeMask();
 }

@@ -18,10 +18,10 @@ void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12
         for (UINT i = 0; i < directQueues; i++)
         {
             m_directQueue.push_back(make_unique<DX12CommandQueue>());
-            m_directQueue[i]->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_DIRECT, manager);
+            m_directQueue[i]->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_DIRECT, manager);
         }
 		m_directList = make_unique<DX12ManagerCommandList>();
-		m_directList->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_DIRECT, &m_directQueue, manager);
+		m_directList->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_DIRECT, &m_directQueue, manager);
     }
 
     if (computeQueues)
@@ -29,20 +29,20 @@ void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12
         for (UINT i = 0; i < computeQueues; i++)
         {
             m_computeQueue.push_back(make_unique<DX12CommandQueue>());
-            m_computeQueue[i]->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_COMPUTE, manager);
+            m_computeQueue[i]->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_COMPUTE, manager);
         }
 		m_computeList = make_unique<DX12ManagerCommandList>();
-		m_computeList->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_COMPUTE, &m_computeQueue, manager);
+		m_computeList->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_COMPUTE, &m_computeQueue, manager);
     }
     if (copyQueues)
     {
         for (UINT i = 0; i < copyQueues; i++)
         {
             m_copyQueue.push_back(make_unique<DX12CommandQueue>());
-            m_copyQueue[i]->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_COPY, manager);
+            m_copyQueue[i]->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_COPY, manager);
         }
 		m_copyList = make_unique<DX12ManagerCommandList>();
-		m_copyList->Initialize(m_device.GetInterface(), D3D12_COMMAND_LIST_TYPE_COPY, &m_copyQueue, manager);
+		m_copyList->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), D3D12_COMMAND_LIST_TYPE_COPY, &m_copyQueue, manager);
     }
 }
 

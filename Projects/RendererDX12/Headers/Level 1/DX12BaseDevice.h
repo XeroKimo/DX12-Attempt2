@@ -10,7 +10,8 @@ public:
 
 	inline ID3D12Device2* GetInterface() { return m_device.Get(); }
     inline IDXGIAdapter3* GetAdapter() { return m_adapter.Get(); }
-	inline UINT GetNodeMask() { return m_nodeMask; }
+	inline UINT GetNodeID() { return m_nodeID; }
+	inline UINT GetNodeMask() { return 1 << m_nodeID; }
 
 private:
     void CreateNodeMask();
@@ -18,6 +19,6 @@ private:
 private:
 	ComPtr<ID3D12Device2> m_device;
 	ComPtr<IDXGIAdapter3> m_adapter;
-	UINT m_nodeMask;
+	UINT m_nodeID;
     static UINT activeNodes;
 };
