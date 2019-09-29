@@ -6,6 +6,10 @@ DX12CommandAllocator::DX12CommandAllocator() :
 {
 }
 
+DX12CommandAllocator::~DX12CommandAllocator()
+{
+}
+
 void DX12CommandAllocator::Initialize(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerUploadBuffer* bufferManager)
 {
 	m_commandAllocator.Initialize(device, type);

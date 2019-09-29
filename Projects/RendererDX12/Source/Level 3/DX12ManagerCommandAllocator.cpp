@@ -13,9 +13,9 @@ void DX12ManagerCommandAllocator::Initialize(ID3D12Device* device, DX12ManagerUp
 	m_bufferManager = bufferManager;
 }
 
-shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
+unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
 {
-	shared_ptr<DX12CommandAllocator> allocator;
+	unique_ptr<DX12CommandAllocator> allocator;
 	switch (type)
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
@@ -23,7 +23,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 			allocator = CreateCommandAllocator(type);
 		else
 		{
-			allocator = m_directAllocators.back();
+			allocator.swap(m_directAllocators.back());
 			m_directAllocators.pop_back();
 		}
 		break;
@@ -41,7 +41,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 			allocator = CreateCommandAllocator(type);
 		else
 		{
-			allocator = m_computeAllocators.back();
+			allocator.swap(m_computeAllocators.back());
 			m_computeAllocators.pop_back();
 		}
 		break;
@@ -50,7 +50,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 			allocator = CreateCommandAllocator(type);
 		else
 		{
-			allocator = m_copyAllocators.back();
+			allocator.swap(m_copyAllocators.back());
 			m_copyAllocators.pop_back();
 		}
 		break;
@@ -62,7 +62,7 @@ shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 	return allocator;
 }
 
-void DX12ManagerCommandAllocator::ResetAllocators(std::vector<shared_ptr<DX12CommandAllocator>>& allocators)
+void DX12ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocators)
 {
 	switch (allocators[0]->GetBase()->GetType())
 	{
@@ -80,9 +80,9 @@ void DX12ManagerCommandAllocator::ResetAllocators(std::vector<shared_ptr<DX12Com
 }
 
 
-shared_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
+unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
 {
-	shared_ptr<DX12CommandAllocator> allocator = make_shared<DX12CommandAllocator>();
+	unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>();
 	allocator->Initialize(m_device, type, m_bufferManager);
 	
 	return allocator;

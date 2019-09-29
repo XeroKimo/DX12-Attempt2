@@ -68,7 +68,7 @@ bool WinApp::InitWindow(HINSTANCE hInstance, unsigned int width, unsigned  int h
         return false;
     }
 
-	//SetWindowLongPtr(m_windowHandle, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(m_windowHandle, GWL_USERDATA, (LONG_PTR)this);
 
     ShowWindow(m_windowHandle, SW_SHOW);
 	SetForegroundWindow(m_windowHandle);
@@ -101,6 +101,8 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)(pFramework));
 		return 1;
 	}
+	//case WM_CREATE:
+		//SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG)
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;

@@ -9,7 +9,7 @@ DX12Mesh::DX12Mesh() :
 {
 }
 
-void DX12Mesh::CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
+void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
 {
 	ComPtr<ID3D12Device> device;
 	HRESULT hr = commandList->GetBase()->GetInterface()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
@@ -60,12 +60,12 @@ void DX12Mesh::CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void
 	m_vertexCount = vertexCount;
 }
 
-void DX12Mesh::Set(shared_ptr<DX12CommandList>& commandList)
+void DX12Mesh::Set(DX12CommandList* commandList)
 {
 	commandList->GetBase()->GetInterface()->IASetVertexBuffers(0, 1, &m_vertexView);
 }
 
-void DX12Mesh::Draw(shared_ptr<DX12CommandList>& commandList)
+void DX12Mesh::Draw(DX12CommandList* commandList)
 {
 	commandList->GetBase()->GetInterface()->DrawInstanced(m_vertexCount, 1, 0, 0);
 }

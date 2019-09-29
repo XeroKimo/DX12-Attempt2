@@ -36,18 +36,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{ -0.5f, -0.5f, 0.0f,1.0f,0.0f,0.0f,1.0f },
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
-	shared_ptr<DX12CommandList> cl = renderer.GetCommandList();
+	unique_ptr<DX12CommandList> cl = renderer.GetCommandList();
 	DX12Mesh mesh;
-	mesh.CreateVertexBuffer(cl, &vertices, sizeof(Vertex), 3);
+	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), 3);
   
 	renderer.ExecuteCommandList(cl);
     renderer.SignalCommandQueue();
     renderer.SyncCommandQueue();
 	renderer.ResetCommandQueue();
 
-
-	struct Vector3 { float x; float y; float z; };
-	Vector3 pos = { 1.0f, 0.0f,0.0f };
 
 	MSG msg;
 	while (application.IsRunning())
@@ -68,16 +65,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		else
 		{
 			clock.Update();
-
-			cl = renderer.GetDeviceInterface()->GetCommandList();
+			cl = renderer.GetCommandList();
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 			renderer.GetSwapChain()->ClearBackBuffer(commandList);
 			pipeline.SetPipelineState(commandList);
 			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			mesh.Set(cl);
-			mesh.Draw(cl);
-			renderer.ExecuteCommandList(cl);
+			mesh.Set(cl.get());
+			mesh.Draw(cl.get());
+			renderer.SubmitCommandList(cl);
+			renderer.ExecuteWaitingCommandLists();
 			renderer.Present();
 		}
 	}

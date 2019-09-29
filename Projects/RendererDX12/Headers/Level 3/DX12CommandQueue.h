@@ -14,13 +14,13 @@ public:
 	void StallQueue(DX12BaseCommandQueue* queue);
 	void SyncQueue(DWORD milliseconds);
 
-	void SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocator);
+	void SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator);
 	inline void ExecuteCommandLists(UINT numList, ID3D12CommandList* const* list) { m_commandQueue.GetInterface()->ExecuteCommandLists(numList, list); }
-	inline void SetActiveAllocator(shared_ptr<DX12CommandAllocator> allocator) { m_runningAllocators.push_back(allocator); }
+	inline void SetActiveAllocator(unique_ptr<DX12CommandAllocator>& allocator) { m_runningAllocators.push_back(std::move(allocator)); }
 	inline DX12BaseCommandQueue* GetBase() { return &m_commandQueue; }
 private:
 	DX12ManagerCommandAllocator* m_allocatorManager;
 	DX12BaseCommandQueue m_commandQueue;
 
-	std::vector<shared_ptr<DX12CommandAllocator>> m_runningAllocators;
+	std::vector<unique_ptr<DX12CommandAllocator>> m_runningAllocators;
 };

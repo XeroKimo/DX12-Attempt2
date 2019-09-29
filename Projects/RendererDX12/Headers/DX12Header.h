@@ -42,6 +42,7 @@ struct CD3DX12_TEXTURE_COPY_LOCATION : public D3D12_TEXTURE_COPY_LOCATION
 		pResource = pRes;
 		Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 		SubresourceIndex = Sub;
+		PlacedFootprint = {};
 	}
 };
 

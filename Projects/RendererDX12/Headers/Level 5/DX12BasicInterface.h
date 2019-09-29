@@ -12,15 +12,15 @@ public:
 	bool Initialize(HWND windowHandle, UINT windowWidth, UINT windowHeight);
 	void Present();
 
-	inline void SubmitCommandList(shared_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->CloseList(commandList, 0); }
-	inline void ExecuteCommandList(shared_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->ExecuteList(commandList, 0); }
+	inline void SubmitCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->CloseList(commandList, 0); }
+	inline void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->ExecuteList(commandList, 0); }
 	inline void ExecuteWaitingCommandLists() { m_device.GetCommandListManager()->ExecuteWaitingList(0); }
 
 	inline void SignalCommandQueue() { m_device.GetCommandQueue()->Signal(); }
 	inline void SyncCommandQueue() { m_device.GetCommandQueue()->SyncQueue(INFINITE); }
 	inline void ResetCommandQueue() { m_device.GetCommandQueue()->GetBase()->ResetFenceValue(); }
 
-	inline shared_ptr<DX12CommandList> GetCommandList() { return m_device.GetCommandList(); }
+	inline unique_ptr<DX12CommandList> GetCommandList() { return m_device.GetCommandList(); }
 	inline DX12BaseSwapChain* GetSwapChain() { return &m_swapChain; }
 	inline DX12Device* GetDeviceInterface() { return &m_device; }
 	inline DX12ManagerCommandAllocator* GetCommandAllocatorManager() { return &m_allocatorManager; }

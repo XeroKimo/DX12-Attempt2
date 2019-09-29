@@ -6,10 +6,10 @@ class DX12Mesh
 public:
 	DX12Mesh();
 
-	void CreateVertexBuffer(shared_ptr<DX12CommandList>& commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
+	void CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
 
-	void Set(shared_ptr<DX12CommandList>& commandList);
-	void Draw(shared_ptr<DX12CommandList>& commandList);
+	void Set(DX12CommandList* commandList);
+	void Draw(DX12CommandList* commandList);
 private:
 	ComPtr<ID3D12Resource> m_vertexBuffer;
 	ComPtr<ID3D12Resource> m_indexBuffer;

@@ -1,7 +1,8 @@
 #include "RendererDX12.h"
 #include "Level 3/DX12CommandQueue.h"
 
-DX12CommandQueue::DX12CommandQueue()
+DX12CommandQueue::DX12CommandQueue() :
+	m_allocatorManager(nullptr)
 {
 }
 
@@ -31,7 +32,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 	m_allocatorManager->ResetAllocators(m_runningAllocators);
 }
 
-void DX12CommandQueue::SetActiveAllocators(std::vector<shared_ptr<DX12CommandAllocator>> allocator)
+void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator)
 {
 	std::move(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators));
 }

@@ -5,16 +5,20 @@ DX12CommandList::DX12CommandList()
 {
 }
 
-void DX12CommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, shared_ptr<DX12CommandAllocator> allocator)
+DX12CommandList::~DX12CommandList()
 {
-	m_commandList.Initialize(device, nodeMask, type, allocator->GetBase()->GetInterface());
-	m_allocator = allocator;
 }
 
-void DX12CommandList::Reset(shared_ptr<DX12CommandAllocator> allocator)
+void DX12CommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator)
+{
+	m_commandList.Initialize(device, nodeMask, type, allocator->GetBase()->GetInterface());
+	m_allocator.swap(allocator);
+}
+
+void DX12CommandList::Reset(unique_ptr<DX12CommandAllocator> allocator)
 {
 	m_commandList.GetInterface()->Reset(allocator->GetBase()->GetInterface(), nullptr);
-	m_allocator = allocator;
+	m_allocator.swap(allocator);
 }
 
 void DX12CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size)
