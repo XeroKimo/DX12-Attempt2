@@ -30,7 +30,6 @@ void DX12ManagerCommandList::CloseList(unique_ptr<DX12CommandList>& list, UINT q
 
 	list->Close();
 	m_waitingLists[queueIndex].AddCommandList(list);
-	list = nullptr;
 }
 
 void DX12ManagerCommandList::ExecuteList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
@@ -42,7 +41,6 @@ void DX12ManagerCommandList::ExecuteList(unique_ptr<DX12CommandList>& commandLis
 	(*m_pCommandQueues)[queueIndex]->ExecuteCommandLists(1, list);
 	(*m_pCommandQueues)[queueIndex]->SetActiveAllocator(commandList->GetCommandAllocator());
 	m_inactiveList.push_back(std::move(commandList));
-	commandList = nullptr;
 }
 
 void DX12ManagerCommandList::ExecuteWaitingList(UINT queueIndex)

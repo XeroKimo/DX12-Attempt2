@@ -161,6 +161,11 @@
     <ClCompile Include="Source\PlatformClock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\MathLib\MathLib.h" />
+    <ClInclude Include="Headers\MathLib\Matrix4x4.h" />
+    <ClInclude Include="Headers\MathLib\Vector2.h" />
+    <ClInclude Include="Headers\MathLib\Vector3.h" />
+    <ClInclude Include="Headers\MathLib\Vector4.h" />
     <ClInclude Include="Headers\PCH.h" />
     <ClInclude Include="Headers\PlatformClock.h" />
   </ItemGroup>

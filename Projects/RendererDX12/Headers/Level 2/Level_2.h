@@ -6,3 +6,4 @@
 #include "DX12CommandList.h"
 #include "DX12ManagerUploadBuffer.h"
 #include "DX12Mesh.h"
+#include "DX12Texture.h"

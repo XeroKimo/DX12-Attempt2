@@ -18,10 +18,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	{
 		unique_ptr<DX12HGraphicsPipelineStateDesc> pipelineDesc = make_unique<DX12HGraphicsPipelineStateDesc>();
 		pipelineDesc->rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+
 		pipelineDesc->inputLayout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 		pipelineDesc->inputLayout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
+
 		pipelineDesc->vsShader.CompileShaderFromFile(L"Resources/Shaders/VertexShader.hlsl", "vs_5_0");
 		pipelineDesc->psShader.CompileShaderFromFile(L"Resources/Shaders/PixelShader.hlsl", "ps_5_0");
+
 		pipelineDesc->GeneratePipelineState(device, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
 
 		pipeline.Initialize(pipelineDesc->pipelineState, pipelineDesc->rootSiganture);
@@ -40,11 +43,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), 3);
   
+	DX12Texture texture;
+	texture.InitializeTexture2D(renderer.GetDeviceInterface()->GetBase()->GetInterface(), cl.get(), L"Resources/test.jpg");
+
 	renderer.ExecuteCommandList(cl);
     renderer.SignalCommandQueue();
     renderer.SyncCommandQueue();
 	renderer.ResetCommandQueue();
 
+	Vector3 pos(1, 0, 0);
 
 	MSG msg;
 	while (application.IsRunning())
@@ -71,6 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			pipeline.SetPipelineState(commandList);
 			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			cl->SetConstantBuffer(0, &pos, sizeof(Vector3));
 			mesh.Set(cl.get());
 			mesh.Draw(cl.get());
 			renderer.SubmitCommandList(cl);

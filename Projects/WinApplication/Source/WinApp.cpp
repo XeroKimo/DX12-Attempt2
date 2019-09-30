@@ -32,7 +32,7 @@ bool WinApp::InitWindow(HINSTANCE hInstance, unsigned int width, unsigned  int h
 	m_hInstance = hInstance;
 
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WindowProc;
+	wc.lpfnWndProc = static_cast<WNDPROC>(WindowProc);
 	wc.cbClsExtra = NULL;
 	wc.cbWndExtra = NULL;
     wc.hInstance = m_hInstance;
@@ -89,7 +89,7 @@ void WinApp::Quit()
 
 LRESULT WinApp::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	WinApp* pWinApp = (WinApp*)(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	WinApp* pWinApp = reinterpret_cast<WinApp*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 	// Get a pointer to the framework object associated with this window.
     switch (uMsg)
     {

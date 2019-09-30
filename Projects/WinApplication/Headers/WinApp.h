@@ -11,7 +11,6 @@ public:
 	inline bool PeekMsg(MSG& msg) {	return (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)); }
 	void ReadMessage(MSG& msg);
 	void Quit();
-    static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	bool IsRunning() { return m_running; }
 
@@ -21,6 +20,7 @@ public:
 	int GetWindowHeight() { return m_windowHeight; }
 private:
 	bool InitWindow(HINSTANCE hInstance, unsigned int width, unsigned int height);
+	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 private:

@@ -30,7 +30,8 @@ void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, U
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	resourceDesc.Alignment = 0;
 
-	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+	HRESULT hr = device->GetDeviceRemovedReason();
+	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 	assert(SUCCEEDED (hr));
 
 	D3D12_RANGE range = { 0,0 };
