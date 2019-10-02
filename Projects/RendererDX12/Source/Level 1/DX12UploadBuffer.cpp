@@ -10,8 +10,6 @@ DX12UploadBuffer::DX12UploadBuffer() :
 
 void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, UINT visibleNodeMask, UINT64 size)
 {
-	UINT64 alignedSize = (size + ((1 << 16) - 1)) & ~((1 << 16) - 1);
-
 	D3D12_HEAP_PROPERTIES heapProperties;
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
