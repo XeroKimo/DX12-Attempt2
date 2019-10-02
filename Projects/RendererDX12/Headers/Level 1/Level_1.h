@@ -6,4 +6,5 @@
 #include "DX12BaseDevice.h"
 #include "DX12BaseSwapChain.h"
 #include "DX12PipelineState.h"
+#include "DX12Resource.h"
 #include "DX12UploadBuffer.h" 

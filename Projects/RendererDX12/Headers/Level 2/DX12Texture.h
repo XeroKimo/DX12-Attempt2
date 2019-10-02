@@ -14,6 +14,6 @@ private:
 
 private:
 	ComPtr<ID3D12DescriptorHeap> m_heap;
-	ComPtr<ID3D12Resource> m_resource;
+    DX12Resource m_resource;
 	D3D12_SHADER_RESOURCE_VIEW_DESC m_resourceView;
 };

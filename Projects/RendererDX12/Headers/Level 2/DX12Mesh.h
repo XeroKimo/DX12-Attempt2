@@ -11,7 +11,8 @@ public:
 	void Set(DX12CommandList* commandList);
 	void Draw(DX12CommandList* commandList);
 private:
-	ComPtr<ID3D12Resource> m_vertexBuffer;
+    unique_ptr<DX12Resource> m_vertexBuffer;
+	//ComPtr<ID3D12Resource> m_vertexBuffer;
 	ComPtr<ID3D12Resource> m_indexBuffer;
 
 	D3D12_VERTEX_BUFFER_VIEW m_vertexView;

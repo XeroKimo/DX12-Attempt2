@@ -138,7 +138,7 @@ void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type, UINT qu
     }
 }
 
-unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type, UINT queuePreference)
+unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
 {
     switch (type)
     {
@@ -147,7 +147,13 @@ unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE t
 			return m_directList->GetCommandList();
 		break;
     case D3D12_COMMAND_LIST_TYPE_BUNDLE:
-		return nullptr;
+    {
+        unique_ptr<DX12CommandList> list = make_unique<DX12CommandList>();
+        unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>();
+        allocator->Initialize(m_device.GetInterface(), type, nullptr);
+        list->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), type, std::move(allocator));
+        return list;
+    }
         break;
     case D3D12_COMMAND_LIST_TYPE_COMPUTE:
         if (m_computeList)

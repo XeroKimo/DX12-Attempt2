@@ -27,6 +27,7 @@
     <ClInclude Include="Headers\Level 1\DX12BaseCommandAllocator.h" />
     <ClInclude Include="Headers\Level 1\DX12BaseCommandList.h" />
     <ClInclude Include="Headers\Level 1\DX12PipelineState.h" />
+    <ClInclude Include="Headers\Level 1\DX12Resource.h" />
     <ClInclude Include="Headers\Level 1\DX12UploadBuffer.h" />
     <ClInclude Include="Headers\Level 1\Level_1.h" />
     <ClInclude Include="Headers\Level 2\DX12CommandAllocator.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="Headers\Helpers\DX12HShaderByteCode.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Level 1\DX12Resource.cpp" />
     <ClCompile Include="Source\Level 2\DX12Texture.cpp" />
     <ClCompile Include="Source\Level 2\DX12CommandAllocator.cpp" />
     <ClCompile Include="Source\Level 3\DX12CommandQueue.cpp" />

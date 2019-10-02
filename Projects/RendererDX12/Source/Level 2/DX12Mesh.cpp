@@ -15,52 +15,33 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 	HRESULT hr = commandList->GetBase()->GetInterface()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	size_t totalVertexSize = sizeOfVertex * vertexCount;
+	LONG_PTR totalVertexSize = static_cast<LONG_PTR>(sizeOfVertex) * static_cast<LONG_PTR>(vertexCount);
 
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.CreationNodeMask = device->GetNodeCount();
-	heapProperties.VisibleNodeMask = heapProperties.CreationNodeMask;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-
-	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	resourceDesc.Width = totalVertexSize;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.Height = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.SampleDesc.Quality = 0;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
-	assert(SUCCEEDED(hr));
+    m_vertexBuffer = make_unique<DX12Resource>();
+    m_vertexBuffer->InitAsBuffer(device.Get(), totalVertexSize, D3D12_RESOURCE_STATE_COPY_DEST);
 
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
 	UINT numRows;
 	UINT64 sizeInBytes;
 	UINT64 totalBytes;
 
-	device->GetCopyableFootprints(&resourceDesc, 0, 1, 0, &footprint, &numRows, &sizeInBytes, &totalBytes);
+	device->GetCopyableFootprints(&m_vertexBuffer->GetInterface()->GetDesc(), 0, 1, 0, &footprint, &numRows, &sizeInBytes, &totalBytes);
 
 	D3D12_SUBRESOURCE_DATA data;
 	data.pData = vertexData;
 	data.RowPitch = sizeOfVertex;
-	data.SlicePitch = sizeOfVertex * vertexCount;
+	data.SlicePitch = data.RowPitch * vertexCount;
 
-	commandList->UploadData(m_vertexBuffer.Get(), data.SlicePitch, &data, 0, 1);
+	commandList->UploadData(m_vertexBuffer->GetInterface(), data.SlicePitch, &data, 0, 1);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Transition.pResource = m_vertexBuffer.Get();
+	barrier.Transition.pResource = m_vertexBuffer->GetInterface();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
 
-	m_vertexView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+	m_vertexView.BufferLocation = m_vertexBuffer->GetInterface()->GetGPUVirtualAddress();
 	m_vertexView.SizeInBytes = totalVertexSize;
 	m_vertexView.StrideInBytes = sizeOfVertex;
 
