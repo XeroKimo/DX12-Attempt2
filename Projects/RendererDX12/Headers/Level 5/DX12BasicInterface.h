@@ -12,7 +12,7 @@ public:
 	bool Initialize(HWND windowHandle, UINT windowWidth, UINT windowHeight);
 	void Present();
 
-	inline void SubmitCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->CloseList(commandList, 0); }
+	inline void CloseCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->CloseList(commandList, 0); }
 	inline void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->ExecuteList(commandList, 0); }
 	inline void ExecuteWaitingCommandLists() { m_device.GetCommandListManager()->ExecuteWaitingList(0); }
 

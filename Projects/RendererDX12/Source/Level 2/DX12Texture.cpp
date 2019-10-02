@@ -20,7 +20,7 @@ void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* com
 	D3D12_RESOURCE_DESC desc;
 	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	desc.Alignment = 0;
-	desc.Width = imageWidth ;
+	desc.Width = imageWidth;
 	desc.Height = imageHeight;
 	desc.DepthOrArraySize = 1;
 	desc.MipLevels = 1;
@@ -79,7 +79,7 @@ void DX12Texture::Set(DX12CommandList* commandList, const UINT& paramIndex)
 	//commandList->GetBase()->GetInterface()->SetGraphicsRootShaderResourceView(paramIndex, m_resource->GetGPUVirtualAddress());
 }
 
-void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageHeight, unsigned int& outImageWidth)
+void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageWidth, unsigned int& outImageHeight)
 {
 	ComPtr<IWICImagingFactory> wicFactory = nullptr;
 	if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(wicFactory.GetAddressOf()))))
@@ -103,7 +103,7 @@ void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImage
 	if (FAILED(hr))
 		assert(false);
 
-	UINT stride = outImageWidth * 4;
+	UINT stride = (outImageWidth * 4);
 	UINT buffersize = stride * outImageHeight;
 
 	outImageData = make_unique<BYTE[]>(buffersize);

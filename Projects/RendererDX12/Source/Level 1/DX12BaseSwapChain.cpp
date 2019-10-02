@@ -89,6 +89,29 @@ void DX12BaseSwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList)
 	commandList->RSSetViewports(1, &m_viewPort);
 	commandList->RSSetScissorRects(1, &m_rect);
 
-	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+	D3D12_RESOURCE_BARRIER barrier;
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Transition.pResource = m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	commandList->ResourceBarrier(1, &barrier);
+
 	commandList->ClearRenderTargetView(handle, color, 0, nullptr);
+	commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+}
+
+void DX12BaseSwapChain::ReadyBackBuffer(ID3D12GraphicsCommandList* commandList)
+{
+	D3D12_RESOURCE_BARRIER barrier;
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Transition.pResource = m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+
+	commandList->ResourceBarrier(1, &barrier);
 }

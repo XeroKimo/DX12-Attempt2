@@ -79,7 +79,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
   
 	DX12Texture texture;
-	texture.InitializeTexture2D(renderer.GetDeviceInterface()->GetBase()->GetInterface(), cl.get(), L"Resources/Maquia.png");
+	texture.InitializeTexture2D(renderer.GetDeviceInterface()->GetBase()->GetInterface(), cl.get(), L"Resources/test.jpg");
 
 	renderer.ExecuteCommandList(cl);
     renderer.SignalCommandQueue();
@@ -117,8 +117,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			mesh.Set(cl.get());
 			texture.Set(cl.get(), 1);
 			mesh.Draw(cl.get());
-			renderer.SubmitCommandList(cl);
-			renderer.ExecuteWaitingCommandLists();
+			renderer.GetSwapChain()->ReadyBackBuffer(commandList);
+			renderer.ExecuteCommandList(cl);
+			//renderer.CloseCommandList(cl);
+			//renderer.ExecuteWaitingCommandLists();
 			renderer.Present();
 		}
 	}
