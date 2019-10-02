@@ -20,7 +20,7 @@ void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* com
 	D3D12_RESOURCE_DESC desc;
 	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	desc.Alignment = 0;
-	desc.Width = imageWidth;
+	desc.Width = imageWidth ;
 	desc.Height = imageHeight;
 	desc.DepthOrArraySize = 1;
 	desc.MipLevels = 1;
@@ -42,12 +42,24 @@ void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* com
 	hr = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(m_heap.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	D3D12_SUBRESOURCE_DATA data;
-	data.pData = &imageData;
-	data.RowPitch = 4;
-	data.SlicePitch = 4 * imageHeight;
+	m_resourceView.Format = desc.Format;
+	m_resourceView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	m_resourceView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	m_resourceView.Texture2D.MipLevels = 1;
+	m_resourceView.Texture2D.MostDetailedMip = 0;
+	m_resourceView.Texture2D.PlaneSlice = 0;
+	m_resourceView.Texture2D.ResourceMinLODClamp = 0.0f;
 
-	commandList->UploadData(m_resource.Get(), &data, 0, 1);
+	device->CreateShaderResourceView(m_resource.Get(), &m_resourceView, m_heap->GetCPUDescriptorHandleForHeapStart());
+	D3D12_SUBRESOURCE_DATA data;
+	data.pData = imageData.get();
+	data.RowPitch = imageWidth * 4;
+	data.SlicePitch = imageHeight * data.RowPitch;
+
+	UINT64 testSize;
+	device->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, nullptr, nullptr, &testSize);
+
+	commandList->UploadData(m_resource.Get(), testSize, &data, 0, 1);
 
 	D3D12_RESOURCE_BARRIER barrier;
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -58,6 +70,13 @@ void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* com
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 
 	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
+}
+
+void DX12Texture::Set(DX12CommandList* commandList, const UINT& paramIndex)
+{
+	commandList->GetBase()->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
+	commandList->GetBase()->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
+	//commandList->GetBase()->GetInterface()->SetGraphicsRootShaderResourceView(paramIndex, m_resource->GetGPUVirtualAddress());
 }
 
 void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageHeight, unsigned int& outImageWidth)
@@ -80,18 +99,20 @@ void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImage
 	if (FAILED(hr))
 		assert(false);
 
-
-
 	hr = wicFrame->GetSize(&outImageWidth, &outImageHeight);
 	if (FAILED(hr))
 		assert(false);
 
-	UINT stride = outImageWidth * 32;
+	UINT stride = outImageWidth * 4;
 	UINT buffersize = stride * outImageHeight;
 
 	outImageData = make_unique<BYTE[]>(buffersize);
 
-	hr = wicConverter->CopyPixels(nullptr, stride, buffersize, outImageData.get());
+	ComPtr<IWICBitmapFlipRotator> wicFlipper;
+	wicFactory->CreateBitmapFlipRotator(wicFlipper.GetAddressOf());
+	wicFlipper->Initialize(wicConverter.Get(), WICBitmapTransformFlipVertical);
+
+	hr = wicFlipper->CopyPixels(nullptr, stride, buffersize, outImageData.get());
 	if (FAILED(hr))
 		assert(false);
 }

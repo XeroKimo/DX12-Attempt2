@@ -13,6 +13,7 @@ public:
 
 	D3D12_GPU_VIRTUAL_ADDRESS UploadCBVSRVUAV(void* data, UINT64 size);
 	void UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
+	void UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 dataSize, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
 	void Reset();
 
 	shared_ptr<DX12UploadBuffer> GetTemporaryBuffer(UINT64 size);

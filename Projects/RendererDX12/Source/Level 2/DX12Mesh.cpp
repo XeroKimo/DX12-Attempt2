@@ -39,12 +39,19 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
+	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
+	UINT numRows;
+	UINT64 sizeInBytes;
+	UINT64 totalBytes;
+
+	device->GetCopyableFootprints(&resourceDesc, 0, 1, 0, &footprint, &numRows, &sizeInBytes, &totalBytes);
+
 	D3D12_SUBRESOURCE_DATA data;
 	data.pData = vertexData;
-	data.RowPitch = totalVertexSize;
-	data.SlicePitch = 1;
+	data.RowPitch = sizeOfVertex;
+	data.SlicePitch = sizeOfVertex * vertexCount;
 
-	commandList->UploadData(m_vertexBuffer.Get(), &data, 0, 1);
+	commandList->UploadData(m_vertexBuffer.Get(), data.SlicePitch, &data, 0, 1);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

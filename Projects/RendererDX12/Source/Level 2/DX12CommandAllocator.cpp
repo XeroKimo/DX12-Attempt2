@@ -29,8 +29,14 @@ D3D12_GPU_VIRTUAL_ADDRESS DX12CommandAllocator::UploadCBVSRVUAV(void* data, UINT
 
 void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
 {
-	UINT64 size = static_cast<UINT64>(((data->RowPitch + 255) & ~255) * data->SlicePitch);
+	UINT64 size = static_cast<UINT64>((data->RowPitch * data->SlicePitch + 255) & ~255);
 	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(size));
+	m_temporaryBuffers.back()->UploadData(commandList, destination, data, intermediateOffset, numSubResources, firstSubResource);
+}
+
+void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 dataSize, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
+{
+	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(dataSize));
 	m_temporaryBuffers.back()->UploadData(commandList, destination, data, intermediateOffset, numSubResources, firstSubResource);
 }
 

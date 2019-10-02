@@ -3,7 +3,9 @@
 
 DX12ManagerUploadBuffer::DX12ManagerUploadBuffer() :
 	m_device(nullptr),
-	m_CBVSRVUAVBufferSize(1<<16)
+	m_CBVSRVUAVBufferSize(1<<16),
+	m_creationNodeMask(0),
+	m_visibleNodeMask(0)
 {
 }
 

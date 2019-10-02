@@ -26,17 +26,12 @@ void DX12CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 
 	m_commandList.GetInterface()->SetGraphicsRootConstantBufferView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
 }
 
-void DX12CommandList::SetShaderResource(UINT rootParamIndex, void* data, UINT64 size)
-{
-	m_commandList.GetInterface()->SetGraphicsRootShaderResourceView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
-}
-
-void DX12CommandList::SetUnorderedAccess(UINT rootParamIndex, void* data, UINT64 size)
-{
-	m_commandList.GetInterface()->SetGraphicsRootUnorderedAccessView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
-}
-
 void DX12CommandList::UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
 {
 	m_allocator->UploadData(m_commandList.GetInterface(), destination, data, intermediateOffset, numSubResources, firstSubResource);
+}
+
+void DX12CommandList::UploadData(ID3D12Resource* destination, UINT64 dataSize, D3D12_SUBRESOURCE_DATA* data,  UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
+{
+	m_allocator->UploadData(m_commandList.GetInterface(), destination, data, dataSize, intermediateOffset, numSubResources, firstSubResource);
 }

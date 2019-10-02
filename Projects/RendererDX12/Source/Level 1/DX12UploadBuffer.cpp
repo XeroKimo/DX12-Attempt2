@@ -10,6 +10,8 @@ DX12UploadBuffer::DX12UploadBuffer() :
 
 void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, UINT visibleNodeMask, UINT64 size)
 {
+	UINT64 alignedSize = (size + ((1 << 16) - 1)) & ~((1 << 16) - 1);
+
 	D3D12_HEAP_PROPERTIES heapProperties;
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -30,8 +32,7 @@ void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT creationNodeMask, U
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	resourceDesc.Alignment = 0;
 
-	HRESULT hr = device->GetDeviceRemovedReason();
-	hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 	assert(SUCCEEDED (hr));
 
 	D3D12_RANGE range = { 0,0 };
