@@ -6,13 +6,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	if (!application.Initialize(hInstance, 1280, 720))
 		return 1;
 
-	DX12BasicInterface renderer;
-	if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
-		return 1;
+	//DX12BasicInterface renderer;
+	//if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
+	//	return 1;
+
+    DX12Device renderer;
+    DX12ManagerCommandAllocator commandAllocatorManager;
+    DX12ManagerUploadBuffer managerUploadBuffer;
+    DX12BaseSwapChain swapChain;
+
+    renderer.Initialize(D3D_FEATURE_LEVEL_11_0, 0, &commandAllocatorManager, 1, 0, 1);
+    commandAllocatorManager.Initialize(renderer.GetBase()->GetInterface(), &managerUploadBuffer);
+    managerUploadBuffer.Initialize(renderer.GetBase(), 1000);
+    swapChain.Initialize(renderer.GetBase()->GetInterface(), renderer.GetBase()->GetNodeMask(), renderer.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT,0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
 
 	PlatformClock clock;
 
-	ID3D12Device* device = renderer.GetDeviceInterface()->GetBase()->GetInterface();
+	ID3D12Device* device = renderer.GetBase()->GetInterface();
 
 	DX12PipelineState pipeline;
 	{
@@ -77,22 +87,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		bottomRight
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
-	unique_ptr<DX12CommandList> cl = renderer.GetCommandList();
+	unique_ptr<DX12CommandList> cl = renderer.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
   
 	DX12Texture texture;
-	texture.InitializeTexture2D(renderer.GetDeviceInterface()->GetBase()->GetInterface(), cl.get(), L"Resources/test.jpg");
+	texture.InitializeTexture2D(renderer.GetBase()->GetInterface(), cl.get(), L"Resources/test.jpg");
 
-	renderer.ExecuteCommandList(cl);
-    renderer.SignalCommandQueue();
-    renderer.SyncCommandQueue();
-	renderer.ResetCommandQueue();
+    renderer.ExecuteCommandList(cl,0);
+    renderer.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    renderer.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Vector3 pos(1, 0, 0);
 
 	MSG msg;
-	while (application.IsRunning())
+ 	while (application.IsRunning())
 	{
 		if (application.PeekMsg(msg))
 		{
@@ -110,21 +119,27 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		else
 		{
 			clock.Update();
-			cl = renderer.GetCommandList();
+			cl = renderer.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
-			renderer.GetSwapChain()->ClearBackBuffer(commandList);
+
+            swapChain.ClearBackBuffer(commandList);
+
 			pipeline.SetPipelineState(commandList);
 			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			//cl->SetConstantBuffer(0, &pos, sizeof(Vector3));
+            texture.Set(cl.get(), 1);
 			mesh.Set(cl.get());
-			texture.Set(cl.get(), 1);
 			mesh.Draw(cl.get());
-			renderer.GetSwapChain()->ReadyBackBuffer(commandList);
-			renderer.ExecuteCommandList(cl);
-			//renderer.CloseCommandList(cl);
-			//renderer.ExecuteWaitingCommandLists();
-			renderer.Present();
+
+            swapChain.ReadyBackBuffer(commandList);
+
+            renderer.ExecuteCommandList(cl, 0);
+            renderer.SignalAllQueues();
+            renderer.SyncAllQueues();
+
+            swapChain.GetInterface()->Present(1, 0);
+            renderer.ResetAllQueues();
 		}
 	}
 

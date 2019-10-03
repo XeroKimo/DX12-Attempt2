@@ -18,6 +18,7 @@ private:
 
 	ComPtr<ID3D12CommandQueue> m_commandQueue;
 	ComPtr<ID3D12Fence> m_fence;
+    D3D12_COMMAND_LIST_TYPE m_type;
 	UINT64 m_fenceValue;
 	HANDLE m_fenceEvent;
 };

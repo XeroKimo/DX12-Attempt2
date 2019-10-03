@@ -10,5 +10,6 @@ void DX12BaseCommandAllocator::Initialize(ID3D12Device* device, const D3D12_COMM
 {
 	m_type = type;
 	HRESULT hr = device->CreateCommandAllocator(type, IID_PPV_ARGS(m_allocator.GetAddressOf()));
+    //hr = device->GetDeviceRemovedReason();
 	assert(SUCCEEDED(hr));
 }

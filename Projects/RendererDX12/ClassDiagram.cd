@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DX12BaseCommandAllocator" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAUIAAAAAAAAAAAAAAAEAAAAAAAIAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12BaseCommandAllocator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12BaseCommandList" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAUQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12BaseCommandList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12PipelineState" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAQAAAQAAAAIAAAAAAgAgAAAAAAAAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12PipelineState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12UploadBuffer" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EABAAAAAAAAABQAABAAEAAAACAAAAAAAAACACCAAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12UploadBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12CommandAllocator" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABQAAAABAAAAADAAIAACAAAAAAIAAgAE=</HashCode>
+      <FileName>Headers\Level 2\DX12CommandAllocator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12Texture" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAAAABAAAAAAAAAAAEAAAAAAAIAAAAABAAAA=</HashCode>
+      <FileName>Headers\Level 2\DX12Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12CommandQueue" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAIAAAAAAQAAABBAAAGgAAIAAAAAAAAAAEAQAAA=</HashCode>
+      <FileName>Headers\Level 3\DX12CommandQueue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12ManagerCommandAllocator" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAABAAAAAYAAAAEAAAAAAAgBAAAAAAAQCAAAggA=</HashCode>
+      <FileName>Headers\Level 3\DX12ManagerCommandAllocator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12CommandList" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAgAAAABQQAAABAABAAAAAIAAAAAgAAAIKAAAA=</HashCode>
+      <FileName>Headers\Level 2\DX12CommandList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12ManagerCommandList" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICAAwAgAAQAIEBIAABAAAAAAAAAASAAACAAAAAA=</HashCode>
+      <FileName>Headers\Level 3\DX12ManagerCommandList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12BaseCommandQueue" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAcAAAAAAAACCAIIAABAJAAAAAAAAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12BaseCommandQueue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12BaseDevice" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAUAAAAAAAAAEABCAoAECAAAACABAAgA=</HashCode>
+      <FileName>Headers\Level 1\DX12BaseDevice.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12Device" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAAAAAAgEQMAAApQAAIABAAAAAAIAAQACABAAAA=</HashCode>
+      <FileName>Headers\Level 4\DX12Device.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12BasicInterface" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAghARAEABIAAACAAAAAQACAAAAAiAIAAQQ=</HashCode>
+      <FileName>Headers\Level 5\DX12BasicInterface.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12BaseSwapChain" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABABAJAAAAWAAAAAAAAABAACAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Headers\Level 1\DX12BaseSwapChain.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12ManagerUploadBuffer" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAEAQAQBAABBACAAAAAA=</HashCode>
+      <FileName>Headers\Level 2\DX12ManagerUploadBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DX12Mesh" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQQAAABkAAAAAQAAABQAAAAAAAAQAAAAAAEAA=</HashCode>
+      <FileName>Headers\Level 2\DX12Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="CD3DX12_TEXTURE_COPY_LOCATION" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Headers\DX12Header.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DX12HGraphicsPipelineStateDesc" Collapsed="true">
+    <Position X="2.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIIACYAAAAAAAAAAAAAAAAAAAIAAAABCAAhAAAIAAAA=</HashCode>
+      <FileName>Headers\Helpers\DX12HGraphicsPipelineStateDesc.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DX12HInputLayout" Collapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAFAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Headers\Helpers\DX12HInputLayout.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DX12HRootSignatureDesc" Collapsed="true">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAIgAAIAIBAAAAAAAAABIAAQCACAAAAAAAAAg=</HashCode>
+      <FileName>Headers\Helpers\DX12HRootSignatureDesc.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DX12HShaderByteCode" Collapsed="true">
+    <Position X="7.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEACAAAAAAAAIBAAAAAAAAAAAAAAAAAAAAAJAAAAA=</HashCode>
+      <FileName>Headers\Helpers\DX12HShaderByteCode.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

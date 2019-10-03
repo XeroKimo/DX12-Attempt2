@@ -12,15 +12,15 @@ public:
 	bool Initialize(HWND windowHandle, UINT windowWidth, UINT windowHeight);
 	void Present();
 
-	inline void CloseCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->CloseList(commandList, 0); }
-	inline void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager()->ExecuteList(commandList, 0); }
-	inline void ExecuteWaitingCommandLists() { m_device.GetCommandListManager()->ExecuteWaitingList(0); }
+	//inline void CloseCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager(D3D12_COMMAND_LIST_TYPE_DIRECT)->CloseCommandList(commandList, 0); }
+	//inline void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList) { m_device.GetCommandListManager(D3D12_COMMAND_LIST_TYPE_DIRECT)->ExecuteList(commandList, 0); }
+	//inline void ExecuteWaitingCommandLists() { m_device.GetCommandListManager(D3D12_COMMAND_LIST_TYPE_DIRECT)->ExecuteWaitingList(0); }
 
-	inline void SignalCommandQueue() { m_device.GetCommandQueue()->Signal(); }
-	inline void SyncCommandQueue() { m_device.GetCommandQueue()->SyncQueue(INFINITE); }
-	inline void ResetCommandQueue() { m_device.GetCommandQueue()->GetBase()->ResetFenceValue(); }
+	//inline void SignalCommandQueue() { m_device.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT,0)->Signal(); }
+	//inline void SyncCommandQueue() { m_device.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT,0)->SyncQueue(INFINITE); }
+	//inline void ResetCommandQueue() { m_device.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT,0)->GetBase()->ResetFenceValue(); }
 
-	inline unique_ptr<DX12CommandList> GetCommandList() { return m_device.GetCommandList(); }
+	inline unique_ptr<DX12CommandList> GetCommandList() { return m_device.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT); }
 	inline DX12BaseSwapChain* GetSwapChain() { return &m_swapChain; }
 	inline DX12Device* GetDeviceInterface() { return &m_device; }
 	inline DX12ManagerCommandAllocator* GetCommandAllocatorManager() { return &m_allocatorManager; }

@@ -11,10 +11,11 @@ public:
 	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
 	void Signal();
-	void StallQueue(DX12BaseCommandQueue* queue);
+	void StallQueue(DX12CommandQueue* queue);
 	void SyncQueue(DWORD milliseconds);
 
 	void SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator);
+    inline void ResetFenceValue() { m_commandQueue.ResetFenceValue(); }
 	inline void ExecuteCommandLists(UINT numList, ID3D12CommandList* const* list) { m_commandQueue.GetInterface()->ExecuteCommandLists(numList, list); }
 	inline void SetActiveAllocator(unique_ptr<DX12CommandAllocator>& allocator) { m_runningAllocators.push_back(std::move(allocator)); }
 	inline DX12BaseCommandQueue* GetBase() { return &m_commandQueue; }

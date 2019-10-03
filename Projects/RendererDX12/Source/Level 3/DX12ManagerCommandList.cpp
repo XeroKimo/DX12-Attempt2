@@ -24,7 +24,7 @@ void DX12ManagerCommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D
 	m_nodeMask = nodeMask;
 }
 
-void DX12ManagerCommandList::CloseList(unique_ptr<DX12CommandList>& list, UINT queueIndex)
+void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex)
 {
 	assert(queueIndex < m_pCommandQueues->size());
 

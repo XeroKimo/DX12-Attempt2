@@ -30,7 +30,9 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Transition.pResource = m_vertexBuffer.Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+    //barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
 
 	m_vertexView.BufferLocation = m_vertexBuffer.Get()->GetGPUVirtualAddress();

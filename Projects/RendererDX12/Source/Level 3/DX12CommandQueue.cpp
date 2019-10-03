@@ -19,15 +19,15 @@ void DX12CommandQueue::Signal()
 	m_commandQueue.Signal();
 }
 
-void DX12CommandQueue::StallQueue(DX12BaseCommandQueue* queue)
+void DX12CommandQueue::StallQueue(DX12CommandQueue* queue)
 {
-	m_commandQueue.GetInterface()->Wait(queue->GetFence(), queue->GetFenceValue());
+    m_commandQueue.GetInterface()->Wait(queue->GetBase()->GetFence(), queue->GetBase()->GetFenceValue());
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 {
-	if (m_runningAllocators.empty())
-		return;
+    if (m_runningAllocators.empty())
+        return;
 	m_commandQueue.SyncQueue(milliseconds);
 	m_allocatorManager->ResetAllocators(m_runningAllocators);
 }

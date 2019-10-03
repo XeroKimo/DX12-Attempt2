@@ -32,6 +32,8 @@ void DX12BaseCommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12
 	cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	cqDesc.Type = commandListType;
 
+    m_type = commandListType;
+
 	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
