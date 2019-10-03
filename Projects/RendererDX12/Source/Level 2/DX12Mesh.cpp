@@ -17,31 +17,23 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 
 	LONG_PTR totalVertexSize = static_cast<LONG_PTR>(sizeOfVertex) * static_cast<LONG_PTR>(vertexCount);
 
-    m_vertexBuffer = make_unique<DX12Resource>();
-    m_vertexBuffer->InitAsBuffer(device.Get(), totalVertexSize, D3D12_RESOURCE_STATE_COPY_DEST);
-
-	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
-	UINT numRows;
-	UINT64 sizeInBytes;
-	UINT64 totalBytes;
-
-	device->GetCopyableFootprints(&m_vertexBuffer->GetInterface()->GetDesc(), 0, 1, 0, &footprint, &numRows, &sizeInBytes, &totalBytes);
+	device->CreateCommittedResource(&DX12HResource::HeapDefault(0), D3D12_HEAP_FLAG_NONE, &DX12HResource::Buffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 
 	D3D12_SUBRESOURCE_DATA data;
 	data.pData = vertexData;
 	data.RowPitch = sizeOfVertex;
 	data.SlicePitch = data.RowPitch * vertexCount;
 
-	commandList->UploadData(m_vertexBuffer->GetInterface(), data.SlicePitch, &data, 0, 1);
+	commandList->UploadData(m_vertexBuffer.Get(), &data);
 
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Transition.pResource = m_vertexBuffer->GetInterface();
+	barrier.Transition.pResource = m_vertexBuffer.Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
 	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
 
-	m_vertexView.BufferLocation = m_vertexBuffer->GetInterface()->GetGPUVirtualAddress();
+	m_vertexView.BufferLocation = m_vertexBuffer.Get()->GetGPUVirtualAddress();
 	m_vertexView.SizeInBytes = totalVertexSize;
 	m_vertexView.StrideInBytes = sizeOfVertex;
 

@@ -27,17 +27,9 @@ D3D12_GPU_VIRTUAL_ADDRESS DX12CommandAllocator::UploadCBVSRVUAV(void* data, UINT
 	return m_CBVSRVUAVBuffers.back()->UploadCBVSRVUAV(data, size);
 }
 
-void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
+void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
 {
-	UINT64 size = static_cast<UINT64>((data->RowPitch * data->SlicePitch + 255) & ~255);
-	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(size));
-	m_temporaryBuffers.back()->UploadData(commandList, destination, data, intermediateOffset, numSubResources, firstSubResource);
-}
-
-void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 dataSize, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource)
-{
-	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(dataSize));
-	m_temporaryBuffers.back()->UploadData(commandList, destination, data, intermediateOffset, numSubResources, firstSubResource);
+	m_temporaryBuffers.push_back(make_unique<DX12UploadBuffer>(commandList, nodeMask, destination, data));
 }
 
 void DX12CommandAllocator::Reset()
@@ -46,10 +38,4 @@ void DX12CommandAllocator::Reset()
 	m_bufferManager->ResetBuffers(m_CBVSRVUAVBuffers);
 	m_CBVSRVUAVBuffers.clear();
 	m_temporaryBuffers.clear();
-}
-
-shared_ptr<DX12UploadBuffer> DX12CommandAllocator::GetTemporaryBuffer(UINT64 size)
-{
-	m_temporaryBuffers.push_back(m_bufferManager->GetTemporaryBuffer(size));
-	return m_temporaryBuffers.back();
 }

@@ -102,7 +102,7 @@
     <ClInclude Include="Headers\Level 2\DX12Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Level 1\DX12Resource.h">
+    <ClInclude Include="Headers\Helpers\DX12HResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -162,9 +162,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 2\DX12Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Level 1\DX12Resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,7 +7,6 @@ public:
 	class DescriptorTable
 	{
 	public:
-
 		friend DX12HRootSignatureDesc;
 		void AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister = 0, UINT registerSpace = 0, UINT offsetDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
 	private:

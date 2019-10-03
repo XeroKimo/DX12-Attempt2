@@ -34,22 +34,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		sampler.RegisterSpace = 0;
 		sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-		unique_ptr<DX12HGraphicsPipelineStateDesc> pipelineDesc = make_unique<DX12HGraphicsPipelineStateDesc>();
-		pipelineDesc->rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-        //pipelineDesc->rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_SRV, 0);
-		pipelineDesc->rootSignatureDesc.CreateRootDescriptorTable(table);
-		pipelineDesc->rootSignatureDesc.AddStaticSampler(sampler);
+		DX12HGraphicsPipelineStateDesc pipelineDesc;
+		{
+			pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+			pipelineDesc.rootSignatureDesc.CreateRootDescriptorTable(table);
+			pipelineDesc.rootSignatureDesc.AddStaticSampler(sampler);
 
-		pipelineDesc->inputLayout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
-		pipelineDesc->inputLayout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
-		pipelineDesc->inputLayout.AddElement("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+			pipelineDesc.inputLayout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+			pipelineDesc.inputLayout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
+			pipelineDesc.inputLayout.AddElement("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 
-		pipelineDesc->vsShader.CompileShaderFromFile(L"Resources/Shaders/VertexShader.hlsl", "vs_5_0");
-		pipelineDesc->psShader.CompileShaderFromFile(L"Resources/Shaders/PixelShader.hlsl", "ps_5_0");
+			pipelineDesc.vsShader.CompileShaderFromFile(L"Resources/Shaders/VertexShader.hlsl", "vs_5_0");
+			pipelineDesc.psShader.CompileShaderFromFile(L"Resources/Shaders/PixelShader.hlsl", "ps_5_0");
 
-		pipelineDesc->GeneratePipelineState(device, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
+			pipelineDesc.GeneratePipelineState(device, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
+		}
 
-		pipeline.Initialize(pipelineDesc->pipelineState, pipelineDesc->rootSiganture);
+
+		pipeline.Initialize(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
 	}
 	
 

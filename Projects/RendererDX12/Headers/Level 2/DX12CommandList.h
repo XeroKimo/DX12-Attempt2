@@ -11,8 +11,7 @@ public:
 	void Reset(unique_ptr<DX12CommandAllocator> allocator);
 
 	void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);
-	void UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data, UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
-	void UploadData(ID3D12Resource* destination, UINT64 dataSize, D3D12_SUBRESOURCE_DATA* data,  UINT64 intermediateOffset, UINT numSubResources, UINT firstSubResource = 0);
+	void UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data);
 
 	inline void Close() { m_commandList.GetInterface()->Close(); }
 	inline DX12BaseCommandList* GetBase() { return &m_commandList; }
@@ -20,4 +19,5 @@ public:
 private:
 	unique_ptr<DX12CommandAllocator> m_allocator;
 	DX12BaseCommandList m_commandList;
+	UINT m_nodeMask;
 };
