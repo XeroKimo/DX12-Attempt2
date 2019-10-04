@@ -39,11 +39,10 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
     if (m_runningAllocators.empty())
         return;
 
-	UINT64 valueToSync = (fenceValue == 0 || fenceValue > m_commandQueue.GetFenceValue()) ? m_commandQueue.GetFenceValue() : fenceValue;
-
-	if (valueToSync < m_highestSyncedSignal)
+	if (fenceValue < m_highestSyncedSignal)
 		return;
 
+	UINT64 valueToSync = (fenceValue == 0 || fenceValue > m_commandQueue.GetFenceValue()) ? m_commandQueue.GetFenceValue() : fenceValue;
 	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
 	size_t iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
 
