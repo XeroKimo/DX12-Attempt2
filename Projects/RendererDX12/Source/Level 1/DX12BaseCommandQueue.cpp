@@ -21,7 +21,7 @@ void DX12BaseCommandQueue::StallQueue(ID3D12Fence* fence, UINT64 fenceValue)
 
 void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 {
-	UINT64& valueToSync = (fenceValue == 0) ? m_fenceValue : fenceValue;
+	UINT64& valueToSync = (fenceValue == 0 || fenceValue > m_fenceValue) ? m_fenceValue : fenceValue;
 	if (m_fence->GetCompletedValue() < valueToSync)
 	{
 		m_fence->SetEventOnCompletion(valueToSync, m_fenceEvent);

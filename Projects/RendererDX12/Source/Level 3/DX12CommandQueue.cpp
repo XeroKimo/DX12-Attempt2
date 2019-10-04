@@ -3,7 +3,9 @@
 
 DX12CommandQueue::DX12CommandQueue() :
 	m_allocatorManager(nullptr),
-	m_highestSignal(0)
+	m_highestSignaledHistory(0),
+	m_highestSyncedSignal(0),
+	m_signalHistory()
 {
 }
 
@@ -11,6 +13,7 @@ void DX12CommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COM
 {
 	m_commandQueue.Initialize(device, nodeMask, commandListType);
 	m_allocatorManager = allocatorManager;
+	m_signalHistory.fill(0);
 }
 
 void DX12CommandQueue::Signal()
@@ -18,7 +21,17 @@ void DX12CommandQueue::Signal()
 	if (m_runningAllocators.empty())
 		return;
 	m_commandQueue.Signal();
-	m_signalHistory.push_back(m_runningAllocators.size());
+	m_signalHistory[(m_commandQueue.GetFenceValue() - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
+}
+
+void DX12CommandQueue::SyncQueue(DWORD milliseconds)
+{
+	if (m_runningAllocators.empty())
+		return;
+	m_commandQueue.SyncQueue(milliseconds);
+	m_allocatorManager->ResetAllocators(m_runningAllocators);
+	m_runningAllocators.clear();
+	Reset();
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
@@ -26,27 +39,43 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
     if (m_runningAllocators.empty())
         return;
 
-	UINT64 valueToSync = (fenceValue == 0) ? m_commandQueue.GetFenceValue() : fenceValue;
+	UINT64 valueToSync = (fenceValue == 0 || fenceValue > m_commandQueue.GetFenceValue()) ? m_commandQueue.GetFenceValue() : fenceValue;
+
+	if (valueToSync < m_highestSyncedSignal)
+		return;
+
+	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
+	size_t iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
+
+	if (iteratorOffset < 1)
+	{
+		assert(false); // Queue will fail to sync
+		return;
+	}
 	m_commandQueue.SyncQueue(milliseconds, valueToSync);
+	m_highestSyncedSignal = valueToSync;
 
 	std::vector<unique_ptr<DX12CommandAllocator>> allocatorsToReset;
-	size_t iteratorOffset = m_signalHistory[valueToSync-1] - m_highestSignal;
-	auto it = m_runningAllocators.begin() +  iteratorOffset;
+	auto it = m_runningAllocators.begin() + iteratorOffset;
 
 	std::move(m_runningAllocators.begin(), it, std::back_inserter(allocatorsToReset));
 	m_allocatorManager->ResetAllocators(allocatorsToReset);
 	m_runningAllocators.erase(m_runningAllocators.begin(), it);
 
 	if (m_runningAllocators.empty())
-	{
-		m_signalHistory.clear();
-		m_highestSignal = 0;
-	}
+		Reset();
 	else
-		m_highestSignal = m_signalHistory[valueToSync-1];
+		m_highestSignaledHistory = m_signalHistory[roundedFenceValue];
 }
 
 void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator)
 {
 	std::move(allocator.begin(), allocator.end(), std::back_inserter(m_runningAllocators));
+}
+
+void DX12CommandQueue::Reset()
+{
+	m_commandQueue.ResetFenceValue();
+	m_highestSignaledHistory = 0;
+	m_highestSyncedSignal = 0;
 }

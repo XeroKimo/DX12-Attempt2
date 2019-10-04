@@ -98,11 +98,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     renderer.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
     renderer.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
-	Vector3 pos(0, 0, 1.f);
+	Vector3 pos(0, 2.f, 5.f);
 	Matrix4x4 worldMatrix;
 	//worldMatrix.SetOrtho(3,3, 0, 1000);
 	worldMatrix.SetPerspective(90, 1280/720, 0, 1000);
-	//worldMatrix.Transpose();
 
 	struct cBuffer { Vector3 pos; float pad; Matrix4x4 worldMatrix; };
 
@@ -147,7 +146,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             renderer.SyncAllQueues();
 
             swapChain.GetInterface()->Present(1, 0);
-            renderer.ResetAllQueues();
 		}
 	}
 

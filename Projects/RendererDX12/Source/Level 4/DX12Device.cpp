@@ -98,11 +98,18 @@ void DX12Device::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
         commandQueue->SyncQueue(INFINITE);
 }
 
+void DX12Device::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex, UINT64 fenceValue)
+{
+	unique_ptr<DX12CommandQueue>& commandQueue = GetCommandQueue(type, queueIndex);
+	if (commandQueue)
+		commandQueue->SyncQueue(INFINITE, fenceValue);
+}
+
 void DX12Device::ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
     unique_ptr<DX12CommandQueue>& commandQueue = GetCommandQueue(type, queueIndex);
     if (commandQueue)
-        commandQueue->ResetFenceValue();
+        commandQueue->Reset();
 }
 
 void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue)
@@ -159,16 +166,24 @@ void DX12Device::ResetAllQueues()
 {
     for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
     {
-        queue->ResetFenceValue();
+        queue->Reset();
     }
     for (const unique_ptr<DX12CommandQueue>& queue : m_computeQueue)
     {
-        queue->ResetFenceValue();
+        queue->Reset();
     }
     for (const unique_ptr<DX12CommandQueue>& queue : m_copyQueue)
     {
-        queue->ResetFenceValue();
+        queue->Reset();
     }
+}
+
+UINT64 DX12Device::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+{
+	unique_ptr<DX12CommandQueue>& commandQueue = GetCommandQueue(type, queueIndex);
+	if (commandQueue)
+		return commandQueue->GetFenceValue();
+	return 0;
 }
 
 unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
