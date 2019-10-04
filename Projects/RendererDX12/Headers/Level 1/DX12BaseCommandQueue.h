@@ -1,6 +1,8 @@
 #pragma once
 #include "DX12Header.h"
 
+#define FENCE_SIGNAL_VALUE_MAX UINT64_MAX
+
 class DX12BaseCommandQueue
 {
 public:
@@ -9,7 +11,7 @@ public:
 
 	void Signal();
 	void StallQueue(ID3D12Fence* fence, UINT64 fenceValue);
-	void SyncQueue(DWORD milliseconds, UINT64 fenceValue = 0);
+	void SyncQueue(DWORD milliseconds, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
 
     inline void ResetFenceValue() { m_fenceValue = 0; m_fence->Signal(0); }
 	inline ID3D12CommandQueue* GetInterface() { return m_commandQueue.Get(); }

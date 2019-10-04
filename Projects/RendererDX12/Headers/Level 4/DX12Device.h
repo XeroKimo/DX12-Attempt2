@@ -29,12 +29,12 @@ public:
 	UINT64 GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
 	
 	unique_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type);
-    inline ID3D12CommandQueue* GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE type, UINT index) { return GetCommandQueue(type, index)->GetBase()->GetInterface(); }
+    inline ID3D12CommandQueue* GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE type, UINT index) { return GetCommandQueue(type, index)->GetInterface(); }
     inline DX12BaseDevice* GetBase() { return &m_device; }
 
 private:
-    unique_ptr<DX12CommandQueue>& GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-    unique_ptr<DX12ManagerCommandList>& GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
+    DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
+    DX12ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
 private:
     DX12BaseDevice m_device;
 

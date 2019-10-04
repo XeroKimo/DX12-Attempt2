@@ -23,9 +23,9 @@ public:
 	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
 
 	void CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
-	void ExecuteList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
+	void ExecuteCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
 	void ExecuteWaitingList(UINT queueIndex);
-	void ExecuteAllWaitingList();
+	void ExecuteAllWaitingLists();
 
 	unique_ptr<DX12CommandList> GetCommandList();
 private:

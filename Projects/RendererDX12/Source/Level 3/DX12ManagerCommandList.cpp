@@ -32,7 +32,7 @@ void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list,
 	m_waitingLists[queueIndex].AddCommandList(list);
 }
 
-void DX12ManagerCommandList::ExecuteList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+void DX12ManagerCommandList::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
 {
 	assert(queueIndex < m_pCommandQueues->size());
 
@@ -48,7 +48,7 @@ void DX12ManagerCommandList::ExecuteWaitingList(UINT queueIndex)
 	m_waitingLists[queueIndex].ExecuteWaitingList((*m_pCommandQueues)[queueIndex].get(), m_inactiveList);
 }
 
-void DX12ManagerCommandList::ExecuteAllWaitingList()
+void DX12ManagerCommandList::ExecuteAllWaitingLists()
 {
 	for (size_t i = 0; i < m_waitingLists.size(); i++)
 	{

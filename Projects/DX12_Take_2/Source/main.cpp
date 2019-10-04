@@ -133,7 +133,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			pipeline.SetPipelineState(commandList);
 			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			//cl->SetConstantBuffer(0, &pos, sizeof(Vector3));
 			cl->SetConstantBuffer(0, &buffer, sizeof(buffer));
             texture.Set(cl.get(), 1);
 			mesh.Set(cl.get());
@@ -145,7 +144,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             renderer.SignalAllQueues();
             renderer.SyncAllQueues();
 
-            swapChain.GetInterface()->Present(1, 0);
+            swapChain.GetInterface()->Present(0, 0);
 		}
 	}
 

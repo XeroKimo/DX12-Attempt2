@@ -21,7 +21,9 @@ public:
 	void Reset();
 	inline void ExecuteCommandLists(UINT numList, ID3D12CommandList* const* list) { m_commandQueue.GetInterface()->ExecuteCommandLists(numList, list); }
 	inline void SetActiveAllocator(unique_ptr<DX12CommandAllocator>& allocator) { m_runningAllocators.push_back(std::move(allocator)); }
-	inline DX12BaseCommandQueue* GetBase() { return &m_commandQueue; }
+	//inline DX12BaseCommandQueue* GetBase() { return &m_commandQueue; }
+	inline ID3D12CommandQueue* GetInterface() { return m_commandQueue.GetInterface(); }
+	inline ID3D12Fence* GetFence() { return m_commandQueue.GetFence(); }
 	inline UINT64 GetFenceValue() { return m_commandQueue.GetFenceValue(); }
 private:
 	DX12ManagerCommandAllocator* m_allocatorManager;
