@@ -17,8 +17,8 @@ public:
 
 	void Identity();
 	void Transpose();
-	void SetOrtho(float width, float height, float near, float far);
-	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far);
+	void SetOrtho(float width, float height, float near, float far, bool posZIn);
+	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far, bool posZIn);
 
 	Matrix4x4 operator+(const Matrix4x4& other);
 	Matrix4x4 operator-(const Matrix4x4& other);
@@ -97,24 +97,52 @@ void inline Matrix4x4::Transpose()
 	v4w = temp.v4w;
 }
 
-inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
+inline void Matrix4x4::SetOrtho(float width, float height, float near, float far, bool posZIn)
 {
+	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh
 	Identity();
-	v1x = 2 / width;
-	v2y = 2 / height;
-	v3z = 1 / (far - near);
-	v4z = -v3z * near;
+	if (posZIn)
+	{
+		v1x = 2 / width;
+		v2y = 2 / height;
+		v3z = 1 / (far - near);
+		v4z = -near / (far - near);
+	}
+	else
+	{
+		v1x = 2 / width;
+		v2y = 2 / height;
+		v3z = 1 / (near - far);
+		v4z = near / (near - far);
+	}
 }
 
-inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far)
+inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far, bool posZIn)
 {
+	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovlh LeftHanded, posZIn = true
+	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovrh Right handed, posZIn = false
+	float yScale = 1 / tanf(fovAngleY * 3.14f / 180.0f * 0.5f);
+	float xScale = yScale / aspectRatio;
+
 	Identity();
-	v1x = 1 / tanf(fovAngleY *3.14f / 180.0f * 0.5f);
-	v2y = v1x / aspectRatio;
-	v3z = far / (far - near);
-	v3w = 1;
-	v4z =(-near * far) / (far - near);
-	v4w = 0;
+	if (posZIn)
+	{
+		v1x = xScale;
+		v2y = yScale;
+		v3z = far / (far - near);
+		v3w = 1;
+		v3z = (-near * far) / (far - near);
+		v4w = 0;
+	}
+	else
+	{
+		v1x = xScale;
+		v2y = yScale;
+		v3z = far / (near - far);
+		v3w = -1;
+		v3z = (near * far) / (near - far);
+		v4w = 0;
+	}
 }
 
 Matrix4x4 inline Matrix4x4::operator+(const Matrix4x4& other)

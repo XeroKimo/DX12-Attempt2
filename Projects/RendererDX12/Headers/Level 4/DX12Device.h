@@ -20,7 +20,7 @@ public:
     void ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
 
     void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue = 0);
-	void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, ID3D12Fence* fence, UINT64 fenceValue);
+	void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue);
 
     void SignalAllQueues();
     void SyncAllQueues();

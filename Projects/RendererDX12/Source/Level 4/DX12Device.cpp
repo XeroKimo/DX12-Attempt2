@@ -118,12 +118,12 @@ void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, 
     DX12CommandQueue* toWaitQueue = GetCommandQueue(waitType, waitIndex);
 	if (stalledQueue && toWaitQueue)
 	{
-		UINT64 valueToWait = (waitValue == 0) ? toWaitQueue->GetFenceValue() : waitValue;
+		UINT64 valueToWait = (waitValue == 0) ? toWaitQueue->GetFence()->fenceValue : waitValue;
 		stalledQueue->StallQueue(toWaitQueue->GetFence(), valueToWait);
 	}
 }
 
-void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, ID3D12Fence* fence, UINT64 fenceValue)
+void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue)
 {
 	DX12CommandQueue* stalledQueue = GetCommandQueue(stallType, stallIndex);
 	if (stalledQueue)
@@ -182,7 +182,7 @@ UINT64 DX12Device::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
 	if (commandQueue)
-		return commandQueue->GetFenceValue();
+		return commandQueue->GetFence()->fenceValue;
 	return FENCE_SIGNAL_VALUE_MAX;
 }
 

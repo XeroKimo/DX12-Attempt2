@@ -52,7 +52,7 @@ void DX12ManagerCommandList::ExecuteAllWaitingLists()
 {
 	for (size_t i = 0; i < m_waitingLists.size(); i++)
 	{
-		ExecuteWaitingList(i);
+		ExecuteWaitingList(static_cast<UINT>(i));
 	}
 }
 
@@ -84,7 +84,7 @@ void DX12ManagerCommandList::WaitingList::AddCommandList(unique_ptr<DX12CommandL
 
 void DX12ManagerCommandList::WaitingList::ExecuteWaitingList(DX12CommandQueue* commandQueue, std::vector<unique_ptr<DX12CommandList>>& inactiveList)
 {
-	commandQueue->ExecuteCommandLists(m_rawList.size(), m_rawList.data());
+	commandQueue->ExecuteCommandLists(static_cast<UINT>(m_rawList.size()), m_rawList.data());
 	commandQueue->SetActiveAllocators(m_waitingAllocator);
 	std::move(m_waitingList.begin(), m_waitingList.end(), std::back_inserter(inactiveList));
 	m_waitingList.clear();

@@ -4,7 +4,6 @@
 DX12CommandQueue::DX12CommandQueue() :
 	m_allocatorManager(nullptr),
 	m_highestSignaledHistory(0),
-	m_highestSyncedSignal(0),
 	m_signalHistory()
 {
 }
@@ -21,7 +20,7 @@ void DX12CommandQueue::Signal()
 	if (m_runningAllocators.empty())
 		return;
 	m_commandQueue.Signal();
-	m_signalHistory[(m_commandQueue.GetFenceValue() - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
+	m_signalHistory[(m_commandQueue.GetFence()->fenceValue - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
@@ -39,9 +38,9 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
     if (m_runningAllocators.empty())
         return;
 
-	UINT64 valueToSync = (fenceValue == FENCE_SIGNAL_VALUE_MAX || fenceValue > m_commandQueue.GetFenceValue()) ? m_commandQueue.GetFenceValue() : fenceValue;
+	UINT64 valueToSync = (fenceValue == FENCE_SIGNAL_VALUE_MAX || fenceValue > m_commandQueue.GetFence()->fenceValue) ? m_commandQueue.GetFence()->fenceValue : fenceValue;
 
-	if (valueToSync <= m_highestSyncedSignal)
+	if (valueToSync <= m_commandQueue.GetFence()->highestSyncedValue)
 		return;
 
 	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
@@ -49,7 +48,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 
 	if (iteratorOffset < 1)
 	{
-		valueToSync = m_commandQueue.GetFenceValue();
+		valueToSync = m_commandQueue.GetFence()->fenceValue;
 		roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
 		iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
 		assert(false); // Signal history might've wrapped around since last sync with a lower value than the last highest signaled history, try increasing MAX_SIGNAL_HISTORY value
@@ -67,7 +66,6 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 		Reset();
 	else
 	{
-		m_highestSyncedSignal = valueToSync;
 		m_highestSignaledHistory = m_signalHistory[roundedFenceValue];
 	}
 }
@@ -79,7 +77,6 @@ void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAll
 
 void DX12CommandQueue::Reset()
 {
-	m_commandQueue.ResetFenceValue();
+	m_commandQueue.ResetFence();
 	m_highestSignaledHistory = 0;
-	m_highestSyncedSignal = 0;
 }

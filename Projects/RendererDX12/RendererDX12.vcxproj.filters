@@ -42,9 +42,6 @@
     <ClInclude Include="Headers\Level 1\DX12BaseCommandAllocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Level 1\DX12BaseCommandQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Level 1\DX12BaseDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,6 +102,12 @@
     <ClInclude Include="Headers\Helpers\DX12HResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Level 1\DX12Fence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 2\DX12BaseCommandQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
@@ -120,9 +123,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 1\DX12BaseCommandAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Level 1\DX12BaseCommandQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 1\DX12BaseDevice.cpp">
@@ -162,6 +162,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 2\DX12Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 1\DX12Fence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12BaseCommandQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

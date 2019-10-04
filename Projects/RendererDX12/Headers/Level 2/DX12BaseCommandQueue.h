@@ -1,5 +1,6 @@
 #pragma once
 #include "DX12Header.h"
+#include "Level 1/DX12Fence.h"
 
 #define FENCE_SIGNAL_VALUE_MAX UINT64_MAX
 
@@ -10,18 +11,20 @@ public:
 	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
 
 	void Signal();
-	void StallQueue(ID3D12Fence* fence, UINT64 fenceValue);
+	void Signal(DX12Fence* fence);
+	void StallQueue(DX12Fence* fence, UINT64 fenceValue);
 	void SyncQueue(DWORD milliseconds, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
+	void SyncFence(DWORD milliseconds, DX12Fence* fence, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
 
-    inline void ResetFenceValue() { m_fenceValue = 0; m_fence->Signal(0); }
+	inline void ResetFence() { m_fence.Reset(); }
 	inline ID3D12CommandQueue* GetInterface() { return m_commandQueue.Get(); }
-	inline ID3D12Fence* GetFence() { return m_fence.Get(); }
-	inline UINT64 GetFenceValue() { return m_fenceValue; }
+	inline DX12Fence* GetFence() { return &m_fence; }
+	inline ID3D12Fence* GetFenceInterface() { return m_fence.GetInterface(); }
 private:
 
 	ComPtr<ID3D12CommandQueue> m_commandQueue;
-	ComPtr<ID3D12Fence> m_fence;
+	DX12Fence m_fence;
+	//ComPtr<ID3D12Fence> m_fence;
     D3D12_COMMAND_LIST_TYPE m_type;
-	UINT64 m_fenceValue;
 	HANDLE m_fenceEvent;
 };

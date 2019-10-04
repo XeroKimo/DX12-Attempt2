@@ -36,8 +36,8 @@ void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData
 	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
 
 	m_vertexView.BufferLocation = m_vertexBuffer.Get()->GetGPUVirtualAddress();
-	m_vertexView.SizeInBytes = totalVertexSize;
-	m_vertexView.StrideInBytes = sizeOfVertex;
+	m_vertexView.SizeInBytes = static_cast<UINT>(totalVertexSize);
+	m_vertexView.StrideInBytes = static_cast<UINT>(sizeOfVertex);
 
 	m_vertexCount = vertexCount;
 }
