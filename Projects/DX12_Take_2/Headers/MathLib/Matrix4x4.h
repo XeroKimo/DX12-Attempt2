@@ -1,7 +1,15 @@
 #pragma once
 #include "Vector4.h"
 
-class Matrix4x4
+#ifdef near
+#undef near
+#endif // near
+
+#ifdef far
+#undef far
+#endif // far
+
+struct Matrix4x4
 {
 public:
 	Matrix4x4();
@@ -9,6 +17,8 @@ public:
 
 	void Identity();
 	void Transpose();
+	void SetOrtho(float width, float height, float near, float far);
+	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far);
 
 	Matrix4x4 operator+(const Matrix4x4& other);
 	Matrix4x4 operator-(const Matrix4x4& other);
@@ -59,7 +69,7 @@ void inline Matrix4x4::Identity()
 	v1x = v2y = v3z = v4w = 1.0f;
 	v1y = v1z = v1w = 0.0f;
 	v2x = v2z = v2w = 0.0f;
-	v3x = v3w = v3w = 0.0f;
+	v3x = v3y = v3w = 0.0f;
 	v4x = v4y = v4z = 0.0f;
 }
 
@@ -85,6 +95,26 @@ void inline Matrix4x4::Transpose()
 	v4y = temp.v2w;
 	v4z = temp.v3w;
 	v4w = temp.v4w;
+}
+
+inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
+{
+	Identity();
+	v1x = 2 / width;
+	v2y = 2 / height;
+	v3z = 1 / (far - near);
+	v4z = -v3z * near;
+}
+
+inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far)
+{
+	Identity();
+	v1x = 1 / tanf(fovAngleY *3.14f / 180.0f * 0.5f);
+	v2y = v1x / aspectRatio;
+	v3z = far / (far - near);
+	v3w = 1;
+	v4z =(-near * far) / (far - near);
+	v4w = 0;
 }
 
 Matrix4x4 inline Matrix4x4::operator+(const Matrix4x4& other)
@@ -264,3 +294,12 @@ void inline Matrix4x4::operator*=(const Matrix4x4& other)
 	v3w = w.Dot(three);
 	v4w = w.Dot(four);
 }
+
+
+#ifndef near
+#define near
+#endif // near
+
+#ifndef far
+#define far
+#endif // far

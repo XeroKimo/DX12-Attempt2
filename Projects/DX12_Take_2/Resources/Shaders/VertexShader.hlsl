@@ -15,6 +15,7 @@ struct PixelInput
 cbuffer constantBuffer : register(b0)
 {
 	float3 position;
+	float4x4 projMatrix;
 }
 
 PixelInput main( VertexInput input)
@@ -22,6 +23,7 @@ PixelInput main( VertexInput input)
 	PixelInput output;
 	output.position = float4(input.position, 1.0f);
 	output.position += float4(position, 0.0f);
+	output.position = mul(output.position, projMatrix);
 	output.color = input.color;
 	output.uv = input.uv;
 	return output;

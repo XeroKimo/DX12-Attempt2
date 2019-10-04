@@ -8,7 +8,8 @@ public:
 	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
 
 	void Signal();
-	void SyncQueue(DWORD milliseconds);
+	void StallQueue(ID3D12Fence* fence, UINT64 fenceValue);
+	void SyncQueue(DWORD milliseconds, UINT64 fenceValue = 0);
 
     inline void ResetFenceValue() { m_fenceValue = 0; m_fence->Signal(0); }
 	inline ID3D12CommandQueue* GetInterface() { return m_commandQueue.Get(); }

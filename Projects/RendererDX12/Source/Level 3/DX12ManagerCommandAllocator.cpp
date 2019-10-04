@@ -76,7 +76,6 @@ void DX12ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<DX12Com
 		std::move(allocators.begin(), allocators.end(), std::back_inserter(m_copyAllocators));
 		break;
 	}
-	allocators.clear();
 }
 
 

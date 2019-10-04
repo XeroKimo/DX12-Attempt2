@@ -3,7 +3,8 @@
 
 DX12BaseCommandQueue::DX12BaseCommandQueue() :
 	m_fenceValue(0),
-    m_fenceEvent(nullptr)
+    m_fenceEvent(nullptr),
+	m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
 {
 }
 
@@ -13,11 +14,17 @@ void DX12BaseCommandQueue::Signal()
 	m_commandQueue->Signal(m_fence.Get(), m_fenceValue);
 }
 
-void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds)
+void DX12BaseCommandQueue::StallQueue(ID3D12Fence* fence, UINT64 fenceValue)
 {
-	if (m_fence->GetCompletedValue() < m_fenceValue)
+	m_commandQueue->Wait(fence, fenceValue);
+}
+
+void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
+{
+	UINT64& valueToSync = (fenceValue == 0) ? m_fenceValue : fenceValue;
+	if (m_fence->GetCompletedValue() < valueToSync)
 	{
-		m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent);
+		m_fence->SetEventOnCompletion(valueToSync, m_fenceEvent);
 		WaitForSingleObject(m_fenceEvent, milliseconds);
 	}
 }

@@ -46,13 +46,13 @@ void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* com
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 
-	commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
+	commandList->GetInterface()->ResourceBarrier(1, &barrier);
 }
 
 void DX12Texture::Set(DX12CommandList* commandList, const UINT& paramIndex)
 {
-	commandList->GetBase()->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
-	commandList->GetBase()->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
+	commandList->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
+	commandList->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
 }
 
 void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageWidth, unsigned int& outImageHeight)

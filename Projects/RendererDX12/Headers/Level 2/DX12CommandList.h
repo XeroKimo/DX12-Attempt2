@@ -14,6 +14,7 @@ public:
 	void UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data);
 
 	inline void Close() { m_commandList.GetInterface()->Close(); }
+	inline ID3D12GraphicsCommandList* GetInterface() { return m_commandList.GetInterface(); }
 	inline DX12BaseCommandList* GetBase() { return &m_commandList; }
     inline D3D12_COMMAND_LIST_TYPE GetType() { return m_commandList.GetInterface()->GetType(); }
 	inline unique_ptr<DX12CommandAllocator>& GetCommandAllocator() { return m_allocator; }

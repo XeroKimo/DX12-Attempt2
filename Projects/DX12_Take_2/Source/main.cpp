@@ -16,8 +16,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     DX12BaseSwapChain swapChain;
 
     renderer.Initialize(D3D_FEATURE_LEVEL_11_0, 0, &commandAllocatorManager, 1, 0, 1);
+	managerUploadBuffer.Initialize(renderer.GetBase(), 1000);
     commandAllocatorManager.Initialize(renderer.GetBase()->GetInterface(), &managerUploadBuffer);
-    managerUploadBuffer.Initialize(renderer.GetBase(), 1000);
     swapChain.Initialize(renderer.GetBase()->GetInterface(), renderer.GetBase()->GetNodeMask(), renderer.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT,0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
 
 	PlatformClock clock;
@@ -98,8 +98,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     renderer.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
     renderer.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
-	Vector3 pos(1, 0, 0);
+	Vector3 pos(0, 0, 1.f);
+	Matrix4x4 worldMatrix;
+	//worldMatrix.SetOrtho(3,3, 0, 1000);
+	worldMatrix.SetPerspective(90, 1280/720, 0, 1000);
+	//worldMatrix.Transpose();
 
+	struct cBuffer { Vector3 pos; float pad; Matrix4x4 worldMatrix; };
+
+	cBuffer buffer = { pos, 0, worldMatrix };
 	MSG msg;
  	while (application.IsRunning())
 	{
@@ -128,6 +135,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			pipeline.SetRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			//cl->SetConstantBuffer(0, &pos, sizeof(Vector3));
+			cl->SetConstantBuffer(0, &buffer, sizeof(buffer));
             texture.Set(cl.get(), 1);
 			mesh.Set(cl.get());
 			mesh.Draw(cl.get());

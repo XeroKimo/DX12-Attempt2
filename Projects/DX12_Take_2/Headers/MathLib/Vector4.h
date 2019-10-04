@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector3.h"
 
-class Vector4
+struct Vector4
 {
 public:
 	Vector4();

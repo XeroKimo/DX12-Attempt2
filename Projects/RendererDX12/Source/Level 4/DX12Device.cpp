@@ -46,7 +46,35 @@ void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12
     }
 }
 
-void DX12Device::ExecuteAllCommandListManager()
+void DX12Device::CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+{
+	unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(commandList->GetType());
+	if (commandListManager != nullptr)
+		commandListManager->CloseCommandList(commandList, queueIndex);
+}
+
+void DX12Device::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+{
+	unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(commandList->GetType());
+	if (commandListManager != nullptr)
+		commandListManager->ExecuteList(commandList, queueIndex);
+}
+
+void DX12Device::ExecuteWaitingLists(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+{
+	unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(type);
+	if (commandListManager != nullptr)
+		commandListManager->ExecuteWaitingList(queueIndex);
+}
+
+void DX12Device::ExecuteAllWaitingListsType(D3D12_COMMAND_LIST_TYPE type)
+{
+	unique_ptr<DX12ManagerCommandList>& manager = GetCommandListManager(type);
+	if (manager)
+		manager->ExecuteAllWaitingList();
+}
+
+void DX12Device::ExecuteAllWaitingLists()
 {
     if (m_directList)
         m_directList->ExecuteAllWaitingList();
@@ -77,13 +105,22 @@ void DX12Device::ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
         commandQueue->ResetFenceValue();
 }
 
-void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex)
+void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue)
 {
     unique_ptr<DX12CommandQueue>& stalledQueue = GetCommandQueue(stallType, stallIndex);
     unique_ptr<DX12CommandQueue>& toWaitQueue = GetCommandQueue(waitType, waitIndex);
+	if (stalledQueue != nullptr && toWaitQueue != nullptr)
+	{
+		UINT64 valueToWait = (waitValue == 0) ? toWaitQueue->GetBase()->GetFenceValue() : waitValue;
+		stalledQueue->StallQueue(toWaitQueue->GetBase()->GetFence(), valueToWait);
+	}
+}
 
-    if (stalledQueue && toWaitQueue)
-        stalledQueue->StallQueue(toWaitQueue.get());
+void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, ID3D12Fence* fence, UINT64 fenceValue)
+{
+	unique_ptr<DX12CommandQueue>& stalledQueue = GetCommandQueue(stallType, stallIndex);
+	if (stalledQueue != nullptr)
+		stalledQueue->StallQueue(fence, fenceValue);
 }
 
 void DX12Device::SignalAllQueues()
@@ -134,27 +171,6 @@ void DX12Device::ResetAllQueues()
     }
 }
 
-void DX12Device::CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
-{
-    unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(commandList->GetType());
-    if (commandListManager)
-        commandListManager->CloseCommandList(commandList, queueIndex);
-}
-
-void DX12Device::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
-{
-    unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(commandList->GetType());
-    if (commandListManager)
-        commandListManager->ExecuteList(commandList, queueIndex);
-}
-
-void DX12Device::ExecuteCommandListManager(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
-{
-    unique_ptr<DX12ManagerCommandList>& commandListManager = GetCommandListManager(type);
-    if (commandListManager)
-        commandListManager->ExecuteWaitingList(queueIndex);
-}
-
 unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
 {
     if (type == D3D12_COMMAND_LIST_TYPE_BUNDLE)
@@ -176,26 +192,18 @@ unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE t
 
 unique_ptr<DX12CommandQueue>& DX12Device::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
-    switch (type)
-    {
-    case D3D12_COMMAND_LIST_TYPE_DIRECT:
-        if (queueIndex < m_directQueue.size())
-            return m_directQueue[queueIndex];
-        break;
-    case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-        if (queueIndex < m_computeQueue.size())
-            return m_computeQueue[queueIndex];
-        break;
-    case D3D12_COMMAND_LIST_TYPE_COPY:
-        if (queueIndex < m_copyQueue.size())
-            return m_copyQueue[queueIndex];
-        break;
-    default:
-        assert(false);
-        unique_ptr<DX12CommandQueue> nullQueue = nullptr;
-        return nullQueue;
-        break;
-    }
+    if (queueIndex < m_directQueue.size() && type == D3D12_COMMAND_LIST_TYPE_DIRECT)
+        return m_directQueue[queueIndex];
+	else if (queueIndex < m_directQueue.size() && type == D3D12_COMMAND_LIST_TYPE_COMPUTE)
+		return m_computeQueue[queueIndex];
+	else if (queueIndex < m_directQueue.size() && type == D3D12_COMMAND_LIST_TYPE_COPY)
+		return m_copyQueue[queueIndex];
+	else
+	{
+		assert(false);
+		static unique_ptr<DX12CommandQueue> nullQueue = nullptr;
+		return nullQueue;
+	}
 }
 
 unique_ptr<DX12ManagerCommandList>& DX12Device::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
@@ -204,17 +212,13 @@ unique_ptr<DX12ManagerCommandList>& DX12Device::GetCommandListManager(D3D12_COMM
     {
     case D3D12_COMMAND_LIST_TYPE_DIRECT:
         return m_directList;
-        break;
     case D3D12_COMMAND_LIST_TYPE_COMPUTE:
         return m_computeList;
-        break;
     case D3D12_COMMAND_LIST_TYPE_COPY:
         return m_copyList;
-        break;
     default:
         assert(false);
-        unique_ptr<DX12ManagerCommandList> nullManager = nullptr;
+        static unique_ptr<DX12ManagerCommandList> nullManager = nullptr;
         return nullManager;
-        break;
     }
 }

@@ -24,7 +24,8 @@ DX12UploadBuffer::DX12UploadBuffer(ID3D12GraphicsCommandList* commandList, UINT 
 
 void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT nodeMask, UINT64 size)
 {
-	device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(m_totalSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+	HRESULT hr = device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+	assert(SUCCEEDED(hr));
 
 	D3D12_RANGE range = { 0,0 };
 	m_resource.Get()->Map(0, &range, reinterpret_cast<void**>(&m_mappedAddress));

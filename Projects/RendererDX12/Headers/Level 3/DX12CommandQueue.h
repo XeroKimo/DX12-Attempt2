@@ -6,13 +6,14 @@ class DX12ManagerCommandAllocator;
 
 class DX12CommandQueue
 {
+	using SignalHistory = size_t;
 public:
 	DX12CommandQueue();
 	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
 	void Signal();
-	void StallQueue(DX12CommandQueue* queue);
-	void SyncQueue(DWORD milliseconds);
+	void StallQueue(ID3D12Fence* fence, UINT64 fenceValue) { m_commandQueue.StallQueue(fence, fenceValue); }
+	void SyncQueue(DWORD milliseconds, UINT64 fenceValue = 0);
 
 	void SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator);
     inline void ResetFenceValue() { m_commandQueue.ResetFenceValue(); }
@@ -24,4 +25,6 @@ private:
 	DX12BaseCommandQueue m_commandQueue;
 
 	std::vector<unique_ptr<DX12CommandAllocator>> m_runningAllocators;
+	std::vector<SignalHistory> m_signalHistory;
+	SignalHistory m_highestSignal;
 };

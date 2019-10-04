@@ -29,7 +29,7 @@ D3D12_GPU_VIRTUAL_ADDRESS DX12CommandAllocator::UploadCBVSRVUAV(void* data, UINT
 
 void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
 {
-	m_temporaryBuffers.push_back(make_unique<DX12UploadBuffer>(commandList, nodeMask, destination, data));
+	m_temporaryBuffers.push_back(make_shared<DX12UploadBuffer>(commandList, nodeMask, destination, data));
 }
 
 void DX12CommandAllocator::Reset()

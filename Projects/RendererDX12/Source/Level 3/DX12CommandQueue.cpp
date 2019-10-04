@@ -2,7 +2,8 @@
 #include "Level 3/DX12CommandQueue.h"
 
 DX12CommandQueue::DX12CommandQueue() :
-	m_allocatorManager(nullptr)
+	m_allocatorManager(nullptr),
+	m_highestSignal(0)
 {
 }
 
@@ -17,19 +18,32 @@ void DX12CommandQueue::Signal()
 	if (m_runningAllocators.empty())
 		return;
 	m_commandQueue.Signal();
+	m_signalHistory.push_back(m_runningAllocators.size());
 }
 
-void DX12CommandQueue::StallQueue(DX12CommandQueue* queue)
-{
-    m_commandQueue.GetInterface()->Wait(queue->GetBase()->GetFence(), queue->GetBase()->GetFenceValue());
-}
-
-void DX12CommandQueue::SyncQueue(DWORD milliseconds)
+void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 {
     if (m_runningAllocators.empty())
         return;
-	m_commandQueue.SyncQueue(milliseconds);
-	m_allocatorManager->ResetAllocators(m_runningAllocators);
+
+	UINT64 valueToSync = (fenceValue == 0) ? m_commandQueue.GetFenceValue() : fenceValue;
+	m_commandQueue.SyncQueue(milliseconds, valueToSync);
+
+	std::vector<unique_ptr<DX12CommandAllocator>> allocatorsToReset;
+	size_t iteratorOffset = m_signalHistory[valueToSync-1] - m_highestSignal;
+	auto it = m_runningAllocators.begin() +  iteratorOffset;
+
+	std::move(m_runningAllocators.begin(), it, std::back_inserter(allocatorsToReset));
+	m_allocatorManager->ResetAllocators(allocatorsToReset);
+	m_runningAllocators.erase(m_runningAllocators.begin(), it);
+
+	if (m_runningAllocators.empty())
+	{
+		m_signalHistory.clear();
+		m_highestSignal = 0;
+	}
+	else
+		m_highestSignal = m_signalHistory[valueToSync-1];
 }
 
 void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator)
