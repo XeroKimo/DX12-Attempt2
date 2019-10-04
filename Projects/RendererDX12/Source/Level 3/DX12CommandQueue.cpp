@@ -39,7 +39,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
     if (m_runningAllocators.empty())
         return;
 
-	if (fenceValue < m_highestSyncedSignal)
+	if (fenceValue <= m_highestSyncedSignal)
 		return;
 
 	UINT64 valueToSync = (fenceValue == 0 || fenceValue > m_commandQueue.GetFenceValue()) ? m_commandQueue.GetFenceValue() : fenceValue;
