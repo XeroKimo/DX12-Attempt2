@@ -18,7 +18,7 @@ void DX12CommandQueue::Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYP
 UINT64 DX12CommandQueue::Signal()
 {
 	if (m_runningAllocators.empty())
-		return;
+		return FENCE_SIGNAL_VALUE_MAX;
 	UINT64 value = m_commandQueue.Signal();
 	m_allocatorSizeHistory[(m_commandQueue.GetFence()->fenceValue - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
 	return value;
