@@ -46,7 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		DX12HGraphicsPipelineStateDesc pipelineDesc;
 		{
-			//pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+			pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptorTable(table);
@@ -99,18 +99,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     renderer.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
     renderer.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
-	Vector3 pos(0, 0.f, 0.f);
-	Vector4 pos4 = Vector4(pos, 1);
 	Matrix4x4 worldMatrix;
-	worldMatrix.SetOrtho(3,3, 0.0f, 100, true);
-	//worldMatrix.SetPerspective(90, 1280/720, 0.f, 1000, true);
-	//worldMatrix.Transpose();
+	Matrix4x4 viewMatrix;
+	Matrix4x4 projMatrix;
+	worldMatrix.SetPosition(Vector3(0, 0, -2));
+	//projMatrix.SetOrtho(3,3, 0.0f, 100, false);
+	projMatrix.SetPerspective(90, 1280/720, 0.f, 1000, false);
 
-	Vector4 finalPos = worldMatrix * pos4;
+	float rotateSpeed = 60.0f;
 
-	struct cBuffer { Vector3 pos; float pad; Matrix4x4 worldMatrix; };
+	struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 
-	cBuffer buffer = { pos, 0, worldMatrix };
+	cBuffer buffer = { worldMatrix, viewMatrix, projMatrix };
 	MSG msg;
  	while (application.IsRunning())
 	{
@@ -130,6 +130,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		else
 		{
 			clock.Update();
+
+			//buffer.viewMatrix.RotateX(rotateSpeed * clock.GetDeltaTime());
+			//buffer.worldMatrix.Translate(Vector3(0, 0, -0.1f)* clock.GetDeltaTime());
+			//buffer.worldMatrix.RotateY(rotateSpeed * clock.GetDeltaTime());
+			//buffer.worldMatrix.RotateZ(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
+
+			Matrix4x4 finalTransform = buffer.worldMatrix * buffer.viewMatrix * buffer.projMatrix;
+			Vector3 angle = buffer.worldMatrix.GetEulerAngles();
+
 			cl = renderer.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 
@@ -148,7 +157,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             renderer.ExecuteCommandList(cl, 0);
             renderer.SignalAllQueues();
             //renderer.SyncAllQueues();
-			renderer.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, renderer.GetFenceValue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0));
+			renderer.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
 
             swapChain.GetInterface()->Present(0, 0);
 		}

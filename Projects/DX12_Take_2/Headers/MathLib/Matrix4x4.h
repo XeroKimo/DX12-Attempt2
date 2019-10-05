@@ -8,18 +8,30 @@
 #ifdef far
 #undef far
 #endif // far
-
+#define PI 3.14159265358979f
 struct Matrix4x4
 {
 public:
 
 	Matrix4x4();
-	Matrix4x4(Vector4 one, Vector4 two, Vector4 three, Vector4 four);
+	Matrix4x4(Vector4 x, Vector4 y, Vector4 z, Vector4 w);
 
 	void Identity();
 	void Transpose();
 	void SetOrtho(float width, float height, float near, float far, bool posZIn);
 	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far, bool posZIn);
+
+	void SetPosition(Vector3 position);
+	void Translate(Vector3 position);
+	void RotateX(float degrees);
+	void RotateY(float degrees);
+	void RotateZ(float degrees);
+	void SetScale(Vector3 scale);
+	void Scale(Vector3 scale);
+
+	Vector3 GetPosition() { return Vector3(vX.w, vY.w, vZ.w); }
+	Vector3 GetScale() { return Vector3(vX.x, vY.y, vZ.z); }
+	Vector3 GetEulerAngles();
 
 	Matrix4x4 GetTransposed();
 
@@ -120,6 +132,108 @@ inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float 
 	}
 }
 
+inline void Matrix4x4::SetPosition(Vector3 position)
+{
+	vX.w = position.x;
+	vY.w = position.y;
+	vZ.w = position.z;
+}
+
+inline void Matrix4x4::Translate(Vector3 position)
+{
+	vX.w += position.x;
+	vY.w += position.y;
+	vZ.w += position.z;
+}
+
+inline void Matrix4x4::RotateX(float degrees)
+{
+	Matrix4x4 rotMatrix;
+	float radians = degrees / 180.f * PI;
+
+	float sinAngle = sinf(radians);
+	float cosAngle = cosf(radians);
+
+	rotMatrix.vY.y = cosAngle;
+	rotMatrix.vY.z = -sinAngle;
+	rotMatrix.vZ.y = sinAngle;
+	rotMatrix.vZ.z = cosAngle;
+
+	*this *= rotMatrix;
+}
+
+inline void Matrix4x4::RotateY(float degrees)
+{
+	Matrix4x4 rotMatrix;
+	float radians = degrees / 180.f * PI;
+
+	float sinAngle = sinf(radians);
+	float cosAngle = cosf(radians);
+
+	rotMatrix.vX.x = cosAngle;
+	rotMatrix.vX.z = -sinAngle;
+	rotMatrix.vZ.x = sinAngle;
+	rotMatrix.vZ.z = cosAngle;
+
+	*this *= rotMatrix;
+}
+
+inline void Matrix4x4::RotateZ(float degrees)
+{
+	Matrix4x4 rotMatrix;
+	float radians = degrees / 180.f * PI;
+
+	float sinAngle = sinf(radians);
+	float cosAngle = cosf(radians);
+
+	rotMatrix.vX.x = cosAngle;
+	rotMatrix.vX.y = -sinAngle;
+	rotMatrix.vY.x = sinAngle;
+	rotMatrix.vY.y = cosAngle;
+
+	*this *= rotMatrix;
+}
+
+inline void Matrix4x4::SetScale(Vector3 scale)
+{
+	vX.x = scale.x;
+	vY.y = scale.y;
+	vZ.z = scale.z;
+}
+
+inline void Matrix4x4::Scale(Vector3 scale)
+{
+	vX.x += scale.x;
+	vY.y += scale.y;
+	vZ.z += scale.z;
+}
+
+inline Vector3 Matrix4x4::GetEulerAngles()
+{
+	float radToDeg = 180 / PI;
+	if (vY.z > 1.0f)
+	{
+		float x = PI / 2;
+		float y = atan2f(vX.y, vX.x);
+		float z = 0.0f;
+		return Vector3(x, y, z) * radToDeg;
+	}
+	else if (vY.z < -1.0f)
+	{
+		float x = PI / 2;
+		float y = -atan2f(vX.y, vX.x);
+		float z = 0.0f;
+		return Vector3(x, y, z) * radToDeg;
+	}
+	else
+	{
+		float x = asinf(vY.z);
+		float y = atan2f(-vX.z, vZ.z);
+		float z = atan2f(-vY.x, vY.y);
+		return Vector3(x, y, z) * radToDeg;
+	}
+}
+
 inline Matrix4x4 Matrix4x4::GetTransposed()
 {
 	Matrix4x4 temp = *this;
@@ -153,28 +267,29 @@ Matrix4x4 inline Matrix4x4::operator*(const Matrix4x4& other)
 {
 	Matrix4x4 mat = other;
 	mat.Transpose();
+	Matrix4x4 output;
 
-	mat.vX.x = vX.Dot(mat.vX);
-	mat.vX.y = vX.Dot(mat.vY);
-	mat.vX.z = vX.Dot(mat.vZ);
-	mat.vX.w = vX.Dot(mat.vW);
+	output.vX.x = vX.Dot(mat.vX);
+	output.vX.y = vX.Dot(mat.vY);
+	output.vX.z = vX.Dot(mat.vZ);
+	output.vX.w = vX.Dot(mat.vW);
 
-	mat.vY.x = vY.Dot(mat.vX);
-	mat.vY.y = vY.Dot(mat.vY);
-	mat.vY.z = vY.Dot(mat.vZ);
-	mat.vY.w = vY.Dot(mat.vW);
+	output.vY.x = vY.Dot(mat.vX);
+	output.vY.y = vY.Dot(mat.vY);
+	output.vY.z = vY.Dot(mat.vZ);
+	output.vY.w = vY.Dot(mat.vW);
 
-	mat.vZ.x = vZ.Dot(mat.vX);
-	mat.vZ.y = vZ.Dot(mat.vY);
-	mat.vZ.z = vZ.Dot(mat.vZ);
-	mat.vZ.w = vZ.Dot(mat.vW);
+	output.vZ.x = vZ.Dot(mat.vX);
+	output.vZ.y = vZ.Dot(mat.vY);
+	output.vZ.z = vZ.Dot(mat.vZ);
+	output.vZ.w = vZ.Dot(mat.vW);
 
-	mat.vW.x = vW.Dot(mat.vX);
-	mat.vW.y = vW.Dot(mat.vY);
-	mat.vW.z = vW.Dot(mat.vZ);
-	mat.vW.w = vW.Dot(mat.vW);
+	output.vW.x = vW.Dot(mat.vX);
+	output.vW.y = vW.Dot(mat.vY);
+	output.vW.z = vW.Dot(mat.vZ);
+	output.vW.w = vW.Dot(mat.vW);
 
-	return mat;
+	return output;
 }
 
 Vector4 inline Matrix4x4::operator*(const Vector4& other)
