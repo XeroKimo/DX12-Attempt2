@@ -25,12 +25,7 @@ void DX12CommandQueue::Signal()
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
 {
-	if (m_runningAllocators.empty())
-		return;
-	m_commandQueue.SyncQueue(milliseconds);
-	m_allocatorManager->ResetAllocators(m_runningAllocators);
-	m_runningAllocators.clear();
-	Reset();
+	SyncQueue(milliseconds, m_commandQueue.GetFence()->fenceValue);
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
@@ -38,20 +33,29 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
     if (m_runningAllocators.empty())
         return;
 
-	UINT64 valueToSync = (fenceValue == FENCE_SIGNAL_VALUE_MAX || fenceValue > m_commandQueue.GetFence()->fenceValue) ? m_commandQueue.GetFence()->fenceValue : fenceValue;
+	const UINT64& localFenceValue = m_commandQueue.GetFence()->fenceValue;
+	const UINT64& highestSyncedFenceValue = m_commandQueue.GetFence()->highestSyncedValue;
 
-	if (valueToSync <= m_commandQueue.GetFence()->highestSyncedValue)
+	if (!m_commandQueue.FenceSyncable(m_commandQueue.GetFence(), fenceValue))
 		return;
 
+	if (fenceValue == FENCE_SIGNAL_VALUE_MAX || fenceValue == m_commandQueue.GetFence()->fenceValue)
+	{
+		m_commandQueue.SyncQueue(milliseconds, fenceValue);
+		m_allocatorManager->ResetAllocators(m_runningAllocators);
+		m_runningAllocators.clear();
+		Reset();
+		return;
+	}
+
+	UINT overflow = (localFenceValue - fenceValue) / MAX_SIGNAL_HISTORY;
+	UINT64 valueToSync = fenceValue + MAX_SIGNAL_HISTORY * static_cast<UINT64>(overflow);
 	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
 	size_t iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
 
 	if (iteratorOffset < 1)
 	{
-		valueToSync = m_commandQueue.GetFence()->fenceValue;
-		roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
-		iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
-		assert(false); // Signal history might've wrapped around since last sync with a lower value than the last highest signaled history, try increasing MAX_SIGNAL_HISTORY value
+		iteratorOffset = m_signalHistory[roundedFenceValue];
 	}
 	m_commandQueue.SyncQueue(milliseconds, valueToSync);
 
@@ -62,12 +66,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 	m_allocatorManager->ResetAllocators(allocatorsToReset);
 	m_runningAllocators.erase(m_runningAllocators.begin(), it);
 
-	if (m_runningAllocators.empty())
-		Reset();
-	else
-	{
-		m_highestSignaledHistory = m_signalHistory[roundedFenceValue];
-	}
+	m_highestSignaledHistory = m_signalHistory[roundedFenceValue];
 }
 
 void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator)

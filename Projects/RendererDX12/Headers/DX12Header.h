@@ -9,7 +9,6 @@
 #include <vector>
 #include <array>
 #include <memory>
-#include <DirectXMath.h>
 #include <string>
 
 using Microsoft::WRL::ComPtr;

@@ -7,16 +7,16 @@ DX12BaseCommandQueue::DX12BaseCommandQueue() :
 {
 }
 
-void DX12BaseCommandQueue::Signal()
+UINT64 DX12BaseCommandQueue::Signal()
 {
-    m_fence.fenceValue++;
-	m_commandQueue->Signal(m_fence.GetInterface(), m_fence.fenceValue);
+	return Signal(&m_fence); 
 }
 
-void DX12BaseCommandQueue::Signal(DX12Fence* fence)
+UINT64 DX12BaseCommandQueue::Signal(DX12Fence* fence)
 {
 	fence->fenceValue++;
 	m_commandQueue->Signal(fence->GetInterface(), fence->fenceValue);
+	return m_fence.fenceValue;
 }
 
 void DX12BaseCommandQueue::StallQueue(DX12Fence* fence, UINT64 fenceValue)
@@ -31,13 +31,12 @@ void DX12BaseCommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 
 void DX12BaseCommandQueue::SyncFence(DWORD milliseconds, DX12Fence* fence, UINT64 fenceValue)
 {
-	UINT64& valueToSync = (fenceValue == FENCE_SIGNAL_VALUE_MAX || fenceValue > fence->fenceValue) ? fence->fenceValue : fenceValue;
-	if (fence->GetInterface()->GetCompletedValue() < valueToSync)
+	if (fence->GetInterface()->GetCompletedValue() < fenceValue)
 	{
-		fence->GetInterface()->SetEventOnCompletion(valueToSync, m_fenceEvent);
+		fence->GetInterface()->SetEventOnCompletion(fenceValue, m_fenceEvent);
 		WaitForSingleObject(m_fenceEvent, milliseconds);
 	}
-	fence->highestSyncedValue = valueToSync;
+	fence->highestSyncedValue = fenceValue;
 }
 
 void DX12BaseCommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType)

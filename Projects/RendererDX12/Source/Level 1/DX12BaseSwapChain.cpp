@@ -71,8 +71,8 @@ void DX12BaseSwapChain::Initialize(ID3D12Device* device, UINT nodeMask, ID3D12Co
 	m_viewPort.Height = static_cast<float>(windowHeight);
 	m_viewPort.TopLeftX = 0;
 	m_viewPort.TopLeftY = 0;
-	m_viewPort.MinDepth = -1;
-	m_viewPort.MaxDepth = 1;
+	m_viewPort.MinDepth = 0;
+	m_viewPort.MaxDepth = 0;
 
 	m_rect.top = 0;
 	m_rect.left = 0;

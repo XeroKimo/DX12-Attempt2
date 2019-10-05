@@ -46,6 +46,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		DX12HGraphicsPipelineStateDesc pipelineDesc;
 		{
+			//pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptorTable(table);
 			pipelineDesc.rootSignatureDesc.AddStaticSampler(sampler);
@@ -63,13 +65,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 		pipeline.Initialize(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
 	}
-	
 
 	struct Vertex { float x; float y; float z; float r; float g; float b; float a; float u; float v; };
-	Vertex bottomLeft = { -0.5f,-0.5f, 1, 0,0,0,0, 0.0f, 0.0f };
-	Vertex bottomRight = { 0.5f,-0.5f, 1, 0,0,0,0, 1.0f, 0.0f };
-	Vertex topLeft = { -0.5f,0.5f, 1,0,0,0,0, 0.0f, 1.0f };
-	Vertex topRight = { 0.5f,0.5f, 1,0,0,0,0, 1.0f, 1.0f};
+	Vertex bottomLeft = { -0.5f,-0.5f, 0, 0,0,0,0, 0.0f, 0.0f };
+	Vertex bottomRight = { 0.5f,-0.5f, 0, 0,0,0,0, 1.0f, 0.0f };
+	Vertex topLeft = { -0.5f,0.5f, 0,0,0,0,0, 0.0f, 1.0f };
+	Vertex topRight = { 0.5f,0.5f, 0,0,0,0,0, 1.0f, 1.0f};
 	//Vertex vertices[] =
 	//{
 	//	{ 0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f },
@@ -98,10 +99,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     renderer.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
     renderer.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
-	Vector3 pos(0, 0.f, -2.f);
+	Vector3 pos(0, 0.f, 0.f);
+	Vector4 pos4 = Vector4(pos, 1);
 	Matrix4x4 worldMatrix;
-	worldMatrix.SetOrtho(3,3, 0.0f, 100, false);
-	//worldMatrix.SetPerspective(90, 1280/720, 0.f, 1000, false);
+	worldMatrix.SetOrtho(3,3, 0.0f, 100, true);
+	//worldMatrix.SetPerspective(90, 1280/720, 0.f, 1000, true);
+	//worldMatrix.Transpose();
+
+	Vector4 finalPos = worldMatrix * pos4;
 
 	struct cBuffer { Vector3 pos; float pad; Matrix4x4 worldMatrix; };
 
@@ -142,12 +147,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
             renderer.ExecuteCommandList(cl, 0);
             renderer.SignalAllQueues();
-            renderer.SyncAllQueues();
-			//renderer.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, FENCE_SIGNAL_VALUE_MAX);
+            //renderer.SyncAllQueues();
+			renderer.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, renderer.GetFenceValue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0));
 
             swapChain.GetInterface()->Present(0, 0);
 		}
 	}
+	renderer.SignalAllQueues();
+	renderer.SyncAllQueues();
 
 	return 0;
 }
