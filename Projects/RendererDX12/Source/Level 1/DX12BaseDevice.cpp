@@ -2,7 +2,7 @@
 #include "Level 1/DX12BaseDevice.h"
 
 
-UINT DX12BaseDevice::activeNodes = 0;
+UINT DX12BaseDevice::m_activeNodes = 0;
 DX12BaseDevice::DX12BaseDevice() :
     m_nodeID(0)
 {
@@ -41,10 +41,10 @@ void DX12BaseDevice::CreateNodeMask()
     for (UINT i = 0; i < 32; i++)
     {
         UINT checkMask = 1 << i;
-        if (checkMask & (~activeNodes))
+        if (checkMask & (~m_activeNodes))
         {
             m_nodeID = i;
-            activeNodes |= checkMask;
+            m_activeNodes |= checkMask;
             break;
         }
     }
@@ -53,5 +53,5 @@ void DX12BaseDevice::CreateNodeMask()
 
 void DX12BaseDevice::DeleteNode()
 {
-    activeNodes ^= GetNodeMask();
+    m_activeNodes ^= GetNodeMask();
 }

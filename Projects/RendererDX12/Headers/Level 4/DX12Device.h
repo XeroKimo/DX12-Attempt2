@@ -14,13 +14,13 @@ public:
 	void ExecuteAllWaitingListsType(D3D12_COMMAND_LIST_TYPE type);
     void ExecuteAllWaitingLists();
 
-    void SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
+    UINT64 SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
     void SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
 	void SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex, UINT64 fenceValue);
     void ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
 
-    void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue = 0);
-	void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue);
+    void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue = FENCE_SIGNAL_VALUE_MAX);
+	void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
 
     void SignalAllQueues();
     void SyncAllQueues();
@@ -33,6 +33,7 @@ public:
     inline DX12BaseDevice* GetBase() { return &m_device; }
 
 private:
+	void StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait);
     DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
     DX12ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
 private:

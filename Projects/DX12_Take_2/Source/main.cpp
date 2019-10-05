@@ -12,12 +12,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     DX12Device renderer;
     DX12ManagerCommandAllocator commandAllocatorManager;
-    DX12ManagerUploadBuffer managerUploadBuffer;
+    DX12ManagerConstBuffer managerUploadBuffer;
     DX12BaseSwapChain swapChain;
 
     renderer.Initialize(D3D_FEATURE_LEVEL_11_0, 0, &commandAllocatorManager, 1, 0, 1);
 	managerUploadBuffer.Initialize(renderer.GetBase(), 1000);
-    commandAllocatorManager.Initialize(renderer.GetBase()->GetInterface(), &managerUploadBuffer);
+    commandAllocatorManager.Initialize(renderer.GetBase(), &managerUploadBuffer);
     swapChain.Initialize(renderer.GetBase()->GetInterface(), renderer.GetBase()->GetNodeMask(), renderer.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT,0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
 
 	PlatformClock clock;
@@ -136,7 +136,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             swapChain.ClearBackBuffer(commandList);
 
 			pipeline.SetPipelineState(commandList);
-			pipeline.SetRootSignature(commandList);
+			pipeline.SetGraphicsRootSignature(commandList);
 			commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			cl->SetConstantBuffer(0, &buffer, sizeof(buffer));
             texture.Set(cl.get(), 1);

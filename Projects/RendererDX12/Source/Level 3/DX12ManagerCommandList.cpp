@@ -10,7 +10,7 @@ DX12ManagerCommandList::DX12ManagerCommandList() :
 {
 }
 
-void DX12ManagerCommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager)
+void DX12ManagerCommandList::Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager)
 {
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE);
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
@@ -21,7 +21,7 @@ void DX12ManagerCommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D
 	m_allocatorManager = allocatorManager;
 	m_type = type;
 	m_waitingLists.resize(commandQueues->size());
-	m_nodeMask = nodeMask;
+	m_nodeMask = device->GetNodeMask();
 }
 
 void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex)
@@ -38,7 +38,7 @@ void DX12ManagerCommandList::ExecuteCommandList(unique_ptr<DX12CommandList>& com
 
 	commandList->Close();
 	ID3D12CommandList* list[1] = { commandList->GetBase()->GetInterface() };
-	(*m_pCommandQueues)[queueIndex]->ExecuteCommandLists(1, list);
+	(*m_pCommandQueues)[queueIndex]->GetInterface()->ExecuteCommandLists(1, list);
 	(*m_pCommandQueues)[queueIndex]->SetActiveAllocator(commandList->GetCommandAllocator());
 	m_inactiveList.push_back(std::move(commandList));
 }
@@ -61,7 +61,7 @@ unique_ptr<DX12CommandList> DX12ManagerCommandList::GetCommandList()
 	if (m_inactiveList.empty())
 	{
 		unique_ptr<DX12CommandList> list = make_unique<DX12CommandList>();
-		list->Initialize(m_device, m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
+		list->Initialize(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
 		return list;
 	}
 	else
@@ -84,7 +84,7 @@ void DX12ManagerCommandList::WaitingList::AddCommandList(unique_ptr<DX12CommandL
 
 void DX12ManagerCommandList::WaitingList::ExecuteWaitingList(DX12CommandQueue* commandQueue, std::vector<unique_ptr<DX12CommandList>>& inactiveList)
 {
-	commandQueue->ExecuteCommandLists(static_cast<UINT>(m_rawList.size()), m_rawList.data());
+	commandQueue->GetInterface()->ExecuteCommandLists(static_cast<UINT>(m_rawList.size()), m_rawList.data());
 	commandQueue->SetActiveAllocators(m_waitingAllocator);
 	std::move(m_waitingList.begin(), m_waitingList.end(), std::back_inserter(inactiveList));
 	m_waitingList.clear();

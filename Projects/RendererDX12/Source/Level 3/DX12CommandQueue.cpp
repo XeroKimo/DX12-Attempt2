@@ -3,24 +3,25 @@
 
 DX12CommandQueue::DX12CommandQueue() :
 	m_allocatorManager(nullptr),
-	m_highestSignaledHistory(0),
-	m_signalHistory()
+	m_highestSignaledSize(0),
+	m_allocatorSizeHistory()
 {
 }
 
-void DX12CommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager)
+void DX12CommandQueue::Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager)
 {
-	m_commandQueue.Initialize(device, nodeMask, commandListType);
+	m_commandQueue.Initialize(device->GetInterface(), device->GetNodeMask(), commandListType);
 	m_allocatorManager = allocatorManager;
-	m_signalHistory.fill(0);
+	m_allocatorSizeHistory.fill(0);
 }
 
-void DX12CommandQueue::Signal()
+UINT64 DX12CommandQueue::Signal()
 {
 	if (m_runningAllocators.empty())
 		return;
-	m_commandQueue.Signal();
-	m_signalHistory[(m_commandQueue.GetFence()->fenceValue - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
+	UINT64 value = m_commandQueue.Signal();
+	m_allocatorSizeHistory[(m_commandQueue.GetFence()->fenceValue - 1) % MAX_SIGNAL_HISTORY] = m_runningAllocators.size();
+	return value;
 }
 
 void DX12CommandQueue::SyncQueue(DWORD milliseconds)
@@ -51,11 +52,11 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 	UINT overflow = (localFenceValue - fenceValue) / MAX_SIGNAL_HISTORY;
 	UINT64 valueToSync = fenceValue + MAX_SIGNAL_HISTORY * static_cast<UINT64>(overflow);
 	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
-	size_t iteratorOffset = m_signalHistory[roundedFenceValue] - m_highestSignaledHistory;
+	size_t iteratorOffset = m_allocatorSizeHistory[roundedFenceValue] - m_highestSignaledSize;
 
 	if (iteratorOffset < 1)
 	{
-		iteratorOffset = m_signalHistory[roundedFenceValue];
+		iteratorOffset = m_allocatorSizeHistory[roundedFenceValue];
 	}
 	m_commandQueue.SyncQueue(milliseconds, valueToSync);
 
@@ -66,7 +67,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 	m_allocatorManager->ResetAllocators(allocatorsToReset);
 	m_runningAllocators.erase(m_runningAllocators.begin(), it);
 
-	m_highestSignaledHistory = m_signalHistory[roundedFenceValue];
+	m_highestSignaledSize = m_allocatorSizeHistory[roundedFenceValue];
 }
 
 void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator)
@@ -77,5 +78,5 @@ void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAll
 void DX12CommandQueue::Reset()
 {
 	m_commandQueue.ResetFence();
-	m_highestSignaledHistory = 0;
+	m_highestSignaledSize = 0;
 }

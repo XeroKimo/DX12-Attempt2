@@ -20,5 +20,5 @@ private:
 	ComPtr<ID3D12Device2> m_device;
 	ComPtr<IDXGIAdapter3> m_adapter;
 	UINT m_nodeID;
-    static UINT activeNodes;
+    static UINT m_activeNodes;
 };

@@ -25,7 +25,7 @@ void DX12CommandList::Reset(unique_ptr<DX12CommandAllocator> allocator)
 
 void DX12CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size)
 {
-	m_commandList.GetInterface()->SetGraphicsRootConstantBufferView(rootParamIndex, m_allocator->UploadCBVSRVUAV(data, size));
+	m_commandList.GetInterface()->SetGraphicsRootConstantBufferView(rootParamIndex, m_allocator->UploadDynamicCBV(data, size));
 }
 
 void DX12CommandList::UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)

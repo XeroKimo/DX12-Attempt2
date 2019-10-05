@@ -10,16 +10,15 @@ class DX12CommandQueue
 {
 public:
 	DX12CommandQueue();
-	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
+	void Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
-	void Signal();
-	void StallQueue(DX12Fence* fence, UINT64 fenceValue) { m_commandQueue.StallQueue(fence, fenceValue); }
+	UINT64 Signal();
 	void SyncQueue(DWORD milliseconds);
 	void SyncQueue(DWORD milliseconds, UINT64 fenceValue);
 
 	void SetActiveAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocator);
 	void Reset();
-	inline void ExecuteCommandLists(UINT numList, ID3D12CommandList* const* list) { m_commandQueue.GetInterface()->ExecuteCommandLists(numList, list); }
+	inline void StallQueue(DX12Fence* fence, UINT64 fenceValue) { if (fenceValue <= fence->fenceValue) m_commandQueue.StallQueue(fence, fenceValue); }
 	inline void SetActiveAllocator(unique_ptr<DX12CommandAllocator>& allocator) { m_runningAllocators.push_back(std::move(allocator)); }
 
 	inline DX12Fence* GetFence() { return m_commandQueue.GetFence(); }
@@ -32,6 +31,6 @@ private:
 
 	std::vector<unique_ptr<DX12CommandAllocator>> m_runningAllocators;
 
-	std::array<size_t, MAX_SIGNAL_HISTORY> m_signalHistory;
-	size_t m_highestSignaledHistory;
+	std::array<size_t, MAX_SIGNAL_HISTORY> m_allocatorSizeHistory;
+	size_t m_highestSignaledSize;
 };

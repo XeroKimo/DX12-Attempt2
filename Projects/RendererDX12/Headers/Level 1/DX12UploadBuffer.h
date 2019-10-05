@@ -15,7 +15,7 @@ public:
 	D3D12_GPU_VIRTUAL_ADDRESS UploadCBVSRVUAV(void* data, UINT64 size);
 
 	inline bool HasSpace(UINT64 requestedSpace) { return (m_totalSize - requestedSpace - m_usedSize) >= 0; }
-	inline ID3D12Resource* GetResource() { return m_resource.Get(); }
+	inline ID3D12Resource* GetInterface() { return m_resource.Get(); }
 private:
 	ComPtr<ID3D12Resource> m_resource;
 	UINT64 m_totalSize;

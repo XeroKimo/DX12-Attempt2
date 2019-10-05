@@ -78,9 +78,6 @@
     <ClInclude Include="Headers\Level 3\DX12ManagerCommandList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Level 2\DX12ManagerUploadBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Level 2\DX12Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,6 +97,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Level 2\DX12BaseCommandQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Level 2\DX12ManagerConstBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,9 +146,6 @@
     <ClCompile Include="Source\Level 3\DX12CommandQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Level 2\DX12ManagerUploadBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Level 2\DX12Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -161,8 +158,11 @@
     <ClCompile Include="Source\Level 2\DX12BaseCommandQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Level 2\DX12ManagerConstBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

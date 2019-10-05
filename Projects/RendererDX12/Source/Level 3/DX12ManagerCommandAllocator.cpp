@@ -7,7 +7,7 @@ DX12ManagerCommandAllocator::DX12ManagerCommandAllocator() :
 {
 }
 
-void DX12ManagerCommandAllocator::Initialize(ID3D12Device* device, DX12ManagerUploadBuffer* bufferManager)
+void DX12ManagerCommandAllocator::Initialize(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager)
 {
 	m_device = device;
 	m_bufferManager = bufferManager;
@@ -82,7 +82,7 @@ void DX12ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<DX12Com
 unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
 {
 	unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>();
-	allocator->Initialize(m_device, type, m_bufferManager);
+	allocator->Initialize(m_device->GetInterface(), type, m_bufferManager);
 	
 	return allocator;
 }
