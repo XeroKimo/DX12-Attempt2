@@ -1,4 +1,5 @@
 #pragma once
+#include "MathConstants.h"
 
 struct Vector2
 {

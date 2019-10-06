@@ -66,17 +66,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		pipeline.Initialize(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
 	}
 
-	struct Vertex { float x; float y; float z; float r; float g; float b; float a; float u; float v; };
-	Vertex bottomLeft = { -0.5f,-0.5f, 0, 0,0,0,0, 0.0f, 0.0f };
-	Vertex bottomRight = { 0.5f,-0.5f, 0, 0,0,0,0, 1.0f, 0.0f };
-	Vertex topLeft = { -0.5f,0.5f, 0,0,0,0,0, 0.0f, 1.0f };
-	Vertex topRight = { 0.5f,0.5f, 0,0,0,0,0, 1.0f, 1.0f};
-	//Vertex vertices[] =
-	//{
-	//	{ 0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f },
-	//	{ 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f },
-	//	{ -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f },
-	//};
+	struct Vertex { Vector3 pos; Vector4 color; Vector2 UV; };
+	Vertex bottomLeft = { Vector3(-0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 0.0f) };
+	Vertex bottomRight = { Vector3(0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 0.0f) };
+	Vertex topLeft = { Vector3(-0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 1.0f) };
+	Vertex topRight = { Vector3(0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 1.0f) };
+
 	Vertex vertices[] =
 	{
 		bottomLeft,
@@ -102,9 +97,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
-	worldMatrix.SetPosition(Vector3(0, 0, -2));
-	//projMatrix.SetOrtho(3,3, 0.0f, 100, false);
-	projMatrix.SetPerspective(90, 1280/720, 0.f, 1000, false);
+	worldMatrix.SetPosition(Vector3(0, 0, -3));
+	projMatrix.SetOrtho(3,3, 0.0f, 100);
+	//projMatrix.SetPerspective(90, 1280/720, 0.f, 1000);
 
 	float rotateSpeed = 60.0f;
 
@@ -131,12 +126,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{
 			clock.Update();
 
-			//buffer.viewMatrix.RotateX(rotateSpeed * clock.GetDeltaTime());
+			//buffer.viewMatrix.RotateX(rotateSpeed/2 * clock.GetDeltaTime());
 			//buffer.worldMatrix.Translate(Vector3(0, 0, -0.1f)* clock.GetDeltaTime());
 			//buffer.worldMatrix.RotateY(rotateSpeed * clock.GetDeltaTime());
-			//buffer.worldMatrix.RotateZ(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
+			buffer.viewMatrix.RotateZ(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
 
-			Matrix4x4 finalTransform = buffer.worldMatrix * buffer.viewMatrix * buffer.projMatrix;
 			Vector3 angle = buffer.worldMatrix.GetEulerAngles();
 
 			cl = renderer.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);

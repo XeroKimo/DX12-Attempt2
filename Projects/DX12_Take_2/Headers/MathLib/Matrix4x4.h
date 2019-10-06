@@ -1,4 +1,5 @@
 #pragma once
+#include "MathConstants.h"
 #include "Vector4.h"
 
 #ifdef near
@@ -8,7 +9,7 @@
 #ifdef far
 #undef far
 #endif // far
-#define PI 3.14159265358979f
+
 struct Matrix4x4
 {
 public:
@@ -18,8 +19,8 @@ public:
 
 	void Identity();
 	void Transpose();
-	void SetOrtho(float width, float height, float near, float far, bool posZIn);
-	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far, bool posZIn);
+	void SetOrtho(float width, float height, float near, float far);
+	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far);
 
 	void SetPosition(Vector3 position);
 	void Translate(Vector3 position);
@@ -81,29 +82,26 @@ void inline Matrix4x4::Transpose()
 	vW = { temp.vX.w, temp.vY.w, temp.vZ.w, temp.vW.w };
 }
 
-inline void Matrix4x4::SetOrtho(float width, float height, float near, float far, bool posZIn)
+inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
 {
 	//The following docs are in row major, this matrix uses column major
 	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, posZIn = true
 	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, posZIn = false
 	Identity();
-	if (posZIn)
-	{
+#if USE_USE_LEFT_HANDED_MATRIXS
 		vX.x = 2 / width;
 		vY.y = 2 / height;
 		vZ.z = 1 / (far - near);
 		vZ.w = -near / (far - near);
-	}
-	else
-	{
+#else
 		vX.x = 2 / width;
 		vY.y = 2 / height;
 		vZ.z = 1 / (near - far);
 		vZ.w = near / (near - far);
-	}
+#endif
 }
 
-inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far, bool posZIn)
+inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far)
 {
 	//The following docs are in row major, this matrix uses column major
 	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovlh Left Handed, posZIn = true
@@ -112,24 +110,21 @@ inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float 
 	float xScale = yScale / aspectRatio;
 
 	Identity();
-	if (posZIn)
-	{
+#if USE_USE_LEFT_HANDED_MATRIXS
 		vX.x = xScale;
 		vY.y = yScale;
 		vZ.z = far / (far - near);
 		vZ.w = (-near * far) / (far - near);
 		vW.z = 1;
 		vW.w = 0;
-	}
-	else
-	{
+#else
 		vX.x = xScale;
 		vY.y = yScale;
 		vZ.z = far / (near - far);
 		vZ.w = (near * far) / (near - far);
 		vW.z = -1;
 		vW.w = 0;
-	}
+#endif
 }
 
 inline void Matrix4x4::SetPosition(Vector3 position)
@@ -155,8 +150,8 @@ inline void Matrix4x4::RotateX(float degrees)
 	float cosAngle = cosf(radians);
 
 	rotMatrix.vY.y = cosAngle;
-	rotMatrix.vY.z = -sinAngle;
-	rotMatrix.vZ.y = sinAngle;
+	rotMatrix.vY.z = sinAngle;
+	rotMatrix.vZ.y = -sinAngle;
 	rotMatrix.vZ.z = cosAngle;
 
 	*this *= rotMatrix;
@@ -171,8 +166,8 @@ inline void Matrix4x4::RotateY(float degrees)
 	float cosAngle = cosf(radians);
 
 	rotMatrix.vX.x = cosAngle;
-	rotMatrix.vX.z = -sinAngle;
-	rotMatrix.vZ.x = sinAngle;
+	rotMatrix.vX.z = sinAngle;
+	rotMatrix.vZ.x = -sinAngle;
 	rotMatrix.vZ.z = cosAngle;
 
 	*this *= rotMatrix;
@@ -322,26 +317,27 @@ void inline Matrix4x4::operator*=(const Matrix4x4& other)
 {
 	Matrix4x4 mat = other;
 	mat.Transpose();
+	Matrix4x4 copy = *this;
+	
+    vX.x = copy.vX.Dot(mat.vX);
+    vX.y = copy.vX.Dot(mat.vY);
+    vX.z = copy.vX.Dot(mat.vZ);
+    vX.w = copy.vX.Dot(mat.vW);
 
-    vX.x = vX.Dot(mat.vX);
-    vX.y = vX.Dot(mat.vY);
-    vX.z = vX.Dot(mat.vZ);
-    vX.w = vX.Dot(mat.vW);
-    
-    vY.x = vY.Dot(mat.vX);
-    vY.y = vY.Dot(mat.vY);
-    vY.z = vY.Dot(mat.vZ);
-    vY.w = vY.Dot(mat.vW);
-    
-    vZ.x = vZ.Dot(mat.vX);
-    vZ.y = vZ.Dot(mat.vY);
-    vZ.z = vZ.Dot(mat.vZ);
-    vZ.w = vZ.Dot(mat.vW);
-    
-    vW.x = vW.Dot(mat.vX);
-    vW.y = vW.Dot(mat.vY);
-    vW.z = vW.Dot(mat.vZ);
-    vW.w = vW.Dot(mat.vW);
+    vY.x = copy.vY.Dot(mat.vX);
+    vY.y = copy.vY.Dot(mat.vY);
+    vY.z = copy.vY.Dot(mat.vZ);
+    vY.w = copy.vY.Dot(mat.vW);
+
+    vZ.x = copy.vZ.Dot(mat.vX);
+    vZ.y = copy.vZ.Dot(mat.vY);
+    vZ.z = copy.vZ.Dot(mat.vZ);
+    vZ.w = copy.vZ.Dot(mat.vW);
+
+    vW.x = copy.vW.Dot(mat.vX);
+    vW.y = copy.vW.Dot(mat.vY);
+    vW.z = copy.vW.Dot(mat.vZ);
+    vW.w = copy.vW.Dot(mat.vW);
 }
 
 
