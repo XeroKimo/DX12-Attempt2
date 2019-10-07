@@ -1,51 +1,57 @@
 #include "PCH.h"
-#include <iostream>
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	WinApp application;
-	if (!application.Initialize(hInstance, 1280, 720))
-		return 1;
-
-	//DX12BasicInterface renderer;
-	//if (!renderer.Initialize(application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight()))
-	//	return 1;
 
     DX12Device renderer;
     DX12ManagerCommandAllocator commandAllocatorManager;
     DX12ManagerConstBuffer managerUploadBuffer;
     DX12BaseSwapChain swapChain;
 
+    PlatformClock clock;
+
+	{
+		WinAppHelpers::TDSTR className = L"DX12Renderer";
+		WNDCLASS wc = WinAppHelpers::WndClassStandard(hInstance, static_cast<WNDPROC>(WindowProc), className);
+		WinAppHelpers::CreateWindowHelper helper = WinAppHelpers::CreateWindowHelper::Standard(hInstance, 1280, 720, className);
+        helper.ConvertToClientSize();
+
+		if (!application.Initialize(wc, helper))
+			return 1;
+	}
+
     renderer.Initialize(D3D_FEATURE_LEVEL_11_0, 0, &commandAllocatorManager, 1, 0, 1);
 	managerUploadBuffer.Initialize(renderer.GetBase(), 1000);
     commandAllocatorManager.Initialize(renderer.GetBase(), &managerUploadBuffer);
     swapChain.Initialize(renderer.GetBase()->GetInterface(), renderer.GetBase()->GetNodeMask(), renderer.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT,0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
 
-	PlatformClock clock;
-
 	ID3D12Device* device = renderer.GetBase()->GetInterface();
 
 	DX12PipelineState pipeline;
 	{
-		DX12HRootSignatureDesc::DescriptorTable table;
-		table.AddTable(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
-
-		D3D12_STATIC_SAMPLER_DESC sampler = {};
-		sampler.Filter = D3D12_FILTER_ANISOTROPIC;
-		sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.MipLODBias = 0;
-		sampler.MaxAnisotropy = 16;
-		sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-		sampler.MinLOD = 0.0f;
-		sampler.MaxLOD = D3D12_FLOAT32_MAX;
-		sampler.ShaderRegister = 0;
-		sampler.RegisterSpace = 0;
-		sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
 		DX12HGraphicsPipelineStateDesc pipelineDesc;
 		{
+            DX12HRootSignatureDesc::DescriptorTable table;
+            table.AddTable(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+
+            D3D12_STATIC_SAMPLER_DESC sampler = {};
+            sampler.Filter = D3D12_FILTER_ANISOTROPIC;
+            sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+            sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+            sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+            sampler.MipLODBias = 0;
+            sampler.MaxAnisotropy = 16;
+            sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+            sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+            sampler.MinLOD = 0.0f;
+            sampler.MaxLOD = D3D12_FLOAT32_MAX;
+            sampler.ShaderRegister = 0;
+            sampler.RegisterSpace = 0;
+            sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 			pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
@@ -61,7 +67,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 			pipelineDesc.GeneratePipelineState(device, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
 		}
-
 
 		pipeline.Initialize(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
 	}
@@ -83,6 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		bottomRight
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
+
 	unique_ptr<DX12CommandList> cl = renderer.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
@@ -118,7 +124,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 				break;
 
 			default:
-				application.ReadMessage(msg);
+				application.ReadMsg(msg);
 			}
 
 		}
@@ -156,8 +162,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             swapChain.GetInterface()->Present(0, 0);
 		}
 	}
-	renderer.SignalAllQueues();
-	renderer.SyncAllQueues();
 
 	return 0;
+}
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	//WinApp* pWinApp = reinterpret_cast<WinApp*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WM_KEYDOWN:
+		if (wParam == VK_ESCAPE)
+		{
+			if (MessageBox(0, L"Are you sure you want to exit?", L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
+				DestroyWindow(hwnd);
+		}
+		break;
+	}
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

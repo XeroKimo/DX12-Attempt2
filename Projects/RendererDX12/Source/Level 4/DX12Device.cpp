@@ -5,6 +5,12 @@ DX12Device::DX12Device()
 {
 }
 
+DX12Device::~DX12Device()
+{
+	SignalAllQueues();
+	SyncAllQueues();
+}
+
 void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues)
 {
     m_device.Initialize(featureLevel, adapterID);

@@ -3,8 +3,6 @@
 WinApp::WinApp() :
 	m_hInstance(nullptr),
 	m_windowHandle(nullptr),
-	m_windowHeight(0),
-	m_windowWidth(0),
 	m_running(false)
 {
 }
@@ -15,68 +13,178 @@ WinApp::~WinApp()
 	UnregisterClass(L"Sample Window Class", m_hInstance);
 }
 
-bool WinApp::Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height)
+bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelper windowOptions)
 {
-	m_windowWidth = width;
-	m_windowHeight = height;
-	return m_running = InitWindow(hInstance, width, height); 
-}
+	m_hInstance = winClass.hInstance;
 
-bool WinApp::InitWindow(HINSTANCE hInstance, unsigned int width, unsigned  int height)
-{
-    // Register the window class.
-    const wchar_t CLASS_NAME[] = L"DX12 Practice";
-    WNDCLASS wc = {};
-
-	//m_hInstance = GetModuleHandle(nullptr);
-	m_hInstance = hInstance;
-
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = static_cast<WNDPROC>(WindowProc);
-	wc.cbClsExtra = NULL;
-	wc.cbWndExtra = NULL;
-    wc.hInstance = m_hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
-	wc.lpszMenuName = NULL;
-    wc.lpszClassName = CLASS_NAME;
-
-	if (!RegisterClass(&wc))
+	if (!RegisterClass(&winClass))
 	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
 		return false;
 	}
-    // Create the window.
 
-    m_windowHandle = CreateWindowEx(
-        NULL,                           // Optional window styles.
-        CLASS_NAME,                     // Window class
-		CLASS_NAME,    // Window text
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,            // Window style
-        CW_USEDEFAULT, CW_USEDEFAULT,	// Size
-		width, height,					// Position
-        NULL,							// Parent window    
-        NULL,							// Menu
-        m_hInstance,					// Instance handle
-        NULL							// Additional application data
-    );
-
-    if (!m_windowHandle)
-    {
+	m_windowHandle = InitWindow(windowOptions);
+	if (!m_windowHandle)
+	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
-        return false;
-    }
+		return false;
+	}
 
-	SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, (LONG_PTR)this);
-
-    ShowWindow(m_windowHandle, SW_SHOW);
+	ShowWindow(m_windowHandle, SW_SHOW);
 	SetForegroundWindow(m_windowHandle);
 	SetFocus(m_windowHandle);
-    return true;
+
+	m_running = true;
+	return true;
 }
 
-void WinApp::ReadMessage(MSG& msg)
+bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelperEX windowOptions)
+{
+	m_hInstance = winClass.hInstance;
+
+	if (!RegisterClass(&winClass))
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	m_windowHandle = InitWindow(windowOptions);
+	if (!m_windowHandle)
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
+
+	m_running = true;
+	return true;
+}
+
+bool WinApp::Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelper windowOptions)
+{
+	m_hInstance = winClass.hInstance;
+
+	if (!RegisterClassEx(&winClass))
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	m_windowHandle = InitWindow(windowOptions);
+	if (!m_windowHandle)
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
+
+	m_running = true;
+	return true;
+}
+
+bool WinApp::Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelperEX windowOptions)
+{
+	m_hInstance = winClass.hInstance;
+
+	if (!RegisterClassEx(&winClass))
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	m_windowHandle = InitWindow(windowOptions);
+	if (!m_windowHandle)
+	{
+		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	ShowWindow(m_windowHandle, SW_SHOW);
+	SetForegroundWindow(m_windowHandle);
+	SetFocus(m_windowHandle);
+	
+	m_running = true;
+	return true;
+}
+
+LONG_PTR WinApp::SetWindowLPTR(int nIndex, LONG_PTR ptr)
+{
+    return SetWindowLongPtr(m_windowHandle, nIndex, ptr);
+}
+
+int WinApp::GetWindowWidth()
+{
+	int width, height;
+	GetWindowSize(width, height);
+	return width;
+}
+
+int WinApp::GetWindowHeight()
+{
+	int width, height;
+	GetWindowSize(width, height);
+	return height;
+}
+
+void WinApp::GetWindowSize(int& outWidth, int& outHeight)
+{
+
+	RECT rect;
+	if (!GetClientRect(m_windowHandle, &rect))
+		return;
+	outWidth = rect.right;
+	outHeight = rect.bottom;
+}
+
+HWND WinApp::InitWindow(WinAppHelpers::CreateWindowHelper windowOptions)
+{
+	return CreateWindow
+	(
+		windowOptions.lpClassName,
+		windowOptions.lpWindowName,
+		windowOptions.dwStyle,
+		windowOptions.X,
+		windowOptions.Y,
+		windowOptions.nWidth,
+		windowOptions.nHeight,
+		windowOptions.hWndParent,
+		windowOptions.hMenu,
+		windowOptions.hInstance,
+		windowOptions.lpParam
+	);
+}
+
+HWND WinApp::InitWindow(WinAppHelpers::CreateWindowHelperEX windowOptions)
+{
+	return CreateWindowEx
+	(
+		windowOptions.dwExStyle,
+		windowOptions.lpClassName,
+		windowOptions.lpWindowName,
+		windowOptions.dwStyle,
+		windowOptions.X,
+		windowOptions.Y,
+		windowOptions.nWidth,
+		windowOptions.nHeight,
+		windowOptions.hWndParent,
+		windowOptions.hMenu,
+		windowOptions.hInstance,
+		windowOptions.lpParam
+	);
+}
+
+bool WinApp::PeekMsg(MSG& msg, HWND hwnd, UINT filterMin, UINT filterMax, UINT removeMsg)
+{
+	return (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE));
+}
+
+void WinApp::ReadMsg(MSG& msg)
 {
 	TranslateMessage(&msg);
 	DispatchMessage(&msg);
@@ -85,34 +193,4 @@ void WinApp::ReadMessage(MSG& msg)
 void WinApp::Quit()
 {
 	m_running = false;
-}
-
-LRESULT WinApp::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	WinApp* pWinApp = reinterpret_cast<WinApp*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-	// Get a pointer to the framework object associated with this window.
-    switch (uMsg)
-    {
-	case WM_NCCREATE:
-	{
-		// Set the user data for this hWnd to the Framework* we passed in, used on first line of this method above.
-		//CREATESTRUCT* pcs = (CREATESTRUCT*)(lParam);
-		//WinApp* pFramework = (WinApp*)(pcs->lpCreateParams);
-		//SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)(pFramework));
-		return 1;
-	}
-	//case WM_CREATE:
-		//SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG)
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE)
-		{
-			if (MessageBox(0, L"Are you sure you want to exit?", L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
-				DestroyWindow(hwnd);
-		}
-		break;
-	}
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

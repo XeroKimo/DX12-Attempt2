@@ -23,5 +23,8 @@
     <ClInclude Include="Headers\WinApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\WinAppHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

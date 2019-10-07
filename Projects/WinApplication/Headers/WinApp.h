@@ -1,4 +1,5 @@
 #pragma once
+#include "WinAppHelpers.h"
 #include <Windows.h>
 
 class WinApp
@@ -6,27 +7,34 @@ class WinApp
 public:
     WinApp();
 	~WinApp();
-	bool Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height);
+	bool Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelper windowOptions);
+	bool Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelperEX windowOptions);
 
-	inline bool PeekMsg(MSG& msg) {	return (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)); }
-	void ReadMessage(MSG& msg);
+	bool Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelper windowOptions);
+	bool Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelperEX windowOptions);
+
+    inline LONG_PTR SetUserData(LONG_PTR ptr) { return SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, ptr); }
+    LONG_PTR SetWindowLPTR(int nIndex, LONG_PTR ptr);
+
+	static bool PeekMsg(MSG& msg, HWND hwnd = nullptr, UINT filterMin = 0, UINT filterMax = 0, UINT removeMsg = PM_REMOVE);
+	static void ReadMsg(MSG& msg);
+
 	void Quit();
 
 	bool IsRunning() { return m_running; }
-
 	HWND GetHandle() { return m_windowHandle; }
-	
-	int GetWindowWidth() { return m_windowWidth; }
-	int GetWindowHeight() { return m_windowHeight; }
+
+	int GetWindowWidth();
+	int GetWindowHeight();
+	void GetWindowSize(int& outWidth, int& outHeight);
 private:
-	bool InitWindow(HINSTANCE hInstance, unsigned int width, unsigned int height);
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	HWND InitWindow(WinAppHelpers::CreateWindowHelper windowOptions);
+	HWND InitWindow(WinAppHelpers::CreateWindowHelperEX windowOptions);
 
+	//WNDPROC definiton
+	//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-	unsigned int m_windowWidth;
-	unsigned int m_windowHeight;
-
 	HWND m_windowHandle;
     HINSTANCE m_hInstance;
 	bool m_running;

@@ -5,6 +5,7 @@ class DX12Device
 {
 public:
     DX12Device();
+	~DX12Device();
 
     void Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
 
