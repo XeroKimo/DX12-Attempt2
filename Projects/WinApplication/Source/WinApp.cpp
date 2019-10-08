@@ -15,8 +15,6 @@ WinApp::~WinApp()
 
 bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelper windowOptions)
 {
-	m_hInstance = winClass.hInstance;
-
 	if (!RegisterClass(&winClass))
 	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
@@ -40,8 +38,6 @@ bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelper win
 
 bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelperEX windowOptions)
 {
-	m_hInstance = winClass.hInstance;
-
 	if (!RegisterClass(&winClass))
 	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
@@ -65,8 +61,6 @@ bool WinApp::Initialize(WNDCLASS winClass, WinAppHelpers::CreateWindowHelperEX w
 
 bool WinApp::Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelper windowOptions)
 {
-	m_hInstance = winClass.hInstance;
-
 	if (!RegisterClassEx(&winClass))
 	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
@@ -90,8 +84,6 @@ bool WinApp::Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelper w
 
 bool WinApp::Initialize(WNDCLASSEX winClass, WinAppHelpers::CreateWindowHelperEX windowOptions)
 {
-	m_hInstance = winClass.hInstance;
-
 	if (!RegisterClassEx(&winClass))
 	{
 		MessageBox(NULL, L"Error registering class", L"ERROR", MB_OK | MB_ICONERROR);
@@ -144,6 +136,8 @@ void WinApp::GetWindowSize(int& outWidth, int& outHeight)
 
 HWND WinApp::InitWindow(WinAppHelpers::CreateWindowHelper windowOptions)
 {
+    m_className = windowOptions.lpClassName;
+    m_hInstance = windowOptions.hInstance;
 	return CreateWindow
 	(
 		windowOptions.lpClassName,
@@ -162,6 +156,8 @@ HWND WinApp::InitWindow(WinAppHelpers::CreateWindowHelper windowOptions)
 
 HWND WinApp::InitWindow(WinAppHelpers::CreateWindowHelperEX windowOptions)
 {
+    m_className = windowOptions.lpClassName;
+    m_hInstance = windowOptions.hInstance;
 	return CreateWindowEx
 	(
 		windowOptions.dwExStyle,

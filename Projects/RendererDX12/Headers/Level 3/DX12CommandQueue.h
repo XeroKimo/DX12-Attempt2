@@ -4,7 +4,7 @@
 class DX12CommandAllocator;
 class DX12ManagerCommandAllocator;
 
-#define MAX_SIGNAL_HISTORY 64
+#define MAX_SIGNAL_HISTORY 8
 
 class DX12CommandQueue
 {

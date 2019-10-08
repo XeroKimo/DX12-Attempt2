@@ -17,15 +17,13 @@ public:
 	void SyncFence(DWORD milliseconds, DX12Fence* fence, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
 
 	inline bool FenceSyncable(DX12Fence* fence, UINT64 fenceValue) { return (fenceValue < m_fence.fenceValue || fenceValue > m_fence.highestSyncedValue); }
-	inline void ResetFence() { m_fence.Reset(); }
+	inline void Reset() { m_fence.Reset(); }
 	inline ID3D12CommandQueue* GetInterface() { return m_commandQueue.Get(); }
 	inline DX12Fence* GetFence() { return &m_fence; }
 	inline ID3D12Fence* GetFenceInterface() { return m_fence.GetInterface(); }
 private:
-
 	ComPtr<ID3D12CommandQueue> m_commandQueue;
 	DX12Fence m_fence;
-	//ComPtr<ID3D12Fence> m_fence;
     D3D12_COMMAND_LIST_TYPE m_type;
 	HANDLE m_fenceEvent;
 };

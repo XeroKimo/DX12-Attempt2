@@ -20,25 +20,16 @@ unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 	{
 	case D3D12_COMMAND_LIST_TYPE_DIRECT:
 		if (m_directAllocators.empty())
-			allocator = CreateCommandAllocator(type);
+            return CreateCommandAllocator(type);
 		else
 		{
 			allocator.swap(m_directAllocators.back());
 			m_directAllocators.pop_back();
 		}
 		break;
-	case D3D12_COMMAND_LIST_TYPE_BUNDLE:
-		//if (m_bundleAllocators.empty())
-		//	allocator = CreateCommandAllocator(type);
-		//else
-		//{
-		//	allocator = m_bundleAllocators.back();
-		//	m_bundleAllocators.pop_back();
-		//}
-		break;
 	case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 		if (m_computeAllocators.empty())
-			allocator = CreateCommandAllocator(type);
+            return CreateCommandAllocator(type);
 		else
 		{
 			allocator.swap(m_computeAllocators.back());
@@ -47,7 +38,7 @@ unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 		break;
 	case D3D12_COMMAND_LIST_TYPE_COPY:
 		if (m_copyAllocators.empty())
-			allocator = CreateCommandAllocator(type);
+			return CreateCommandAllocator(type);
 		else
 		{
 			allocator.swap(m_copyAllocators.back());
@@ -56,6 +47,7 @@ unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const
 		break;
 	default:
         assert(false);
+        return nullptr;
 		break;
 	}
 	allocator->Reset();

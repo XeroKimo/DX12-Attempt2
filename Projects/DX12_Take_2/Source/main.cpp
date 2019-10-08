@@ -4,12 +4,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-	WinApp application;
+    WinApp application;
 
     DX12Device renderer;
     DX12ManagerCommandAllocator commandAllocatorManager;
     DX12ManagerConstBuffer managerUploadBuffer;
     DX12BaseSwapChain swapChain;
+
 
     PlatformClock clock;
 

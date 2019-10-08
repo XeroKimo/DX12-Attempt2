@@ -18,7 +18,6 @@ private:
     DX12BaseDevice* m_device;
 	DX12ManagerConstBuffer* m_bufferManager;
 	std::vector<unique_ptr<DX12CommandAllocator>> m_directAllocators;
-	//std::vector<unique_ptr<DX12CommandAllocator>> m_bundleAllocators;
 	std::vector<unique_ptr<DX12CommandAllocator>> m_copyAllocators;
 	std::vector<unique_ptr<DX12CommandAllocator>> m_computeAllocators;
 };

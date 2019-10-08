@@ -38,4 +38,5 @@ private:
 	HWND m_windowHandle;
     HINSTANCE m_hInstance;
 	bool m_running;
+    WinAppHelpers::TDSTR m_className;
 };

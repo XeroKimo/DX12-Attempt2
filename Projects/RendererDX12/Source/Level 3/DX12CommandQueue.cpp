@@ -77,6 +77,6 @@ void DX12CommandQueue::SetActiveAllocators(std::vector<unique_ptr<DX12CommandAll
 
 void DX12CommandQueue::Reset()
 {
-	m_commandQueue.ResetFence();
+	m_commandQueue.Reset();
 	m_highestSignaledSize = 0;
 }

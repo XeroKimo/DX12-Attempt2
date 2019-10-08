@@ -21,6 +21,4 @@ public:
 	DX12HShaderByteCode dsShader;
 	DX12HShaderByteCode hsShader;
 	DX12HShaderByteCode gsShader;
-
-    //void SetShaders(D3D12_SHADER_BYTECODE* VS, D3D12_SHADER_BYTECODE* PS, D3D12_SHADER_BYTECODE* DS = nullptr, D3D12_SHADER_BYTECODE* HS = nullptr, D3D12_SHADER_BYTECODE* GS = nullptr );
 };
