@@ -35,16 +35,15 @@ namespace RendererDX12
             DWORDRemaining -= 2;
         }
 
-        void RootSignatureDesc::CreateRootDescriptorTable(RootSignatureDesc::DescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity)
+        void RootSignatureDesc::CreateRootDescriptorTable(DescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity)
         {
             assert(DWORDRemaining - 1 >= 0);
 
             D3D12_ROOT_PARAMETER param;
             param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-            param.DescriptorTable.NumDescriptorRanges = static_cast<UINT>(table.m_descriptorRanges.size());
-            param.DescriptorTable.pDescriptorRanges = table.m_descriptorRanges.data();
+            param.DescriptorTable.NumDescriptorRanges = static_cast<UINT>(table.GetRangesSize());
+            param.DescriptorTable.pDescriptorRanges = table.GetRanges();
             param.ShaderVisibility = shaderVisiblity;
-
 
             m_parameters.push_back(param);
             DWORDRemaining--;
@@ -63,7 +62,7 @@ namespace RendererDX12
             return D3D12SerializeRootSignature(&desc, version, &m_signatureBlob, &m_errorBlob);
         }
 
-        void RootSignatureDesc::DescriptorTable::AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister, UINT registerSpace, UINT offsetDescriptorsFromTableStart)
+        void DescriptorTable::AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister, UINT registerSpace, UINT offsetDescriptorsFromTableStart)
         {
             D3D12_DESCRIPTOR_RANGE range;
             range.NumDescriptors = numDescriptors;

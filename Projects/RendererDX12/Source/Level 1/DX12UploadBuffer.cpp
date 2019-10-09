@@ -3,9 +3,10 @@
 
 namespace RendererDX12
 {
+    using namespace Helpers::ResourceFuncs;
     DX12UploadBuffer::DX12UploadBuffer(ID3D12Device* device, UINT nodeMask, UINT64 size)
     {
-        HRESULT hr = device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+        HRESULT hr = device->CreateCommittedResource(&HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
         assert(SUCCEEDED(hr));
 
         D3D12_RANGE range = { 0,0 };
@@ -24,7 +25,7 @@ namespace RendererDX12
 
         device->GetCopyableFootprints(&targetResource->GetDesc(), 0, 1, 0, nullptr, nullptr, nullptr, &m_totalSize);
 
-        device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(m_totalSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+        device->CreateCommittedResource(&HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &Buffer(m_totalSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
         UpdateSubresources(commandList, targetResource, m_resource.Get(), 0, 0, 1, data);
     }
 

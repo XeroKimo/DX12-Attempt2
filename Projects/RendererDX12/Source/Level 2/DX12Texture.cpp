@@ -4,6 +4,7 @@
 
 namespace RendererDX12
 {
+    using namespace Helpers::ResourceFuncs;
     void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* commandList, std::wstring filename)
     {
         unique_ptr<BYTE[]> imageData;
@@ -12,7 +13,7 @@ namespace RendererDX12
 
         ParseImage(filename, imageData, imageWidth, imageHeight);
 
-        device->CreateCommittedResource(&DX12HResource::HeapDefault(0), D3D12_HEAP_FLAG_NONE, &DX12HResource::Texture2D(imageWidth, imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &Texture2D(imageWidth, imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
         heapDesc.NodeMask = 0;

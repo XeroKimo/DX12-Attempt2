@@ -9,12 +9,12 @@ namespace RendererDX12
     {
     }
 
-    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const Command_List_Type& type)
+    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
         unique_ptr<DX12CommandAllocator> allocator;
         switch (type)
         {
-        case Command_List_Type::Direct:
+        case D3D12_COMMAND_LIST_TYPE_DIRECT:
             if (m_directAllocators.empty())
                 return CreateCommandAllocator(type);
             else
@@ -23,7 +23,7 @@ namespace RendererDX12
                 m_directAllocators.pop_back();
             }
             break;
-        case  Command_List_Type::Compute:
+        case  D3D12_COMMAND_LIST_TYPE_COMPUTE:
             if (m_computeAllocators.empty())
                 return CreateCommandAllocator(type);
             else
@@ -32,7 +32,7 @@ namespace RendererDX12
                 m_computeAllocators.pop_back();
             }
             break;
-        case Command_List_Type::Copy:
+        case D3D12_COMMAND_LIST_TYPE_COPY:
             if (m_copyAllocators.empty())
                 return CreateCommandAllocator(type);
             else
@@ -54,20 +54,20 @@ namespace RendererDX12
     {
         switch (allocators[0]->GetBase()->GetType())
         {
-        case Command_List_Type::Direct:
+        case D3D12_COMMAND_LIST_TYPE_DIRECT:
             std::move(allocators.begin(), allocators.end(), std::back_inserter(m_directAllocators));
             break;
-        case Command_List_Type::Compute:
+        case D3D12_COMMAND_LIST_TYPE_COMPUTE:
             std::move(allocators.begin(), allocators.end(), std::back_inserter(m_computeAllocators));
             break;
-        case Command_List_Type::Copy:
+        case D3D12_COMMAND_LIST_TYPE_COPY:
             std::move(allocators.begin(), allocators.end(), std::back_inserter(m_copyAllocators));
             break;
         }
     }
 
 
-    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const Command_List_Type& type)
+    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
         return make_unique<DX12CommandAllocator>(m_device->GetInterface(), type, m_bufferManager);
     }

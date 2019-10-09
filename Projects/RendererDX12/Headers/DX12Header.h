@@ -10,7 +10,6 @@
 #include <array>
 #include <memory>
 #include <string>
-#include "DX12Enums.h"
 
 using Microsoft::WRL::ComPtr;
 using std::string;

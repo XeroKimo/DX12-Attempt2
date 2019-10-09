@@ -3,7 +3,7 @@
 
 namespace RendererDX12
 {
-    DX12ManagerCommandList::DX12ManagerCommandList(DX12BaseDevice* device, Command_List_Type type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
+    DX12ManagerCommandList::DX12ManagerCommandList(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
         m_device(device),
         m_type(type),
         m_pCommandQueues(commandQueues),
@@ -11,9 +11,9 @@ namespace RendererDX12
         m_nodeMask(device->GetNodeMask())
     {
         //The following command list types does not require a manager
-        assert(type != Command_List_Type::Video_Process);
-        assert(type != Command_List_Type::Video_Decode);
-        assert(type != Command_List_Type::Bundle);
+        assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
+        assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE);
+        assert(type != D3D12_COMMAND_LIST_TYPE_BUNDLE);
     }
 
     void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex)

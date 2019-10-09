@@ -12,9 +12,9 @@ namespace RendererDX12
 
         void ResetAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocators);
 
-        unique_ptr<DX12CommandAllocator> GetAllocator(const Command_List_Type& type);
+        unique_ptr<DX12CommandAllocator> GetAllocator(const D3D12_COMMAND_LIST_TYPE& type);
     private:
-        unique_ptr<DX12CommandAllocator> CreateCommandAllocator(const Command_List_Type& type);
+        unique_ptr<DX12CommandAllocator> CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type);
     private:
         DX12BaseDevice* m_device;
         DX12ManagerConstBuffer* m_bufferManager;

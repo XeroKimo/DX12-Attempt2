@@ -6,6 +6,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 {
     using namespace RendererDX12;
     using namespace WinApplication;
+    using namespace RendererDX12::Helpers;
 
     Window application;
     PlatformClock clock;
@@ -27,15 +28,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     DX12ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
     DX12DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
 
-    DX12BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(Command_List_Type::Direct, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
+    DX12BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
         return 1;
 
     unique_ptr<DX12PipelineState> pipeline;
 	{
-		DX12HGraphicsPipelineStateDesc pipelineDesc;
+		GraphicsPipelineStateDesc pipelineDesc;
 		{
-            DX12HRootSignatureDesc::DescriptorTable table;
+            DescriptorTable table;
             table.AddTable(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 
             D3D12_STATIC_SAMPLER_DESC sampler = {};
@@ -90,7 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 
-	unique_ptr<DX12CommandList> cl = commandModule.GetCommandList(Command_List_Type::Copy);
+	unique_ptr<DX12CommandList> cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
   
@@ -98,8 +99,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	texture.InitializeTexture2D(device.GetInterface(), cl.get(), L"Resources/test.jpg");
 
     commandModule.ExecuteCommandList(cl,0);
-    commandModule.SignalQueue(Command_List_Type::Copy, 0);
-    commandModule.StallQueue(Command_List_Type::Direct, 0, Command_List_Type::Copy, 0);
+    commandModule.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    commandModule.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;
@@ -140,7 +141,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 			Vector3 angle = buffer.worldMatrix.GetEulerAngles();
 
-			cl = commandModule.GetCommandList(Command_List_Type::Direct);
+			cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 
             swapChain.ClearBackBuffer(commandList);
@@ -158,7 +159,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             commandModule.ExecuteCommandList(cl, 0);
             commandModule.SignalAllQueues();
             //renderer.SyncAllQueues();
-			commandModule.SyncQueue(Command_List_Type::Direct, 0);
+			commandModule.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
 
             swapChain.GetInterface()->Present(0, 0);
 		}

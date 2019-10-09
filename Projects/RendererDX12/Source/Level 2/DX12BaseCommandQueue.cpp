@@ -3,7 +3,7 @@
 
 namespace RendererDX12
 {
-    DX12BaseCommandQueue::DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, Command_List_Type commandListType) :
+    DX12BaseCommandQueue::DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType) :
         m_fence(device)
     {
         HRESULT hr;

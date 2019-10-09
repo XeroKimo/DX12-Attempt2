@@ -4,7 +4,7 @@
 
 namespace RendererDX12
 {
-    DX12CommandQueue::DX12CommandQueue(DX12BaseDevice* device, Command_List_Type commandListType, DX12ManagerCommandAllocator* allocatorManager) :
+    DX12CommandQueue::DX12CommandQueue(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager) :
         m_commandQueue(device->GetInterface(), device->GetNodeMask(), commandListType),
         m_allocatorManager(allocatorManager),
         m_allocatorSizeHistory()

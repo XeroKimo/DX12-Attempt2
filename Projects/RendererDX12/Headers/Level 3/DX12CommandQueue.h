@@ -12,7 +12,7 @@ namespace RendererDX12
     private:
         static const size_t MAX_SIGNAL_HISTORY = 8;
     public:
-        DX12CommandQueue(DX12BaseDevice* device, Command_List_Type commandListType, DX12ManagerCommandAllocator* allocatorManager);
+        DX12CommandQueue(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
         UINT64 Signal();
         void SyncQueue(DWORD milliseconds);

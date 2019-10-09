@@ -9,7 +9,7 @@ namespace RendererDX12
     class DX12BaseCommandQueue
     {
     public:
-        DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, Command_List_Type commandListType);
+        DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
 
         UINT64 Signal();
         UINT64 Signal(DX12Fence* fence);
@@ -25,7 +25,7 @@ namespace RendererDX12
     private:
         ComPtr<ID3D12CommandQueue> m_commandQueue;
         DX12Fence m_fence;
-        Command_List_Type m_type;
+        D3D12_COMMAND_LIST_TYPE m_type;
         HANDLE m_fenceEvent;
     };
 }

@@ -21,18 +21,6 @@
     <ClInclude Include="Headers\RendererDX12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HInputLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HRootSignatureDesc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HShaderByteCode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Level 1\DX12UploadBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,16 +66,10 @@
     <ClInclude Include="Headers\Level 2\DX12Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Helpers\Helpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\Level 1\DX12PipelineState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Level 2\DX12Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\Helpers\DX12HResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Level 1\DX12Fence.h">
@@ -102,23 +84,26 @@
     <ClInclude Include="Headers\Level 4\DX12DeviceCommandModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\DX12Enums.h">
+    <ClInclude Include="Headers\Helpers\GraphicsPipelineStateDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\ShaderInputLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\!Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\ShaderByteCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\RootSignatureDesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Helpers\ResourceFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Helpers\DX12HInputLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Helpers\DX12HRootSignatureDesc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Helpers\DX12HShaderByteCode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Level 1\DX12BaseDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -156,6 +141,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Level 4\DX12DeviceCommandModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\ShaderInputLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\GraphicsPipelineStateDesc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\ShaderByteCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Helpers\RootSignatureDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

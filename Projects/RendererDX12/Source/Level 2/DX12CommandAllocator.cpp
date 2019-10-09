@@ -3,7 +3,7 @@
 
 namespace RendererDX12
 {
-    DX12CommandAllocator::DX12CommandAllocator(ID3D12Device* device, const Command_List_Type& type, DX12ManagerConstBuffer* bufferManager) :
+    DX12CommandAllocator::DX12CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager) :
         m_commandAllocator(device, type)
     {
         m_bufferManager = bufferManager;

@@ -3,6 +3,7 @@
 
 namespace RendererDX12
 {
+    using namespace Helpers::ResourceFuncs;
     DX12Mesh::DX12Mesh() :
         m_indexCount(0),
         m_vertexCount(0),
@@ -19,7 +20,7 @@ namespace RendererDX12
 
         LONG_PTR totalVertexSize = static_cast<LONG_PTR>(sizeOfVertex)* static_cast<LONG_PTR>(vertexCount);
 
-        device->CreateCommittedResource(&DX12HResource::HeapDefault(0), D3D12_HEAP_FLAG_NONE, &DX12HResource::Buffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
+        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &Buffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 
         D3D12_SUBRESOURCE_DATA data;
         data.pData = vertexData;
