@@ -5,8 +5,7 @@
 class DX12ManagerConstBuffer
 {
 public:
-	DX12ManagerConstBuffer();
-	void Initialize(DX12BaseDevice* device, UINT64 constBufferSize);
+	DX12ManagerConstBuffer(DX12BaseDevice* device, UINT64 constBufferSize);
 	void ResetBuffers(std::vector<unique_ptr<DX12UploadBuffer>>& buffers);
 
 	unique_ptr<DX12UploadBuffer> GetConstBuffer();

@@ -1,13 +1,11 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12Device
+class DX12DeviceCommandModule
 {
 public:
-    DX12Device();
-	~DX12Device();
-
-    void Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
+    DX12DeviceCommandModule(DX12BaseDevice* device, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
+	~DX12DeviceCommandModule();
 
     void CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
     void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
@@ -31,14 +29,14 @@ public:
 	
 	unique_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type);
     inline ID3D12CommandQueue* GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE type, UINT index) { return GetCommandQueue(type, index)->GetInterface(); }
-    inline DX12BaseDevice* GetBase() { return &m_device; }
+    inline DX12BaseDevice* GetDevice() { return m_device; }
 
 private:
 	void StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait);
     DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
     DX12ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
 private:
-    DX12BaseDevice m_device;
+    DX12BaseDevice* m_device;
 
     std::vector<unique_ptr<DX12CommandQueue>> m_directQueue;
     std::vector<unique_ptr<DX12CommandQueue>> m_computeQueue;

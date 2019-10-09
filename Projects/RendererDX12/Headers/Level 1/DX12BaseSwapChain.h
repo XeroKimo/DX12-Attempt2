@@ -4,8 +4,7 @@
 class DX12BaseSwapChain
 {
 public:
-	DX12BaseSwapChain();
-	void Initialize(ID3D12Device* device, UINT nodeMask, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
+	DX12BaseSwapChain(ID3D12Device* device, UINT nodeMask, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
 	void ClearBackBuffer(ID3D12GraphicsCommandList* commandList);
 	void ReadyBackBuffer(ID3D12GraphicsCommandList* commandList);

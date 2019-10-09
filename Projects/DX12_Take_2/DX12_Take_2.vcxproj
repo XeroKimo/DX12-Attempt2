@@ -167,7 +167,6 @@
     <ClInclude Include="Headers\MathLib\Vector2.h" />
     <ClInclude Include="Headers\MathLib\Vector3.h" />
     <ClInclude Include="Headers\MathLib\Vector4.h" />
-    <ClInclude Include="Headers\MathLib\VectorBase.h" />
     <ClInclude Include="Headers\PCH.h" />
     <ClInclude Include="Headers\PlatformClock.h" />
   </ItemGroup>

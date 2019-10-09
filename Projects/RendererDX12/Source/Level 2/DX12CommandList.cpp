@@ -1,20 +1,12 @@
 #include "RendererDX12.h"
 #include "Level 2/DX12CommandList.h"
 
-DX12CommandList::DX12CommandList() :
-	m_nodeMask(0)
+DX12CommandList::DX12CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator) :
+    m_commandList(device,nodeMask, type, allocator->GetBase()->GetInterface()),
+    m_allocator(),
+    m_nodeMask(nodeMask)
 {
-}
-
-DX12CommandList::~DX12CommandList()
-{
-}
-
-void DX12CommandList::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator)
-{
-	m_commandList.Initialize(device, nodeMask, type, allocator->GetBase()->GetInterface());
-	m_allocator.swap(allocator);
-	m_nodeMask = nodeMask;
+    m_allocator.swap(allocator);
 }
 
 void DX12CommandList::Reset(unique_ptr<DX12CommandAllocator> allocator)

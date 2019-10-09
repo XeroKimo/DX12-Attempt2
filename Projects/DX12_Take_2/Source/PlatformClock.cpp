@@ -2,13 +2,7 @@
 
 PlatformClock::PlatformClock()
 {
-	m_lastTick = m_currentTick = std::chrono::high_resolution_clock::now();
-	m_lifeTime = 0.0;
 	Update();
-}
-
-PlatformClock::~PlatformClock()
-{
 }
 
 void PlatformClock::Update()

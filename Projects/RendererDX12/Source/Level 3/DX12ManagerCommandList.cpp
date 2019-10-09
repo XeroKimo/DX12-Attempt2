@@ -1,27 +1,17 @@
 #include "RendererDX12.h"
 #include "Level 3/DX12ManagerCommandList.h"
 
-DX12ManagerCommandList::DX12ManagerCommandList() :
-    m_allocatorManager(nullptr),
-    m_device(nullptr),
-    m_type(D3D12_COMMAND_LIST_TYPE_DIRECT),
-    m_pCommandQueues(),
-	m_nodeMask(0)
+DX12ManagerCommandList::DX12ManagerCommandList(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
+    m_device(device),
+    m_type(type),
+    m_pCommandQueues(commandQueues),
+    m_allocatorManager(allocatorManager),
+    m_nodeMask(device->GetNodeMask())
 {
-}
-
-void DX12ManagerCommandList::Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager)
-{
+    //The following command list types does not require a manager
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_DECODE);
     assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
     assert(type != D3D12_COMMAND_LIST_TYPE_BUNDLE);
-
-    m_device = device;
-	m_pCommandQueues = commandQueues;
-	m_allocatorManager = allocatorManager;
-	m_type = type;
-	m_waitingLists.resize(commandQueues->size());
-	m_nodeMask = device->GetNodeMask();
 }
 
 void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex)
@@ -59,11 +49,7 @@ void DX12ManagerCommandList::ExecuteAllWaitingLists()
 unique_ptr<DX12CommandList> DX12ManagerCommandList::GetCommandList()
 {
 	if (m_inactiveList.empty())
-	{
-		unique_ptr<DX12CommandList> list = make_unique<DX12CommandList>();
-		list->Initialize(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
-		return list;
-	}
+        return make_unique<DX12CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
 	else
 	{
 		unique_ptr<DX12CommandList> list;

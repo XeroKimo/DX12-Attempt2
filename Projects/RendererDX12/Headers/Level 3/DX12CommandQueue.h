@@ -9,8 +9,7 @@ class DX12ManagerCommandAllocator;
 class DX12CommandQueue
 {
 public:
-	DX12CommandQueue();
-	void Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
+	DX12CommandQueue(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager);
 
 	UINT64 Signal();
 	void SyncQueue(DWORD milliseconds);

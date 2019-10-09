@@ -1,19 +1,10 @@
 #include "RendererDX12.h"
 #include "Level 2/DX12CommandAllocator.h"
 
-DX12CommandAllocator::DX12CommandAllocator() :
-	m_bufferManager(nullptr)
+DX12CommandAllocator::DX12CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager) :
+    m_commandAllocator(device,type)
 {
-}
-
-DX12CommandAllocator::~DX12CommandAllocator()
-{
-}
-
-void DX12CommandAllocator::Initialize(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager)
-{
-	m_commandAllocator.Initialize(device, type);
-	m_bufferManager = bufferManager;
+    m_bufferManager = bufferManager;
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS DX12CommandAllocator::UploadDynamicCBV(void* data, UINT64 size)

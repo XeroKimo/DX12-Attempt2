@@ -1,17 +1,10 @@
 #include "RendererDX12.h"
 #include "Level 2/DX12ManagerConstBuffer.h"
 
-DX12ManagerConstBuffer::DX12ManagerConstBuffer() :
-	m_device(nullptr),
-	m_bufferSize(1<<16)
+DX12ManagerConstBuffer::DX12ManagerConstBuffer(DX12BaseDevice* device, UINT64 constBufferSize) :
+    m_device (device),
+    m_bufferSize((constBufferSize + (1 << 16) - 1) & ~((1 << 16) - 1))
 {
-}
-
-void DX12ManagerConstBuffer::Initialize(DX12BaseDevice* device, UINT64 constBufferSize)
-{
-	int power = (1 << 16) - 1;
-	m_device = device;
-	m_bufferSize = (constBufferSize + power) & ~power;
 }
 
 void DX12ManagerConstBuffer::ResetBuffers(std::vector<unique_ptr<DX12UploadBuffer>>& buffers)
@@ -31,7 +24,5 @@ unique_ptr<DX12UploadBuffer> DX12ManagerConstBuffer::GetConstBuffer()
 
 unique_ptr<DX12UploadBuffer> DX12ManagerConstBuffer::CreateBuffer(UINT64 size)
 {
-	unique_ptr<DX12UploadBuffer> buffer = make_unique<DX12UploadBuffer>();
-	buffer->Initialize(m_device->GetInterface(), m_device->GetNodeMask(), size);
-	return buffer;
+    return make_unique<DX12UploadBuffer>(m_device->GetInterface(), m_device->GetNodeMask(), size);
 }

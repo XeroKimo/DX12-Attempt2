@@ -7,9 +7,7 @@ class DX12ManagerConstBuffer;
 class DX12CommandAllocator
 {
 public:
-	DX12CommandAllocator();
-	~DX12CommandAllocator();
-	void Initialize(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* m_bufferManager);
+	DX12CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager);
 
 	D3D12_GPU_VIRTUAL_ADDRESS UploadDynamicCBV(void* data, UINT64 size);
 	void UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data);

@@ -5,7 +5,7 @@
 struct Vector4
 {
 public:
-	Vector4();
+	Vector4() = default;
 	Vector4(float _x, float _y, float _z, float _w);
 	Vector4(Vector3 _xyz, float _w = 0);
 
@@ -33,20 +33,11 @@ public:
 
 
 public:
-	float x;
-	float y;
-	float z;
-	float w;
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float w = 0;
 };
-
-
-inline Vector4::Vector4() :
-	x(0),
-	y(0),
-	z(0),
-	w(0)
-{
-}
 
 inline Vector4::Vector4(float _x, float _y, float _z, float _w) :
 	x(_x),
@@ -59,9 +50,6 @@ inline Vector4::Vector4(float _x, float _y, float _z, float _w) :
 inline Vector4::Vector4(Vector3 _xyz, float _w) : Vector4(_xyz.x, _xyz.y, _xyz.z, _w)
 {
 }
-
-
-
 
 float inline Vector4::Dot(const Vector4& other)
 {

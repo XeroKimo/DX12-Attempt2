@@ -13,12 +13,12 @@ public:
 	ComPtr<ID3D12RootSignature> rootSiganture;
 	ComPtr<ID3D12PipelineState> pipelineState;
 public:
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc;
-	DX12HRootSignatureDesc rootSignatureDesc;
-	DX12HInputLayout inputLayout;
-	DX12HShaderByteCode vsShader;
-	DX12HShaderByteCode psShader;
-	DX12HShaderByteCode dsShader;
-	DX12HShaderByteCode hsShader;
-	DX12HShaderByteCode gsShader;
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
+	DX12HRootSignatureDesc rootSignatureDesc = {};
+	DX12HInputLayout inputLayout = {};
+	DX12HShaderByteCode vsShader = {};
+	DX12HShaderByteCode psShader = {};
+	DX12HShaderByteCode dsShader = {};
+	DX12HShaderByteCode hsShader = {};
+	DX12HShaderByteCode gsShader = {};
 };

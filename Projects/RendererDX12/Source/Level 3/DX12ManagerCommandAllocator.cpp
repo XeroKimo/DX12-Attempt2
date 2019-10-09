@@ -1,16 +1,10 @@
 #include "RendererDX12.h"
 #include "Level 3/DX12ManagerCommandAllocator.h"
 
-DX12ManagerCommandAllocator::DX12ManagerCommandAllocator() :
-	m_device(nullptr),
-    m_bufferManager(nullptr)
+DX12ManagerCommandAllocator::DX12ManagerCommandAllocator(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager) :
+    m_device(device),
+    m_bufferManager(bufferManager)
 {
-}
-
-void DX12ManagerCommandAllocator::Initialize(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager)
-{
-	m_device = device;
-	m_bufferManager = bufferManager;
 }
 
 unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
@@ -73,8 +67,5 @@ void DX12ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<DX12Com
 
 unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
 {
-	unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>();
-	allocator->Initialize(m_device->GetInterface(), type, m_bufferManager);
-	
-	return allocator;
+	return make_unique<DX12CommandAllocator>(m_device->GetInterface(), type, m_bufferManager);
 }

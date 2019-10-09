@@ -5,7 +5,7 @@
 struct Vector3
 {
 public:
-	Vector3();
+	Vector3() = default;
 	Vector3(float _x, float _y, float _z);
 	Vector3(Vector2 _xy, float _z = 0);
 
@@ -31,18 +31,10 @@ public:
 	void operator*=(const float& other);
 	void operator/=(const float& other);
 public:
-	float x;
-	float y;
-	float z;
+	float x = 0;
+	float y = 0;
+	float z = 0;
 };
-
-
-inline Vector3::Vector3() :
-	x(0),
-	y(0),
-	z(0)
-{
-}
 
 inline Vector3::Vector3(float _x, float _y, float _z) :
 	x(_x),

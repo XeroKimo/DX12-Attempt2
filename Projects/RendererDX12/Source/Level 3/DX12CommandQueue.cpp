@@ -1,18 +1,13 @@
 #include "RendererDX12.h"
 #include "Level 3/DX12CommandQueue.h"
 
-DX12CommandQueue::DX12CommandQueue() :
-	m_allocatorManager(nullptr),
-	m_highestSignaledSize(0),
-	m_allocatorSizeHistory()
-{
-}
 
-void DX12CommandQueue::Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager)
+DX12CommandQueue::DX12CommandQueue(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, DX12ManagerCommandAllocator* allocatorManager) :
+    m_commandQueue(device->GetInterface(), device->GetNodeMask(), commandListType),
+    m_allocatorManager (allocatorManager),
+    m_allocatorSizeHistory()
 {
-	m_commandQueue.Initialize(device->GetInterface(), device->GetNodeMask(), commandListType);
-	m_allocatorManager = allocatorManager;
-	m_allocatorSizeHistory.fill(0);
+    m_allocatorSizeHistory.fill(0);
 }
 
 UINT64 DX12CommandQueue::Signal()
@@ -49,7 +44,7 @@ void DX12CommandQueue::SyncQueue(DWORD milliseconds, UINT64 fenceValue)
 		return;
 	}
 
-	UINT overflow = (localFenceValue - fenceValue) / MAX_SIGNAL_HISTORY;
+	UINT64 overflow = (localFenceValue - fenceValue) / MAX_SIGNAL_HISTORY;
 	UINT64 valueToSync = fenceValue + MAX_SIGNAL_HISTORY * static_cast<UINT64>(overflow);
 	unsigned int roundedFenceValue = (valueToSync - 1) % MAX_SIGNAL_HISTORY;
 	size_t iteratorOffset = m_allocatorSizeHistory[roundedFenceValue] - m_highestSignaledSize;

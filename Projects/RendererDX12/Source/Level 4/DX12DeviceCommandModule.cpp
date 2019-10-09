@@ -1,19 +1,9 @@
 #include "RendererDX12.h"
-#include "Level 4/DX12Device.h"
+#include "Level 4/DX12DeviceCommandModule.h"
 
-DX12Device::DX12Device()
+DX12DeviceCommandModule::DX12DeviceCommandModule(DX12BaseDevice* device, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues)
 {
-}
-
-DX12Device::~DX12Device()
-{
-	SignalAllQueues();
-	SyncAllQueues();
-}
-
-void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues)
-{
-    m_device.Initialize(featureLevel, adapterID);
+    m_device = device;
 
     m_directQueue.reserve(directQueues);
     m_copyQueue.reserve(copyQueues);
@@ -22,65 +12,59 @@ void DX12Device::Initialize(D3D_FEATURE_LEVEL featureLevel, UINT adapterID, DX12
     if (directQueues)
     {
         for (UINT i = 0; i < directQueues; i++)
-        {
-            m_directQueue.push_back(make_unique<DX12CommandQueue>());
-            m_directQueue[i]->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_DIRECT, manager);
-        }
-		m_directList = make_unique<DX12ManagerCommandList>();
-		m_directList->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_DIRECT, &m_directQueue, manager);
+            m_directQueue.push_back(make_unique<DX12CommandQueue>(m_device, D3D12_COMMAND_LIST_TYPE_DIRECT, manager));
+        m_directList = make_unique<DX12ManagerCommandList>(m_device, D3D12_COMMAND_LIST_TYPE_DIRECT, &m_directQueue, manager);
     }
 
     if (computeQueues)
     {
         for (UINT i = 0; i < computeQueues; i++)
-        {
-            m_computeQueue.push_back(make_unique<DX12CommandQueue>());
-            m_computeQueue[i]->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_COMPUTE, manager);
-        }
-		m_computeList = make_unique<DX12ManagerCommandList>();
-		m_computeList->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_COMPUTE, &m_computeQueue, manager);
+            m_computeQueue.push_back(make_unique<DX12CommandQueue>(m_device, D3D12_COMMAND_LIST_TYPE_COMPUTE, manager));
+        m_computeList = make_unique<DX12ManagerCommandList>(m_device, D3D12_COMMAND_LIST_TYPE_COMPUTE, &m_computeQueue, manager);
     }
     if (copyQueues)
     {
         for (UINT i = 0; i < copyQueues; i++)
-        {
-            m_copyQueue.push_back(make_unique<DX12CommandQueue>());
-            m_copyQueue[i]->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_COPY, manager);
-        }
-		m_copyList = make_unique<DX12ManagerCommandList>();
-		m_copyList->Initialize(&m_device, D3D12_COMMAND_LIST_TYPE_COPY, &m_copyQueue, manager);
+            m_copyQueue.push_back(make_unique<DX12CommandQueue>(m_device, D3D12_COMMAND_LIST_TYPE_COPY, manager));
+        m_copyList = make_unique<DX12ManagerCommandList>(m_device, D3D12_COMMAND_LIST_TYPE_COPY, &m_copyQueue, manager);
     }
 }
 
-void DX12Device::CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+DX12DeviceCommandModule::~DX12DeviceCommandModule()
+{
+    SignalAllQueues();
+    SyncAllQueues();
+}
+
+void DX12DeviceCommandModule::CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
 {
 	DX12ManagerCommandList* commandListManager = GetCommandListManager(commandList->GetInterface()->GetType());
 	if (commandListManager != nullptr)
 		commandListManager->CloseCommandList(commandList, queueIndex);
 }
 
-void DX12Device::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+void DX12DeviceCommandModule::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
 {
 	DX12ManagerCommandList* commandListManager = GetCommandListManager(commandList->GetInterface()->GetType());
 	if (commandListManager != nullptr)
 		commandListManager->ExecuteCommandList(commandList, queueIndex);
 }
 
-void DX12Device::ExecuteWaitingLists(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+void DX12DeviceCommandModule::ExecuteWaitingLists(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	DX12ManagerCommandList* commandListManager = GetCommandListManager(type);
 	if (commandListManager != nullptr)
 		commandListManager->ExecuteWaitingList(queueIndex);
 }
 
-void DX12Device::ExecuteAllWaitingListsType(D3D12_COMMAND_LIST_TYPE type)
+void DX12DeviceCommandModule::ExecuteAllWaitingListsType(D3D12_COMMAND_LIST_TYPE type)
 {
 	DX12ManagerCommandList* manager = GetCommandListManager(type);
 	if (manager)
 		manager->ExecuteAllWaitingLists();
 }
 
-void DX12Device::ExecuteAllWaitingLists()
+void DX12DeviceCommandModule::ExecuteAllWaitingLists()
 {
     if (m_directList)
         m_directList->ExecuteAllWaitingLists();
@@ -90,7 +74,7 @@ void DX12Device::ExecuteAllWaitingLists()
         m_copyList->ExecuteAllWaitingLists();
 }
 
-UINT64 DX12Device::SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+UINT64 DX12DeviceCommandModule::SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
     if (commandQueue)
@@ -98,28 +82,28 @@ UINT64 DX12Device::SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 	return FENCE_SIGNAL_VALUE_MAX;
 }
 
-void DX12Device::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+void DX12DeviceCommandModule::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
     if (commandQueue)
         commandQueue->SyncQueue(INFINITE);
 }
 
-void DX12Device::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex, UINT64 fenceValue)
+void DX12DeviceCommandModule::SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex, UINT64 fenceValue)
 {
 	DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
 	if (commandQueue)
 		commandQueue->SyncQueue(INFINITE, fenceValue);
 }
 
-void DX12Device::ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+void DX12DeviceCommandModule::ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
     DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
     if (commandQueue)
         commandQueue->Reset();
 }
 
-void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue)
+void DX12DeviceCommandModule::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue)
 {
     DX12CommandQueue* stalledQueue = GetCommandQueue(stallType, stallIndex);
     DX12CommandQueue* toWaitQueue = GetCommandQueue(waitType, waitIndex);
@@ -127,14 +111,14 @@ void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, 
 		StallQueue(stalledQueue, toWaitQueue->GetFence(), waitValue);
 }
 
-void DX12Device::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue)
+void DX12DeviceCommandModule::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue)
 {
 	DX12CommandQueue* stalledQueue = GetCommandQueue(stallType, stallIndex);
 	if (stalledQueue)
 		StallQueue(stalledQueue, fence, fenceValue);
 }
 
-void DX12Device::SignalAllQueues()
+void DX12DeviceCommandModule::SignalAllQueues()
 {
     for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
     {
@@ -150,7 +134,7 @@ void DX12Device::SignalAllQueues()
     }
 }
 
-void DX12Device::SyncAllQueues()
+void DX12DeviceCommandModule::SyncAllQueues()
 {
     for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
     {
@@ -166,7 +150,7 @@ void DX12Device::SyncAllQueues()
     }
 }
 
-void DX12Device::ResetAllQueues()
+void DX12DeviceCommandModule::ResetAllQueues()
 {
     for (const unique_ptr<DX12CommandQueue>& queue : m_directQueue)
     {
@@ -182,7 +166,7 @@ void DX12Device::ResetAllQueues()
     }
 }
 
-UINT64 DX12Device::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+UINT64 DX12DeviceCommandModule::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	DX12CommandQueue* commandQueue = GetCommandQueue(type, queueIndex);
 	if (commandQueue)
@@ -190,15 +174,12 @@ UINT64 DX12Device::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 	return FENCE_SIGNAL_VALUE_MAX;
 }
 
-unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
+unique_ptr<DX12CommandList> DX12DeviceCommandModule::GetCommandList(D3D12_COMMAND_LIST_TYPE type)
 {
     if (type == D3D12_COMMAND_LIST_TYPE_BUNDLE)
     {
-        unique_ptr<DX12CommandList> list = make_unique<DX12CommandList>();
-        unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>();
-        allocator->Initialize(m_device.GetInterface(), type, nullptr);
-        list->Initialize(m_device.GetInterface(), m_device.GetNodeMask(), type, std::move(allocator));
-        return list;
+        unique_ptr<DX12CommandAllocator> allocator = make_unique<DX12CommandAllocator>(m_device->GetInterface(), type, nullptr);
+        return make_unique<DX12CommandList>(m_device->GetInterface(), m_device->GetNodeMask(), type, std::move(allocator));
     }
     else
     {
@@ -210,13 +191,13 @@ unique_ptr<DX12CommandList> DX12Device::GetCommandList(D3D12_COMMAND_LIST_TYPE t
 }
 
 
-void DX12Device::StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait)
+void DX12DeviceCommandModule::StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait)
 {
 	UINT64 waitValue = (valueToWait == FENCE_SIGNAL_VALUE_MAX) ? fenceToWait->fenceValue : valueToWait;
 	queueToStall->StallQueue(fenceToWait, waitValue);
 }
 
-DX12CommandQueue* DX12Device::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
+DX12CommandQueue* DX12DeviceCommandModule::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
 {
 	switch (type)
 	{
@@ -237,7 +218,7 @@ DX12CommandQueue* DX12Device::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT
 	}
 }
 
-DX12ManagerCommandList* DX12Device::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
+DX12ManagerCommandList* DX12DeviceCommandModule::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
 {
     switch (type)
     {

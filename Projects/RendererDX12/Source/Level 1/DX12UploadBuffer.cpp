@@ -1,11 +1,15 @@
 #include "RendererDX12.h"
 #include "Level 1/DX12UploadBuffer.h"
 
-DX12UploadBuffer::DX12UploadBuffer() :
-	m_totalSize(0),
-	m_usedSize(0),
-    m_mappedAddress(nullptr)
+DX12UploadBuffer::DX12UploadBuffer(ID3D12Device* device, UINT nodeMask, UINT64 size)
 {
+    HRESULT hr = device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+    assert(SUCCEEDED(hr));
+
+    D3D12_RANGE range = { 0,0 };
+    m_resource.Get()->Map(0, &range, reinterpret_cast<void**>(&m_mappedAddress));
+
+    m_totalSize = size;
 }
 
 DX12UploadBuffer::DX12UploadBuffer(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* targetResource, D3D12_SUBRESOURCE_DATA* data) :
@@ -20,17 +24,6 @@ DX12UploadBuffer::DX12UploadBuffer(ID3D12GraphicsCommandList* commandList, UINT 
 
 	device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(m_totalSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 	UpdateSubresources(commandList, targetResource, m_resource.Get(), 0, 0, 1, data);
-}
-
-void DX12UploadBuffer::Initialize(ID3D12Device* device, UINT nodeMask, UINT64 size)
-{
-	HRESULT hr = device->CreateCommittedResource(&DX12HResource::HeapUpload(nodeMask), D3D12_HEAP_FLAG_ALLOW_ALL_BUFFERS_AND_TEXTURES, &DX12HResource::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-	D3D12_RANGE range = { 0,0 };
-	m_resource.Get()->Map(0, &range, reinterpret_cast<void**>(&m_mappedAddress));
-
-	m_totalSize = size;
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS DX12UploadBuffer::UploadCBVSRVUAV(void* data, UINT64 size)

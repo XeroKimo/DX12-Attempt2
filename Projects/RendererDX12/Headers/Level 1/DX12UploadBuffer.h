@@ -6,10 +6,9 @@
 class DX12UploadBuffer
 {
 public:
-	DX12UploadBuffer();
+	DX12UploadBuffer(ID3D12Device* device, UINT nodeMask, UINT64 size);
 	DX12UploadBuffer(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* targetResource, D3D12_SUBRESOURCE_DATA* data);
 
-	void Initialize(ID3D12Device* device, UINT nodeMask, UINT64 size);
 	void Reset();
 
 	D3D12_GPU_VIRTUAL_ADDRESS UploadCBVSRVUAV(void* data, UINT64 size);

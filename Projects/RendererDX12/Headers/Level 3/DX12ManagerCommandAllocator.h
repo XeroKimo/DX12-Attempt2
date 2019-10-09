@@ -6,9 +6,8 @@
 class DX12ManagerCommandAllocator
 {
 public:
-	DX12ManagerCommandAllocator();
+	DX12ManagerCommandAllocator(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager);
 
-	void Initialize(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager);
 	void ResetAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocators);
 
 	unique_ptr<DX12CommandAllocator> GetAllocator(const D3D12_COMMAND_LIST_TYPE& type);

@@ -7,8 +7,7 @@
 class DX12BaseCommandQueue
 {
 public:
-	DX12BaseCommandQueue();
-	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
+	DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
 
 	UINT64 Signal();
 	UINT64 Signal(DX12Fence* fence);

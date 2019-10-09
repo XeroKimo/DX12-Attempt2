@@ -1,10 +1,23 @@
 #include "RendererDX12.h"
 #include "Level 2/DX12BaseCommandQueue.h"
 
-DX12BaseCommandQueue::DX12BaseCommandQueue() :
-    m_fenceEvent(nullptr),
-	m_type(D3D12_COMMAND_LIST_TYPE_DIRECT)
+DX12BaseCommandQueue::DX12BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType) :
+    m_fence(device)
 {
+    HRESULT hr;
+
+    D3D12_COMMAND_QUEUE_DESC cqDesc;
+    cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+    cqDesc.NodeMask = nodeMask;
+    cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+    cqDesc.Type = commandListType;
+
+    m_type = commandListType;
+
+    hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
+    assert(SUCCEEDED(hr));
+
+    m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
 UINT64 DX12BaseCommandQueue::Signal()
@@ -37,24 +50,4 @@ void DX12BaseCommandQueue::SyncFence(DWORD milliseconds, DX12Fence* fence, UINT6
 		WaitForSingleObject(m_fenceEvent, milliseconds);
 	}
 	fence->highestSyncedValue = fenceValue;
-}
-
-void DX12BaseCommandQueue::Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType)
-{
-	HRESULT hr;
-
-	D3D12_COMMAND_QUEUE_DESC cqDesc;
-	cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	cqDesc.NodeMask = nodeMask;
-	cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-	cqDesc.Type = commandListType;
-
-    m_type = commandListType;
-
-	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-	m_fence.Initialize(device);
-
-	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }

@@ -19,8 +19,7 @@ private:
 	};
 
 public:
-	DX12ManagerCommandList();
-	void Initialize(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
+	DX12ManagerCommandList(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
 
 	void CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
 	void ExecuteCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);

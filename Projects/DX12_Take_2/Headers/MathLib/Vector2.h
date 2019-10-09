@@ -4,7 +4,7 @@
 struct Vector2
 {
 public:
-	Vector2();
+	Vector2() = default;
 	Vector2(float _x, float _y);
 
 	float Dot(const Vector2& other);
@@ -28,16 +28,9 @@ public:
 	void operator*=(const float& other);
 	void operator/=(const float& other);
 public:
-	float x;
-	float y;
+	float x = 0;
+	float y = 0;
 };
-
-
-inline Vector2::Vector2() :
-	x(0),
-	y(0)
-{
-}
 
 inline Vector2::Vector2(float _x, float _y) :
 	x(_x),

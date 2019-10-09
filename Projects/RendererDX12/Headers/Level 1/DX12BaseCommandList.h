@@ -4,8 +4,8 @@
 class DX12BaseCommandList
 {
 public:
-	inline void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* allocator) 
-	{
+    inline DX12BaseCommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* allocator)
+    {
 		device->CreateCommandList(nodeMask, type, allocator, nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
 	}
 

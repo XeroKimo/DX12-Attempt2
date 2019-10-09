@@ -5,9 +5,7 @@
 class DX12CommandList
 {
 public:
-	DX12CommandList();
-	~DX12CommandList();
-	void Initialize(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator);
+	DX12CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator);
 	void Reset(unique_ptr<DX12CommandAllocator> allocator);
 
 	void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);
