@@ -4,13 +4,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-    WinApp application;
-    PlatformClock clock;
+    using namespace RendererDX12;
+    using namespace WinApplication;
 
+    Window application;
+    PlatformClock clock;
 	{
-		WinAppHelpers::TDSTR className = L"DX12Renderer";
-		WNDCLASS wc = WinAppHelpers::WndClassStandard(hInstance, static_cast<WNDPROC>(WindowProc), className);
-		WinAppHelpers::CreateWindowHelper helper = WinAppHelpers::CreateWindowHelper::Standard(hInstance, 1280, 720, className);
+		TDSTR className = L"DX12Renderer";
+		WNDCLASS wc = WndClassStandard(hInstance, static_cast<WNDPROC>(WindowProc), className);
+		CreateWindowHelper helper = CreateWindowHelper::Standard(hInstance, 1280, 720, className);
         helper.ConvertToClientSize();
 
 		if (!application.Initialize(wc, helper))
@@ -25,7 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     DX12ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
     DX12DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
 
-    DX12BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
+    DX12BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(Command_List_Type::Direct, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
         return 1;
 
@@ -88,7 +90,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 
-	unique_ptr<DX12CommandList> cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+	unique_ptr<DX12CommandList> cl = commandModule.GetCommandList(Command_List_Type::Copy);
 	DX12Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
   
@@ -96,8 +98,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	texture.InitializeTexture2D(device.GetInterface(), cl.get(), L"Resources/test.jpg");
 
     commandModule.ExecuteCommandList(cl,0);
-    commandModule.SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
-    commandModule.StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    commandModule.SignalQueue(Command_List_Type::Copy, 0);
+    commandModule.StallQueue(Command_List_Type::Direct, 0, Command_List_Type::Copy, 0);
 
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;
@@ -138,7 +140,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 			Vector3 angle = buffer.worldMatrix.GetEulerAngles();
 
-			cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
+			cl = commandModule.GetCommandList(Command_List_Type::Direct);
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 
             swapChain.ClearBackBuffer(commandList);
@@ -156,7 +158,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             commandModule.ExecuteCommandList(cl, 0);
             commandModule.SignalAllQueues();
             //renderer.SyncAllQueues();
-			commandModule.SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
+			commandModule.SyncQueue(Command_List_Type::Direct, 0);
 
             swapChain.GetInterface()->Present(0, 0);
 		}

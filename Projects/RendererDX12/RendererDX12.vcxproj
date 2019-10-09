@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\DX12Enums.h" />
     <ClInclude Include="Headers\DX12Header.h" />
     <ClInclude Include="Headers\Helpers\DX12HGraphicsPipelineStateDesc.h" />
     <ClInclude Include="Headers\Helpers\DX12HInputLayout.h" />

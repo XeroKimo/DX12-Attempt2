@@ -1,25 +1,28 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12Fence
+namespace RendererDX12
 {
-public:
-	DX12Fence(ID3D12Device* device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE) 
-    { 
-        device->CreateFence(0, flags, IID_PPV_ARGS(m_fence.GetAddressOf())); 
-    }
-
-    void Reset() 
+    class DX12Fence
     {
-        fenceValue = highestSyncedValue = 0;
-        m_fence->Signal(fenceValue);
-    }
+    public:
+        DX12Fence(ID3D12Device* device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE)
+        {
+            device->CreateFence(0, flags, IID_PPV_ARGS(m_fence.GetAddressOf()));
+        }
 
-	inline ID3D12Fence* GetInterface() { return m_fence.Get(); }
-public:
-	UINT64 fenceValue;
-	UINT64 highestSyncedValue;
+        void Reset()
+        {
+            fenceValue = highestSyncedValue = 0;
+            m_fence->Signal(fenceValue);
+        }
 
-private:
-	ComPtr<ID3D12Fence> m_fence;
-};
+        inline ID3D12Fence* GetInterface() { return m_fence.Get(); }
+    public:
+        UINT64 fenceValue;
+        UINT64 highestSyncedValue;
+
+    private:
+        ComPtr<ID3D12Fence> m_fence;
+    };
+}

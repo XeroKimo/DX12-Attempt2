@@ -102,6 +102,9 @@
     <ClInclude Include="Headers\Level 4\DX12DeviceCommandModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\DX12Enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Helpers\DX12HGraphicsPipelineStateDesc.cpp">

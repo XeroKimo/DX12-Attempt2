@@ -1,48 +1,51 @@
 #pragma once
 #include "DX12Header.h"
 
-class DX12DeviceCommandModule
+namespace RendererDX12
 {
-public:
-    DX12DeviceCommandModule(DX12BaseDevice* device, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
-	~DX12DeviceCommandModule();
+    class DX12DeviceCommandModule
+    {
+    public:
+        DX12DeviceCommandModule(DX12BaseDevice* device, DX12ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
+        ~DX12DeviceCommandModule();
 
-    void CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
-    void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
-    void ExecuteWaitingLists(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-	void ExecuteAllWaitingListsType(D3D12_COMMAND_LIST_TYPE type);
-    void ExecuteAllWaitingLists();
+        void CloseCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
+        void ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex);
+        void ExecuteWaitingLists(Command_List_Type type, UINT queueIndex);
+        void ExecuteAllWaitingListsType(Command_List_Type type);
+        void ExecuteAllWaitingLists();
 
-    UINT64 SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-    void SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-	void SyncQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex, UINT64 fenceValue);
-    void ResetQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
+        UINT64 SignalQueue(Command_List_Type type, UINT queueIndex);
+        void SyncQueue(Command_List_Type type, UINT queueIndex);
+        void SyncQueue(Command_List_Type type, UINT queueIndex, UINT64 fenceValue);
+        void ResetQueue(Command_List_Type type, UINT queueIndex);
 
-    void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, D3D12_COMMAND_LIST_TYPE waitType, UINT waitIndex, UINT64 waitValue = FENCE_SIGNAL_VALUE_MAX);
-	void StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue = FENCE_SIGNAL_VALUE_MAX);
+        void StallQueue(Command_List_Type stallType, UINT stallIndex, Command_List_Type waitType, UINT waitIndex, UINT64 waitValue = FENCE_MAX_SIGNAL_VALUE);
+        void StallQueue(Command_List_Type stallType, UINT stallIndex, DX12Fence* fence, UINT64 fenceValue = FENCE_MAX_SIGNAL_VALUE);
 
-    void SignalAllQueues();
-    void SyncAllQueues();
-    void ResetAllQueues();
+        void SignalAllQueues();
+        void SyncAllQueues();
+        void ResetAllQueues();
 
-	UINT64 GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-	
-	unique_ptr<DX12CommandList> GetCommandList(D3D12_COMMAND_LIST_TYPE type);
-    inline ID3D12CommandQueue* GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE type, UINT index) { return GetCommandQueue(type, index)->GetInterface(); }
-    inline DX12BaseDevice* GetDevice() { return m_device; }
+        UINT64 GetFenceValue(Command_List_Type type, UINT queueIndex);
 
-private:
-	void StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait);
-    DX12CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
-    DX12ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
-private:
-    DX12BaseDevice* m_device;
+        unique_ptr<DX12CommandList> GetCommandList(Command_List_Type type);
+        inline ID3D12CommandQueue* GetCommandQueueInterface(Command_List_Type type, UINT index) { return GetCommandQueue(type, index)->GetInterface(); }
+        inline DX12BaseDevice* GetDevice() { return m_device; }
 
-    std::vector<unique_ptr<DX12CommandQueue>> m_directQueue;
-    std::vector<unique_ptr<DX12CommandQueue>> m_computeQueue;
-    std::vector<unique_ptr<DX12CommandQueue>> m_copyQueue;
+    private:
+        void StallQueue(DX12CommandQueue* queueToStall, DX12Fence* fenceToWait, UINT64 valueToWait);
+        DX12CommandQueue* GetCommandQueue(Command_List_Type type, UINT queueIndex);
+        DX12ManagerCommandList* GetCommandListManager(Command_List_Type type);
+    private:
+        DX12BaseDevice* m_device;
 
-    unique_ptr<DX12ManagerCommandList> m_directList;
-    unique_ptr<DX12ManagerCommandList> m_computeList;
-    unique_ptr<DX12ManagerCommandList> m_copyList;
-};
+        std::vector<unique_ptr<DX12CommandQueue>> m_directQueue;
+        std::vector<unique_ptr<DX12CommandQueue>> m_computeQueue;
+        std::vector<unique_ptr<DX12CommandQueue>> m_copyQueue;
+
+        unique_ptr<DX12ManagerCommandList> m_directList;
+        unique_ptr<DX12ManagerCommandList> m_computeList;
+        unique_ptr<DX12ManagerCommandList> m_copyList;
+    };
+}

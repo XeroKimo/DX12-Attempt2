@@ -1,6 +1,6 @@
 #pragma once
 
-#include <WinApp.h>
+#include <Window.h>
 #include <RendererDX12.h>
 
 #include "MathLib/MathLib.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-namespace WinAppHelpers
+namespace WinApplication
 {
 #ifdef _MBCS
 	using TDSTR = LPCSTR;
