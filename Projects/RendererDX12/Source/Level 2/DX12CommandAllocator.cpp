@@ -3,6 +3,7 @@
 
 namespace RendererDX12
 {
+    using namespace LevelOne;
     DX12CommandAllocator::DX12CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager) :
         m_commandAllocator(device, type)
     {
@@ -22,7 +23,7 @@ namespace RendererDX12
 
     void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
     {
-        m_temporaryBuffers.push_back(make_shared<DX12UploadBuffer>(commandList, nodeMask, destination, data));
+        m_temporaryBuffers.push_back(make_shared<UploadBuffer>(commandList, nodeMask, destination, data));
     }
 
     void DX12CommandAllocator::Reset()

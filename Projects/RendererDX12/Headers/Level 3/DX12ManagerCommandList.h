@@ -21,7 +21,7 @@ namespace RendererDX12
         };
 
     public:
-        DX12ManagerCommandList(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
+        DX12ManagerCommandList(LevelOne::BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager);
 
         void CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
         void ExecuteCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex);
@@ -30,7 +30,7 @@ namespace RendererDX12
 
         unique_ptr<DX12CommandList> GetCommandList();
     private:
-        DX12BaseDevice* m_device;
+        LevelOne::BaseDevice* m_device;
         DX12ManagerCommandAllocator* m_allocatorManager;
         std::vector<unique_ptr<DX12CommandQueue>>* m_pCommandQueues;
         std::vector<unique_ptr<DX12CommandList>> m_inactiveList;

@@ -3,6 +3,7 @@
 
 namespace RendererDX12
 {
+    using namespace LevelOne;
     DX12CommandList::DX12CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<DX12CommandAllocator> allocator) :
         m_commandList(device, nodeMask, type, allocator->GetBase()->GetInterface()),
         m_allocator(),

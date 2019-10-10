@@ -13,7 +13,7 @@ namespace RendererDX12
 
         ParseImage(filename, imageData, imageWidth, imageHeight);
 
-        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &Texture2D(imageWidth, imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &ResourceTexture2D(imageWidth, imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
         heapDesc.NodeMask = 0;
@@ -40,16 +40,7 @@ namespace RendererDX12
 
         commandList->UploadData(m_resource.Get(), &data);
 
-        D3D12_RESOURCE_BARRIER barrier;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_resource.Get();
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-        //barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-
-        commandList->GetInterface()->ResourceBarrier(1, &barrier);
+        commandList->GetInterface()->ResourceBarrier(1, &ResourceBarrierTransition(m_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
     }
 
     void DX12Texture::Set(DX12CommandList* commandList, const UINT& paramIndex)

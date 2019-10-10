@@ -20,7 +20,7 @@ namespace RendererDX12
 
         LONG_PTR totalVertexSize = static_cast<LONG_PTR>(sizeOfVertex)* static_cast<LONG_PTR>(vertexCount);
 
-        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &Buffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
+        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &ResourceBuffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 
         D3D12_SUBRESOURCE_DATA data;
         data.pData = vertexData;
@@ -28,15 +28,7 @@ namespace RendererDX12
         data.SlicePitch = data.RowPitch * vertexCount;
 
         commandList->UploadData(m_vertexBuffer.Get(), &data);
-
-        D3D12_RESOURCE_BARRIER barrier = {};
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_vertexBuffer.Get();
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-        //barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-        commandList->GetBase()->GetInterface()->ResourceBarrier(1, &barrier);
+        commandList->GetBase()->GetInterface()->ResourceBarrier(1, &ResourceBarrierTransition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
 
         m_vertexView.BufferLocation = m_vertexBuffer.Get()->GetGPUVirtualAddress();
         m_vertexView.SizeInBytes = static_cast<UINT>(totalVertexSize);

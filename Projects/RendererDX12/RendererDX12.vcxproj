@@ -24,13 +24,13 @@
     <ClInclude Include="Headers\Helpers\ShaderInputLayout.h" />
     <ClInclude Include="Headers\Helpers\RootSignatureDesc.h" />
     <ClInclude Include="Headers\Helpers\!Header.h" />
-    <ClInclude Include="Headers\Level 1\DX12BaseCommandAllocator.h" />
-    <ClInclude Include="Headers\Level 1\DX12BaseCommandList.h" />
-    <ClInclude Include="Headers\Level 1\DX12Fence.h" />
-    <ClInclude Include="Headers\Level 1\DX12PipelineState.h" />
+    <ClInclude Include="Headers\Level 1\BaseCommandAllocator.h" />
+    <ClInclude Include="Headers\Level 1\BaseCommandList.h" />
+    <ClInclude Include="Headers\Level 1\Fence.h" />
+    <ClInclude Include="Headers\Level 1\PipelineState.h" />
     <ClInclude Include="Headers\Helpers\ResourceFuncs.h" />
-    <ClInclude Include="Headers\Level 1\DX12UploadBuffer.h" />
-    <ClInclude Include="Headers\Level 1\Level_1.h" />
+    <ClInclude Include="Headers\Level 1\UploadBuffer.h" />
+    <ClInclude Include="Headers\Level 1\!Header.h" />
     <ClInclude Include="Headers\Level 2\DX12BaseCommandQueue.h" />
     <ClInclude Include="Headers\Level 2\DX12CommandAllocator.h" />
     <ClInclude Include="Headers\Level 2\DX12Texture.h" />
@@ -38,11 +38,11 @@
     <ClInclude Include="Headers\Level 3\DX12ManagerCommandAllocator.h" />
     <ClInclude Include="Headers\Level 2\DX12CommandList.h" />
     <ClInclude Include="Headers\Level 3\DX12ManagerCommandList.h" />
-    <ClInclude Include="Headers\Level 1\DX12BaseDevice.h" />
+    <ClInclude Include="Headers\Level 1\BaseDevice.h" />
     <ClInclude Include="Headers\Level 2\Level_2.h" />
     <ClInclude Include="Headers\Level 4\DX12DeviceCommandModule.h" />
     <ClInclude Include="Headers\Level 3\Level_3.h" />
-    <ClInclude Include="Headers\Level 1\DX12BaseSwapChain.h" />
+    <ClInclude Include="Headers\Level 1\BaseSwapChain.h" />
     <ClInclude Include="Headers\Level 2\DX12ManagerConstBuffer.h" />
     <ClInclude Include="Headers\Level 2\DX12Mesh.h" />
     <ClInclude Include="Headers\Level 4\Level_4.h" />
@@ -54,7 +54,7 @@
     <ClCompile Include="Source\Level 2\DX12Texture.cpp" />
     <ClCompile Include="Source\Level 2\DX12CommandAllocator.cpp" />
     <ClCompile Include="Source\Level 3\DX12CommandQueue.cpp" />
-    <ClCompile Include="Source\Level 1\DX12UploadBuffer.cpp" />
+    <ClCompile Include="Source\Level 1\UploadBuffer.cpp" />
     <ClCompile Include="Source\Level 2\DX12ManagerConstBuffer.cpp" />
     <ClCompile Include="Source\Level 2\DX12Mesh.cpp" />
     <ClCompile Include="Source\Helpers\GraphicsPipelineStateDesc.cpp" />
@@ -62,11 +62,11 @@
     <ClCompile Include="Source\Helpers\ShaderInputLayout.cpp" />
     <ClCompile Include="Source\Helpers\RootSignatureDesc.cpp" />
     <ClCompile Include="Source\Helpers\ShaderByteCode.cpp" />
-    <ClCompile Include="Source\Level 1\DX12BaseSwapChain.cpp" />
+    <ClCompile Include="Source\Level 1\BaseSwapChain.cpp" />
     <ClCompile Include="Source\Level 2\DX12CommandList.cpp" />
     <ClCompile Include="Source\Level 3\DX12ManagerCommandList.cpp" />
     <ClCompile Include="Source\Level 3\DX12ManagerCommandAllocator.cpp" />
-    <ClCompile Include="Source\Level 1\DX12BaseDevice.cpp">
+    <ClCompile Include="Source\Level 1\BaseDevice.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

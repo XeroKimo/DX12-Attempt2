@@ -3,7 +3,8 @@
 
 namespace RendererDX12
 {
-    DX12ManagerCommandAllocator::DX12ManagerCommandAllocator(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager) :
+    using namespace LevelOne;
+    DX12ManagerCommandAllocator::DX12ManagerCommandAllocator(BaseDevice* device, DX12ManagerConstBuffer* bufferManager) :
         m_device(device),
         m_bufferManager(bufferManager)
     {

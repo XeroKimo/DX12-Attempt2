@@ -56,7 +56,7 @@ namespace RendererDX12
                 return properties;
             }
 
-            inline D3D12_RESOURCE_DESC Buffer(UINT64 size, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
+            inline D3D12_RESOURCE_DESC ResourceBuffer(UINT64 size, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
             {
                 const UINT64 alignment = ((1 << 16) - 1);
 
@@ -76,7 +76,7 @@ namespace RendererDX12
                 return resourceDesc;
             }
 
-            inline D3D12_RESOURCE_DESC Texture1D(UINT64 width, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, UINT16 arraySize = 1, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
+            inline D3D12_RESOURCE_DESC ResourceTexture1D(UINT64 width, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, UINT16 arraySize = 1, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
             {
                 const UINT64 alignment = (sampleCount == 1) ? ((1 << 16) - 1) : ((1 << 22) - 1);
 
@@ -95,7 +95,7 @@ namespace RendererDX12
                 return resourceDesc;
             }
 
-            inline D3D12_RESOURCE_DESC Texture2D(UINT64 width, UINT height, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, UINT16 arraySize = 1, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
+            inline D3D12_RESOURCE_DESC ResourceTexture2D(UINT64 width, UINT height, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, UINT16 arraySize = 1, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
             {
                 const UINT64 alignment = (sampleCount == 1) ? ((1 << 16) - 1) : ((1 << 22) - 1);
 
@@ -114,7 +114,7 @@ namespace RendererDX12
                 return resourceDesc;
             }
 
-            inline D3D12_RESOURCE_DESC Texture3D(UINT64 width, UINT height, UINT16 depth, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
+            inline D3D12_RESOURCE_DESC ResourceTexture3D(UINT64 width, UINT height, UINT16 depth, DXGI_FORMAT format, UINT16 mipLevels, UINT sampleCount = 1, UINT sampleQuality = 0, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE)
             {
                 const UINT64 alignment = (sampleCount == 1) ? ((1 << 16) - 1) : ((1 << 22) - 1);
 

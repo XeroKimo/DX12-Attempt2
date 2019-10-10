@@ -7,7 +7,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     using namespace RendererDX12;
     using namespace WinApplication;
     using namespace RendererDX12::Helpers;
-
+    using namespace LevelOne;
     Window application;
     PlatformClock clock;
 	{
@@ -20,7 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			return 1;
 	}
 
-    DX12BaseDevice device(D3D_FEATURE_LEVEL_11_0, 0);
+    BaseDevice device(D3D_FEATURE_LEVEL_11_0, 0);
     if (!device.GetInterface())
         return 1;
 
@@ -28,11 +28,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     DX12ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
     DX12DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
 
-    DX12BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
+    BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
         return 1;
 
-    unique_ptr<DX12PipelineState> pipeline;
+    unique_ptr<PipelineState> pipeline;
 	{
 		GraphicsPipelineStateDesc pipelineDesc;
 		{
@@ -70,7 +70,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			pipelineDesc.GeneratePipelineState(device.GetInterface(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT, D3D_ROOT_SIGNATURE_VERSION_1_0);
 		}
 
-        pipeline = make_unique<DX12PipelineState>(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
+        pipeline = make_unique<PipelineState>(pipelineDesc.pipelineState, pipelineDesc.rootSiganture);
 	}
 
 	struct Vertex { Vector3 pos; Vector4 color; Vector2 UV; };

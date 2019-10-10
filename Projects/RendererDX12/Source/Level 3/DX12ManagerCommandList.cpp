@@ -3,7 +3,8 @@
 
 namespace RendererDX12
 {
-    DX12ManagerCommandList::DX12ManagerCommandList(DX12BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
+    using namespace LevelOne;
+    DX12ManagerCommandList::DX12ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
         m_device(device),
         m_type(type),
         m_pCommandQueues(commandQueues),

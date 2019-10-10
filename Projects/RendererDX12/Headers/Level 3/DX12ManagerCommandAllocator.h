@@ -8,7 +8,7 @@ namespace RendererDX12
     class DX12ManagerCommandAllocator
     {
     public:
-        DX12ManagerCommandAllocator(DX12BaseDevice* device, DX12ManagerConstBuffer* bufferManager);
+        DX12ManagerCommandAllocator(LevelOne::BaseDevice* device, DX12ManagerConstBuffer* bufferManager);
 
         void ResetAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocators);
 
@@ -16,7 +16,7 @@ namespace RendererDX12
     private:
         unique_ptr<DX12CommandAllocator> CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type);
     private:
-        DX12BaseDevice* m_device;
+        LevelOne::BaseDevice* m_device;
         DX12ManagerConstBuffer* m_bufferManager;
         std::vector<unique_ptr<DX12CommandAllocator>> m_directAllocators;
         std::vector<unique_ptr<DX12CommandAllocator>> m_copyAllocators;
