@@ -47,9 +47,6 @@ struct CD3DX12_TEXTURE_COPY_LOCATION : public D3D12_TEXTURE_COPY_LOCATION
 	}
 };
 
-
-
-
 // Row-by-row memcpy
 inline void MemcpySubresource(
 	_In_ const D3D12_MEMCPY_DEST* pDest,

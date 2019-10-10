@@ -3,15 +3,15 @@
 
 namespace RendererDX12
 {
-    class DX12Mesh
+    class Mesh
     {
     public:
-        DX12Mesh();
+        Mesh();
 
-        void CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
+        void CreateVertexBuffer(CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
 
-        void Set(DX12CommandList* commandList);
-        void Draw(DX12CommandList* commandList);
+        void Set(CommandList* commandList);
+        void Draw(CommandList* commandList);
     private:
         ComPtr<ID3D12Resource> m_vertexBuffer;
         ComPtr<ID3D12Resource> m_indexBuffer;

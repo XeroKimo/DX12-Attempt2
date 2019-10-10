@@ -3,14 +3,14 @@
 
 namespace RendererDX12
 {
-    class DX12CommandList;
-    class DX12Texture
+    class CommandList;
+    class Texture
     {
     public:
 
-        void InitializeTexture2D(ID3D12Device* device, DX12CommandList* commandList, std::wstring filename);
+        void InitializeTexture2D(ID3D12Device* device, CommandList* commandList, std::wstring filename);
 
-        void Set(DX12CommandList* commandList, const UINT& paramIndex);
+        void Set(CommandList* commandList, const UINT& paramIndex);
     private:
         void ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageHeight, unsigned int& outImageWidth);
 

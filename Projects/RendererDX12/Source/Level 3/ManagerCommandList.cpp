@@ -1,10 +1,8 @@
 #include "RendererDX12.h"
-#include "Level 3/DX12ManagerCommandList.h"
 
 namespace RendererDX12
 {
-    using namespace LevelOne;
-    DX12ManagerCommandList::DX12ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<DX12CommandQueue>>* commandQueues, DX12ManagerCommandAllocator* allocatorManager) :
+    ManagerCommandList::ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager) :
         m_device(device),
         m_type(type),
         m_pCommandQueues(commandQueues),
@@ -17,7 +15,7 @@ namespace RendererDX12
         assert(type != D3D12_COMMAND_LIST_TYPE_BUNDLE);
     }
 
-    void DX12ManagerCommandList::CloseCommandList(unique_ptr<DX12CommandList>& list, UINT queueIndex)
+    void ManagerCommandList::CloseCommandList(unique_ptr<CommandList>& list, UINT queueIndex)
     {
         assert(queueIndex < m_pCommandQueues->size());
 
@@ -25,7 +23,7 @@ namespace RendererDX12
         m_waitingLists[queueIndex].AddCommandList(list);
     }
 
-    void DX12ManagerCommandList::ExecuteCommandList(unique_ptr<DX12CommandList>& commandList, UINT queueIndex)
+    void ManagerCommandList::ExecuteCommandList(unique_ptr<CommandList>& commandList, UINT queueIndex)
     {
         assert(queueIndex < m_pCommandQueues->size());
 
@@ -36,12 +34,12 @@ namespace RendererDX12
         m_inactiveList.push_back(std::move(commandList));
     }
 
-    void DX12ManagerCommandList::ExecuteWaitingList(UINT queueIndex)
+    void ManagerCommandList::ExecuteWaitingList(UINT queueIndex)
     {
         m_waitingLists[queueIndex].ExecuteWaitingList((*m_pCommandQueues)[queueIndex].get(), m_inactiveList);
     }
 
-    void DX12ManagerCommandList::ExecuteAllWaitingLists()
+    void ManagerCommandList::ExecuteAllWaitingLists()
     {
         for (size_t i = 0; i < m_waitingLists.size(); i++)
         {
@@ -49,13 +47,13 @@ namespace RendererDX12
         }
     }
 
-    unique_ptr<DX12CommandList> DX12ManagerCommandList::GetCommandList()
+    unique_ptr<CommandList> ManagerCommandList::GetCommandList()
     {
         if (m_inactiveList.empty())
-            return make_unique<DX12CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
+            return make_unique<CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
         else
         {
-            unique_ptr<DX12CommandList> list;
+            unique_ptr<CommandList> list;
             m_inactiveList.back().swap(list);
             m_inactiveList.pop_back();
             list->Reset(std::move(m_allocatorManager->GetAllocator(m_type)));
@@ -64,14 +62,14 @@ namespace RendererDX12
 
     }
 
-    void DX12ManagerCommandList::WaitingList::AddCommandList(unique_ptr<DX12CommandList>& commandList)
+    void ManagerCommandList::WaitingList::AddCommandList(unique_ptr<CommandList>& commandList)
     {
         m_rawList.push_back(commandList->GetBase()->GetInterface());
         m_waitingAllocator.push_back(std::move(commandList->GetCommandAllocator()));
         m_waitingList.push_back(std::move(commandList));
     }
 
-    void DX12ManagerCommandList::WaitingList::ExecuteWaitingList(DX12CommandQueue* commandQueue, std::vector<unique_ptr<DX12CommandList>>& inactiveList)
+    void ManagerCommandList::WaitingList::ExecuteWaitingList(CommandQueue* commandQueue, std::vector<unique_ptr<CommandList>>& inactiveList)
     {
         commandQueue->GetInterface()->ExecuteCommandLists(static_cast<UINT>(m_rawList.size()), m_rawList.data());
         commandQueue->SetActiveAllocators(m_waitingAllocator);

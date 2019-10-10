@@ -1,18 +1,16 @@
 #include "RendererDX12.h"
-#include "Level 3/DX12ManagerCommandAllocator.h"
 
 namespace RendererDX12
 {
-    using namespace LevelOne;
-    DX12ManagerCommandAllocator::DX12ManagerCommandAllocator(BaseDevice* device, DX12ManagerConstBuffer* bufferManager) :
+    ManagerCommandAllocator::ManagerCommandAllocator(BaseDevice* device, ManagerConstantBuffer* bufferManager) :
         m_device(device),
         m_bufferManager(bufferManager)
     {
     }
 
-    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
+    unique_ptr<CommandAllocator> ManagerCommandAllocator::GetAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
-        unique_ptr<DX12CommandAllocator> allocator;
+        unique_ptr<CommandAllocator> allocator;
         switch (type)
         {
         case D3D12_COMMAND_LIST_TYPE_DIRECT:
@@ -51,7 +49,7 @@ namespace RendererDX12
         return allocator;
     }
 
-    void DX12ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<DX12CommandAllocator>>& allocators)
+    void ManagerCommandAllocator::ResetAllocators(std::vector<unique_ptr<CommandAllocator>>& allocators)
     {
         switch (allocators[0]->GetBase()->GetType())
         {
@@ -68,8 +66,8 @@ namespace RendererDX12
     }
 
 
-    unique_ptr<DX12CommandAllocator> DX12ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
+    unique_ptr<CommandAllocator> ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
-        return make_unique<DX12CommandAllocator>(m_device->GetInterface(), type, m_bufferManager);
+        return make_unique<CommandAllocator>(m_device->GetInterface(), type, m_bufferManager);
     }
 }

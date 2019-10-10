@@ -1,11 +1,10 @@
 #include "RendererDX12.h"
-#include "Level 2/DX12Texture.h"
 #include <wincodec.h>
 
 namespace RendererDX12
 {
-    using namespace Helpers::ResourceFuncs;
-    void DX12Texture::InitializeTexture2D(ID3D12Device* device, DX12CommandList* commandList, std::wstring filename)
+    using namespace Helpers;
+    void Texture::InitializeTexture2D(ID3D12Device* device, CommandList* commandList, std::wstring filename)
     {
         unique_ptr<BYTE[]> imageData;
         unsigned int imageWidth;
@@ -43,13 +42,13 @@ namespace RendererDX12
         commandList->GetInterface()->ResourceBarrier(1, &ResourceBarrierTransition(m_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
     }
 
-    void DX12Texture::Set(DX12CommandList* commandList, const UINT& paramIndex)
+    void Texture::Set(CommandList* commandList, const UINT& paramIndex)
     {
         commandList->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
         commandList->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
     }
 
-    void DX12Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageWidth, unsigned int& outImageHeight)
+    void Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageWidth, unsigned int& outImageHeight)
     {
         ComPtr<IWICImagingFactory> wicFactory = nullptr;
         if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(wicFactory.GetAddressOf()))))

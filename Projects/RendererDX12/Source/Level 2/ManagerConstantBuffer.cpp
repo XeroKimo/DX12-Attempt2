@@ -1,21 +1,19 @@
 #include "RendererDX12.h"
-#include "Level 2/DX12ManagerConstBuffer.h"
 
 namespace RendererDX12
 {
-    using namespace LevelOne;
-    DX12ManagerConstBuffer::DX12ManagerConstBuffer(BaseDevice* device, UINT64 constBufferSize) :
+    ManagerConstantBuffer::ManagerConstantBuffer(BaseDevice* device, UINT64 constBufferSize) :
         m_device(device),
         m_bufferSize((constBufferSize + (1 << 16) - 1) & ~((1 << 16) - 1))
     {
     }
 
-    void DX12ManagerConstBuffer::ResetBuffers(std::vector<unique_ptr<UploadBuffer>>& buffers)
+    void ManagerConstantBuffer::ResetBuffers(std::vector<unique_ptr<UploadBuffer>>& buffers)
     {
         std::move(buffers.begin(), buffers.end(), std::back_inserter(m_inactiveBuffers));
     }
 
-    unique_ptr<UploadBuffer> DX12ManagerConstBuffer::GetConstBuffer()
+    unique_ptr<UploadBuffer> ManagerConstantBuffer::GetConstBuffer()
     {
         if (m_inactiveBuffers.empty())
             return CreateBuffer(m_bufferSize);
@@ -25,7 +23,7 @@ namespace RendererDX12
         return buffer;
     }
 
-    unique_ptr<UploadBuffer> DX12ManagerConstBuffer::CreateBuffer(UINT64 size)
+    unique_ptr<UploadBuffer> ManagerConstantBuffer::CreateBuffer(UINT64 size)
     {
         return make_unique<UploadBuffer>(m_device->GetInterface(), m_device->GetNodeMask(), size);
     }

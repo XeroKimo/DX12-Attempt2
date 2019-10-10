@@ -7,7 +7,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     using namespace RendererDX12;
     using namespace WinApplication;
     using namespace RendererDX12::Helpers;
-    using namespace LevelOne;
+
     Window application;
     PlatformClock clock;
 	{
@@ -24,9 +24,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     if (!device.GetInterface())
         return 1;
 
-    DX12ManagerConstBuffer managerUploadBuffer(&device, 1000);
-    DX12ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
-    DX12DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
+    ManagerConstantBuffer managerUploadBuffer(&device, 1000);
+    ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
+    DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
 
     BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
@@ -91,11 +91,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	};
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 
-	unique_ptr<DX12CommandList> cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-	DX12Mesh mesh;
+	unique_ptr<CommandList> cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+	Mesh mesh;
 	mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
   
-	DX12Texture texture;
+	Texture texture;
 	texture.InitializeTexture2D(device.GetInterface(), cl.get(), L"Resources/test.jpg");
 
     commandModule.ExecuteCommandList(cl,0);

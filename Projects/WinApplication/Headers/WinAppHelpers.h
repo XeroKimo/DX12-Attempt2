@@ -40,6 +40,7 @@ namespace WinApplication
         Visible = WS_VISIBLE,
         V_Scroll = WS_VSCROLL,
     };
+
     DEFINE_ENUM_FLAG_OPERATORS(Window_Style);
 
     //https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles

@@ -1,10 +1,9 @@
 #include "RendererDX12.h"
-#include "Level 2/DX12Mesh.h"
 
 namespace RendererDX12
 {
-    using namespace Helpers::ResourceFuncs;
-    DX12Mesh::DX12Mesh() :
+    using namespace Helpers;
+    Mesh::Mesh() :
         m_indexCount(0),
         m_vertexCount(0),
         m_vertexView(),
@@ -12,7 +11,7 @@ namespace RendererDX12
     {
     }
 
-    void DX12Mesh::CreateVertexBuffer(DX12CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
+    void Mesh::CreateVertexBuffer(CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount)
     {
         ComPtr<ID3D12Device> device;
         HRESULT hr = commandList->GetBase()->GetInterface()->GetDevice(IID_PPV_ARGS(device.GetAddressOf()));
@@ -37,12 +36,12 @@ namespace RendererDX12
         m_vertexCount = vertexCount;
     }
 
-    void DX12Mesh::Set(DX12CommandList* commandList)
+    void Mesh::Set(CommandList* commandList)
     {
         commandList->GetBase()->GetInterface()->IASetVertexBuffers(0, 1, &m_vertexView);
     }
 
-    void DX12Mesh::Draw(DX12CommandList* commandList)
+    void Mesh::Draw(CommandList* commandList)
     {
         commandList->GetBase()->GetInterface()->DrawInstanced(m_vertexCount, 1, 0, 0);
     }

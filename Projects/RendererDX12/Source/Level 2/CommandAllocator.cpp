@@ -1,16 +1,14 @@
 #include "RendererDX12.h"
-#include "Level 2/DX12CommandAllocator.h"
 
 namespace RendererDX12
 {
-    using namespace LevelOne;
-    DX12CommandAllocator::DX12CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, DX12ManagerConstBuffer* bufferManager) :
+    CommandAllocator::CommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type, ManagerConstantBuffer* bufferManager) :
         m_commandAllocator(device, type)
     {
         m_bufferManager = bufferManager;
     }
 
-    D3D12_GPU_VIRTUAL_ADDRESS DX12CommandAllocator::UploadDynamicCBV(void* data, UINT64 size)
+    D3D12_GPU_VIRTUAL_ADDRESS CommandAllocator::UploadDynamicCBV(void* data, UINT64 size)
     {
         if (m_constBuffers.empty())
             m_constBuffers.push_back(m_bufferManager->GetConstBuffer());
@@ -21,12 +19,12 @@ namespace RendererDX12
         return m_constBuffers.back()->UploadCBVSRVUAV(data, size);
     }
 
-    void DX12CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
+    void CommandAllocator::UploadData(ID3D12GraphicsCommandList* commandList, UINT nodeMask, ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
     {
         m_temporaryBuffers.push_back(make_shared<UploadBuffer>(commandList, nodeMask, destination, data));
     }
 
-    void DX12CommandAllocator::Reset()
+    void CommandAllocator::Reset()
     {
         m_commandAllocator.GetInterface()->Reset();
         m_bufferManager->ResetBuffers(m_constBuffers);
