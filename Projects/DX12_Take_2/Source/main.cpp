@@ -108,6 +108,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	worldMatrix.SetPosition(Vector3(0, 0, -3));
 	projMatrix.SetOrtho(3,3, 0.0f, 100);
 	//projMatrix.SetPerspective(90, 1280/720, 0.f, 1000);
+    Quaternion test;
+    //test.Rotate(Vector3(0, 0, 1), 90);
+    //test.Rotate(Vector3(0, 0, 1), 90);
 
 	float rotateSpeed = 60.0f;
 
@@ -137,9 +140,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			//buffer.viewMatrix.RotateX(rotateSpeed/2 * clock.GetDeltaTime());
 			//buffer.worldMatrix.Translate(Vector3(0, 0, -0.1f)* clock.GetDeltaTime());
 			//buffer.worldMatrix.RotateY(rotateSpeed * clock.GetDeltaTime());
-			buffer.viewMatrix.RotateZ(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
+			//buffer.viewMatrix.RotateX(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
+            test.Rotate(Vector3(0, 1, 0.125), rotateSpeed* clock.GetDeltaTime());
+            //test.Rotate(Vector3(0, 0, 1), rotateSpeed / 8* clock.GetDeltaTime());
+            buffer.worldMatrix.Identity();
+            buffer.worldMatrix.SetPosition(Vector3(0, 0, -3));
+            buffer.worldMatrix *= test.GetRotation();
 
-			Vector3 angle = buffer.worldMatrix.GetEulerAngles();
+			Vector3 angle = buffer.viewMatrix.GetEulerAngles();
 
 			cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 			ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
