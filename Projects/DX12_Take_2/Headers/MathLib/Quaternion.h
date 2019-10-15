@@ -4,10 +4,10 @@
 
 struct Quaternion
 {
-    float a;
-    float b;
-    float c;
-    float d;
+    float r;
+    float i;
+    float j;
+    float k;
 
 public:
     Quaternion();
@@ -33,29 +33,29 @@ inline Quaternion::Quaternion()
 
 inline Quaternion::Quaternion(float x, float y, float z, float w)
 {
-    a = x;
-    b = y;
-    c = z;
-    d = w;
+    r = x;
+    i = y;
+    j = z;
+    k = w;
 }
 
 inline void Quaternion::Identity()
 {
-    a = 1;
-    b = 0;
-    c = 0;
-    d = 0;
+    r = 1;
+    i = 0;
+    j = 0;
+    k = 0;
 }
 
 inline void Quaternion::Rotate(Vector3 axis, float angle)
 {
-    angle = angle / 180 * PI / 2;
+    angle = angle / 180 * static_cast<float>(PI) / 2;
     Quaternion temp;
     float sinAngle = sin(angle);
-    temp.a = cos(angle);
-    temp.b = axis.x * sinAngle;
-    temp.c = axis.y * sinAngle;
-    temp.d = axis.z * sinAngle;
+    temp.r = cos(angle);
+    temp.i = axis.x * sinAngle;
+    temp.j = axis.y * sinAngle;
+    temp.k = axis.z * sinAngle;
 
     *this = *this * temp;
 }
@@ -63,10 +63,10 @@ inline void Quaternion::Rotate(Vector3 axis, float angle)
 inline Quaternion Quaternion::operator+(const Quaternion& other)
 {
     Quaternion result;
-    result.a = a + other.a;
-    result.b = b + other.b;
-    result.c = c + other.c;
-    result.d = d + other.d;
+    result.r = r + other.r;
+    result.i = i + other.i;
+    result.j = j + other.j;
+    result.k = k + other.k;
 
     return result;
 }
@@ -74,10 +74,10 @@ inline Quaternion Quaternion::operator+(const Quaternion& other)
 inline Quaternion Quaternion::operator-(const Quaternion& other)
 {
     Quaternion result;
-    result.a = a - other.a;
-    result.b = b - other.b;
-    result.c = c - other.c;
-    result.d = d - other.d;
+    result.r = r - other.r;
+    result.i = i - other.i;
+    result.j = j - other.j;
+    result.k = k - other.k;
 
     return result;
 }
@@ -85,10 +85,17 @@ inline Quaternion Quaternion::operator-(const Quaternion& other)
 inline Quaternion Quaternion::operator*(const Quaternion& other)
 {
     Quaternion result;
-    result.a = (a * other.a) - (b * other.b) - (c * other.c) - (d * other.d);
-    result.b = (b * other.a) + (a * other.b) - (d * other.c) + (c * other.d);
-    result.c = (c * other.a) + (d * other.b) + (a * other.c) - (b * other.d);
-    result.d = (d * other.a) - (c * other.b) + (b * other.c) + (a * other.d);
+    Matrix4x4 mat
+    (
+        Vector4(r, -i, -j, -k),
+        Vector4(i, r, -k, j),
+        Vector4(j, k, r, -i),
+        Vector4(k, -j, i, r)
+    );
+    Vector4 vec(other.r, other.i, other.j, other.k);
+    Vector4 res = mat * vec;
+
+    result = Quaternion(res.x, res.y, res.z, res.w);
 
     return result;
 }
@@ -96,12 +103,12 @@ inline Quaternion Quaternion::operator*(const Quaternion& other)
 inline Quaternion Quaternion::operator/(const Quaternion& other)
 {
     Quaternion result;
-    float dividor = other.a * other.a + other.b * other.b + other.c * other.c + other.d * other.d;
+    float dividor = other.r * other.r + other.i * other.i + other.j * other.j + other.k * other.k;
 
-    result.a = (other.a * a + other.b * b + other.c * c + other.d * d) / dividor;
-    result.b = (other.a * b - other.b * a - other.c * d + other.d * c) / dividor;
-    result.c = (other.a * c + other.b * d - other.c * a - other.d * b) / dividor;
-    result.d = (other.a * d - other.b * c + other.c * b - other.d * a) / dividor;
+    result.r = (other.r * r + other.i * i + other.j * j + other.k * k) / dividor;
+    result.i = (other.r * i - other.i * r - other.j * k + other.k * j) / dividor;
+    result.j = (other.r * j + other.i * k - other.j * r - other.k * i) / dividor;
+    result.k = (other.r * k - other.i * j + other.j * i - other.k * r) / dividor;
 
 
     return result;
@@ -109,28 +116,29 @@ inline Quaternion Quaternion::operator/(const Quaternion& other)
 
 inline void Quaternion::Normalize()
 {
-    Vector4 normalized(a, b, c, d);
+    Vector4 normalized(r, i, j, k);
     normalized.Normalize();
-    a = normalized.x;
-    b = normalized.y;
-    c = normalized.z;
-    d = normalized.w;
+    r = normalized.x;
+    i = normalized.y;
+    j = normalized.z;
+    k = normalized.w;
 }
 
+//https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Quaternion-derived_rotation_matrix
 inline Matrix4x4 Quaternion::GetRotation()
 {
     Matrix4x4 matrix;
-    matrix.vX.x = 1 - 2 * (c * c) - 2 * (d * d);
-    matrix.vX.y = (2 * b * c) - (2 * a * d);
-    matrix.vX.z = (2 * b * d) + (2 * a * c);
+    matrix.vX.x = 1 - 2 * (j * j + k * k);
+    matrix.vX.y = 2 * (i * j -  r * k);
+    matrix.vX.z = 2 * (i * k + r * j);
 
-    matrix.vY.x = (2 * b * c) + (2 * a * d);
-    matrix.vY.y = 1 - 2 * (b * b) - 2 * (d * d);
-    matrix.vY.z = (2 * d * c) + (2 * a * b);
+    matrix.vY.x = 2 * (i * j +  r * k);
+    matrix.vY.y = 1 - 2 * (i * i + k * k);
+    matrix.vY.z = 2 * (k * j - r * i);
 
-    matrix.vZ.x = (2 * b * d) - (2 * a * c);
-    matrix.vZ.y = (2 * c * d) - (2 * a * b);
-    matrix.vZ.z = 1 - 2 * (b * b) - 2 * (c * c);
+    matrix.vZ.x = 2 * (i * k - r * j);
+    matrix.vZ.y = 2 * (j * k + r * i);
+    matrix.vZ.z = 1 - 2 * (i * i + j * j);
 
     return matrix;
 }

@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     ManagerConstantBuffer managerUploadBuffer(&device, 1000);
     ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
-    DeviceCommandModule commandModule(&device, &commandAllocatorManager, 1, 0, 1);
+    DeviceCommandModule commandModule(&device, &commandAllocatorManager, 0, 0, 1);
 
     BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
@@ -36,29 +36,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	{
 		GraphicsPipelineStateDesc pipelineDesc;
 		{
-            DescriptorTable table;
+            RootDescriptorTable table;
             table.AddTable(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 
-            D3D12_STATIC_SAMPLER_DESC sampler = {};
-            sampler.Filter = D3D12_FILTER_ANISOTROPIC;
-            sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-            sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-            sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-            sampler.MipLODBias = 0;
-            sampler.MaxAnisotropy = 16;
-            sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-            sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-            sampler.MinLOD = 0.0f;
-            sampler.MaxLOD = D3D12_FLOAT32_MAX;
-            sampler.ShaderRegister = 0;
-            sampler.RegisterSpace = 0;
-            sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-			pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+			//pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 			pipelineDesc.rootSignatureDesc.CreateRootDescriptorTable(table);
-			pipelineDesc.rootSignatureDesc.AddStaticSampler(sampler);
+			pipelineDesc.rootSignatureDesc.AddStaticSampler(Defaults::StaticSamplerAnisotropic(0));
 
 			pipelineDesc.inputLayout.AddElement("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 			pipelineDesc.inputLayout.AddElement("COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT);
@@ -74,21 +59,84 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	struct Vertex { Vector3 pos; Vector4 color; Vector2 UV; };
-	Vertex bottomLeft = { Vector3(-0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 0.0f) };
-	Vertex bottomRight = { Vector3(0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 0.0f) };
-	Vertex topLeft = { Vector3(-0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 1.0f) };
-	Vertex topRight = { Vector3(0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 1.0f) };
+	//Vertex bottomLeft = { Vector3(-0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 0.0f) };
+	//Vertex bottomRight = { Vector3(0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 0.0f) };
+	//Vertex topLeft = { Vector3(-0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 1.0f) };
+	//Vertex topRight = { Vector3(0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 1.0f) };
 
-	Vertex vertices[] =
-	{
-		bottomLeft,
-		topLeft,
-		bottomRight,
+	//Vertex vertices[] =
+	//{
+	//	bottomLeft,
+	//	topLeft,
+	//	bottomRight,
 
-		topLeft,
-		topRight,
-		bottomRight
-	};
+	//	topLeft,
+	//	topRight,
+	//	bottomRight
+	//};
+
+    Vertex bottomLeftFront = { Vector3(-0.5f, -0.5f, 0.5f), Vector4(0,0,0,0), Vector2(0.0f,0.0f) };
+    Vertex bottomRightFront = { Vector3(0.5f, -0.5f, 0.5f), Vector4(0,0,0,0), Vector2(1.0f,0.0f) };
+    Vertex topLeftFront = { Vector3(-0.5f, 0.5f, 0.5f), Vector4(0,0,0,0), Vector2(0.0f,1.0f) };
+    Vertex topRightFront = { Vector3(0.5f, 0.5f, 0.5f), Vector4(0,0,0,0), Vector2(1.0f,1.0f) };
+
+    Vertex bottomLeftBack = { Vector3(-0.5f, -0.5f, -0.5f), Vector4(0,0,0,0), Vector2(1.0f,0.0f) };
+    Vertex bottomRightBack = { Vector3(0.5f, -0.5f, -0.5f), Vector4(0,0,0,0), Vector2(0.0f,0.0f) };
+    Vertex topLeftBack = { Vector3(-0.5f, 0.5f, -0.5f), Vector4(0,0,0,0), Vector2(1.0f,1.0f) };
+    Vertex topRightBack = { Vector3(0.5f, 0.5f, -0.5f), Vector4(0,0,0,0), Vector2(0.0f,1.0f) };
+
+    Vertex vertices[] =
+{
+    bottomLeftFront,
+	topLeftFront,
+	bottomRightFront,
+
+	topLeftFront,
+	topRightFront,
+	bottomRightFront,
+    //Front square
+    bottomRightFront,
+    topRightFront,
+    bottomRightBack,
+
+    topRightFront,
+    topRightBack,
+    bottomRightBack,
+    //Right Square
+    topLeftFront,
+    bottomLeftFront,
+    bottomLeftBack,
+
+    topLeftBack,
+    topLeftFront,
+    bottomLeftBack,
+    //LeftSquare
+    topLeftBack,
+    bottomLeftBack,
+    bottomRightBack,
+
+    topRightBack,
+    topLeftBack,
+    bottomRightBack,
+    //Back Square
+    topLeftFront,
+    topLeftBack,
+    topRightFront,
+
+    topRightFront,
+    topLeftBack,
+    topRightBack,
+    //Top Square
+    bottomLeftBack,
+    bottomLeftFront,
+    bottomRightFront,
+
+    bottomLeftBack,
+    bottomRightFront,
+    bottomRightBack,
+    //Bottom Square
+};
+
 	void* vertexData = reinterpret_cast<void*>(&vertices);
 
 	unique_ptr<CommandList> cl = commandModule.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
@@ -106,17 +154,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
 	worldMatrix.SetPosition(Vector3(0, 0, -3));
-	projMatrix.SetOrtho(3,3, 0.0f, 100);
-	//projMatrix.SetPerspective(90, 1280/720, 0.f, 1000);
-    Quaternion test;
-    //test.Rotate(Vector3(0, 0, 1), 90);
-    //test.Rotate(Vector3(0, 0, 1), 90);
+	projMatrix.SetOrtho(16,9, 0.0f, 100);
+
+    Quaternion quat;
 
 	float rotateSpeed = 60.0f;
 
 	struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
-
 	cBuffer buffer = { worldMatrix, viewMatrix, projMatrix };
+
 	MSG msg;
  	while (application.IsRunning())
 	{
@@ -135,17 +181,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		}
 		else
 		{
-			clock.Update();
+			clock.Tick();
 
-			//buffer.viewMatrix.RotateX(rotateSpeed/2 * clock.GetDeltaTime());
-			//buffer.worldMatrix.Translate(Vector3(0, 0, -0.1f)* clock.GetDeltaTime());
-			//buffer.worldMatrix.RotateY(rotateSpeed * clock.GetDeltaTime());
-			//buffer.viewMatrix.RotateX(rotateSpeed * static_cast<float>(clock.GetDeltaTime()));
-            test.Rotate(Vector3(0, 1, 0.125), rotateSpeed* clock.GetDeltaTime());
-            //test.Rotate(Vector3(0, 0, 1), rotateSpeed / 8* clock.GetDeltaTime());
+            float time = clock.GetDeltaTime<float>();
+            //quat.r = 2.0f;
+            //quat.k = 2.0f;
+            quat.Rotate(Vector3(1, 1, 1).GetNormalized(), rotateSpeed* clock.GetDeltaTime<float>());
+            //quat.Rotate(Vector3(0, 0, 0), rotateSpeed * clock.GetDeltaTime<float>());
+
             buffer.worldMatrix.Identity();
             buffer.worldMatrix.SetPosition(Vector3(0, 0, -3));
-            buffer.worldMatrix *= test.GetRotation();
+            buffer.worldMatrix *= quat.GetRotation();
 
 			Vector3 angle = buffer.viewMatrix.GetEulerAngles();
 

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\DX12Header.h" />
+    <ClInclude Include="Headers\Helpers\Defaults.h" />
     <ClInclude Include="Headers\Helpers\GraphicsPipelineStateDesc.h" />
     <ClInclude Include="Headers\Helpers\ShaderInputLayout.h" />
     <ClInclude Include="Headers\Helpers\RootSignatureDesc.h" />

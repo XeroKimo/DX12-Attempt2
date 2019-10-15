@@ -102,6 +102,9 @@
     <ClInclude Include="Headers\Level 4\DeviceCommandModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Helpers\Defaults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Helpers\ShaderInputLayout.cpp">

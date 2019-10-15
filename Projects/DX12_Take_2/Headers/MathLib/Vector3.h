@@ -14,6 +14,7 @@ public:
 	float Magnitude();
 	void Normalize();
 	void Absolute();
+    Vector3 GetNormalized();
 
 	Vector3 operator+(const Vector3& other);
 	Vector3 operator-(const Vector3& other);
@@ -79,6 +80,13 @@ void inline Vector3::Absolute()
 	x = abs(x);
 	y = abs(y);
 	z = abs(z);
+}
+
+inline Vector3 Vector3::GetNormalized()
+{
+    Vector3 normalized = *this;
+    normalized.Normalize();
+    return normalized;
 }
 
 

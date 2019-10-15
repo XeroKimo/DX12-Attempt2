@@ -1,24 +1,18 @@
 #include "PCH.h"
 
+using namespace std::chrono;
+
 PlatformClock::PlatformClock()
 {
-	Update();
+    m_initialTick = m_previousTick = m_currentTick = high_resolution_clock::now();
+    Tick();
+
 }
 
-void PlatformClock::Update()
+void PlatformClock::Tick()
 {
-	m_lastTick = m_currentTick;
-	m_currentTick = std::chrono::high_resolution_clock::now();
-	m_deltaTime = std::chrono::duration<double>(m_currentTick - m_lastTick).count();
-	m_lifeTime += m_deltaTime;
+	m_previousTick = m_currentTick;
+	m_currentTick = high_resolution_clock::now();
+    m_deltaTick = m_currentTick - m_previousTick;
 }
 
-double PlatformClock::GetDeltaTime()
-{
-	return m_deltaTime;
-}
-
-double PlatformClock::GetLifeTime()
-{
-	return m_lifeTime;
-}

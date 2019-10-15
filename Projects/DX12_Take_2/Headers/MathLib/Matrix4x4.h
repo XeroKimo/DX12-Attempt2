@@ -144,7 +144,7 @@ inline void Matrix4x4::Translate(Vector3 position)
 inline void Matrix4x4::RotateX(float degrees)
 {
 	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * PI;
+	float radians = degrees / 180.f * static_cast<float>(PI);
 
 	float sinAngle = sinf(radians);
 	float cosAngle = cosf(radians);
@@ -160,7 +160,7 @@ inline void Matrix4x4::RotateX(float degrees)
 inline void Matrix4x4::RotateY(float degrees)
 {
 	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * PI;
+	float radians = degrees / 180.f * static_cast<float>(PI);
 
 	float sinAngle = sinf(radians);
 	float cosAngle = cosf(radians);
@@ -176,7 +176,7 @@ inline void Matrix4x4::RotateY(float degrees)
 inline void Matrix4x4::RotateZ(float degrees)
 {
 	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * PI;
+	float radians = degrees / 180.f * static_cast<float>(PI);
 
 	float sinAngle = sinf(radians);
 	float cosAngle = cosf(radians);
@@ -205,17 +205,17 @@ inline void Matrix4x4::Scale(Vector3 scale)
 
 inline Vector3 Matrix4x4::GetEulerAngles()
 {
-	float radToDeg = 180 / PI;
+	float radToDeg = 180 / static_cast<float>(PI);
 	if (vY.z > 1.0f)
 	{
-		float x = PI / 2;
+		float x = static_cast<float>(PI) / 2;
 		float y = atan2f(vX.y, vX.x);
 		float z = 0.0f;
 		return Vector3(x, y, z) * radToDeg;
 	}
 	else if (vY.z < -1.0f)
 	{
-		float x = PI / 2;
+		float x = static_cast<float>(PI) / 2;
 		float y = -atan2f(vX.y, vX.x);
 		float z = 0.0f;
 		return Vector3(x, y, z) * radToDeg;

@@ -11,6 +11,7 @@ public:
 	float Magnitude();
 	void Normalize();
 	void Absolute();
+    Vector2 GetNormalized();
 
 	Vector2 operator+(const Vector2& other);
 	Vector2 operator-(const Vector2& other);
@@ -59,6 +60,13 @@ void inline Vector2::Absolute()
 {
 	x = abs(x);
 	y = abs(y);
+}
+
+inline Vector2 Vector2::GetNormalized()
+{
+    Vector2 normalized = *this;
+    normalized.Normalize();
+    return normalized;
 }
 
 Vector2 inline Vector2::operator+(const Vector2& other)

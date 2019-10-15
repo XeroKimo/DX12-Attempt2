@@ -5,7 +5,7 @@ namespace RendererDX12
 {
     namespace Helpers
     {
-        class DescriptorTable
+        class RootDescriptorTable
         {
         public:
             void AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister = 0, UINT registerSpace = 0, UINT offsetDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
@@ -22,7 +22,7 @@ namespace RendererDX12
         public:
             void CreateRootConstant(UINT numValues, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
             void CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE paramType, UINT shaderRegister, UINT registerSpace = 0, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
-            void CreateRootDescriptorTable(DescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
+            void CreateRootDescriptorTable(RootDescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity = D3D12_SHADER_VISIBILITY_ALL);
             void AddStaticSampler(D3D12_STATIC_SAMPLER_DESC sampler) { m_staticSamplers.push_back(sampler); }
 
             HRESULT SerializeSignature(D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version);

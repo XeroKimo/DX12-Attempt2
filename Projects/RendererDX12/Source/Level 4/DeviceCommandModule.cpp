@@ -5,7 +5,8 @@ namespace RendererDX12
     DeviceCommandModule::DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues)
     {
         m_device = device;
-
+        if (directQueues == 0)
+            directQueues = 1;
         m_directQueue.reserve(directQueues);
         m_copyQueue.reserve(copyQueues);
         m_computeQueue.reserve(computeQueues);
@@ -112,7 +113,10 @@ namespace RendererDX12
         CommandQueue* stalledQueue = GetCommandQueue(stallType, stallIndex);
         CommandQueue* toWaitQueue = GetCommandQueue(waitType, waitIndex);
         if (stalledQueue && toWaitQueue)
-            StallQueue(stalledQueue, toWaitQueue->GetFence(), waitValue);
+        {
+            if (stalledQueue != toWaitQueue)
+                StallQueue(stalledQueue, toWaitQueue->GetFence(), waitValue);
+        }
     }
 
     void DeviceCommandModule::StallQueue(D3D12_COMMAND_LIST_TYPE stallType, UINT stallIndex, Fence* fence, UINT64 fenceValue)
@@ -208,7 +212,7 @@ namespace RendererDX12
         case D3D12_COMMAND_LIST_TYPE_DIRECT:
             if (queueIndex < m_directQueue.size())
                 return m_directQueue[queueIndex].get();
-            return nullptr;
+            return m_directQueue[0].get();
         case D3D12_COMMAND_LIST_TYPE_COMPUTE:
             if (queueIndex < m_computeQueue.size())
                 return m_computeQueue[queueIndex].get();
@@ -220,6 +224,7 @@ namespace RendererDX12
         default:
             return nullptr;
         }
+
     }
 
     ManagerCommandList* DeviceCommandModule::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
@@ -233,7 +238,7 @@ namespace RendererDX12
         case D3D12_COMMAND_LIST_TYPE_COPY:
             return m_copyList.get();
         default:
-            return nullptr;
+            return m_directList.get();
         }
     }
 }

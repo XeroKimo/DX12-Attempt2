@@ -12,6 +12,12 @@ namespace RendererDX12
 
         void Set(CommandList* commandList);
         void Draw(CommandList* commandList);
+
+        ID3D12Resource* GetVertexBuffer() { return m_vertexBuffer.Get(); }
+        ID3D12Resource* GetIndexBuffer() { return m_indexBuffer.Get(); }
+
+        D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() { return m_vertexView; }
+        D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() { return m_indexView; }
     private:
         ComPtr<ID3D12Resource> m_vertexBuffer;
         ComPtr<ID3D12Resource> m_indexBuffer;

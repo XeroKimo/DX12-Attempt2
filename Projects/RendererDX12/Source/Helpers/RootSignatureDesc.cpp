@@ -35,7 +35,7 @@ namespace RendererDX12
             DWORDRemaining -= 2;
         }
 
-        void RootSignatureDesc::CreateRootDescriptorTable(DescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity)
+        void RootSignatureDesc::CreateRootDescriptorTable(RootDescriptorTable& table, D3D12_SHADER_VISIBILITY shaderVisiblity)
         {
             assert(DWORDRemaining - 1 >= 0);
 
@@ -62,7 +62,7 @@ namespace RendererDX12
             return D3D12SerializeRootSignature(&desc, version, &m_signatureBlob, &m_errorBlob);
         }
 
-        void DescriptorTable::AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister, UINT registerSpace, UINT offsetDescriptorsFromTableStart)
+        void RootDescriptorTable::AddTable(UINT numDescriptors, D3D12_DESCRIPTOR_RANGE_TYPE rangeType, UINT baseShaderRegister, UINT registerSpace, UINT offsetDescriptorsFromTableStart)
         {
             D3D12_DESCRIPTOR_RANGE range;
             range.NumDescriptors = numDescriptors;
