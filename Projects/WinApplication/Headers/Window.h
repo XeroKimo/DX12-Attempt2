@@ -24,7 +24,7 @@ namespace WinApplication
         void Quit();
 
         bool IsRunning() { return m_running; }
-        HWND GetHandle() { return m_windowHandle; }
+        HWND GetWindowHandle() { return m_windowHandle; }
 
         int GetWindowWidth();
         int GetWindowHeight();
@@ -34,7 +34,6 @@ namespace WinApplication
         HWND InitWindow(CreateWindowHelperEX windowOptions);
 
         //WNDPROC definiton
-        //LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     private:
         HWND m_windowHandle = nullptr;

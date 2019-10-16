@@ -1,7 +1,5 @@
 #include "PCH.h"
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
     using namespace RendererDX12;
@@ -12,7 +10,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     PlatformClock clock;
 	{
 		TDSTR className = L"DX12Renderer";
-		WNDCLASS wc = WndClassStandard(hInstance, static_cast<WNDPROC>(WindowProc), className);
+		WNDCLASS wc = WndClassStandard(hInstance, static_cast<WNDPROC>(WindowProcMain), className);
 		CreateWindowHelper helper = CreateWindowHelper::Standard(hInstance, 1280, 720, className);
         helper.ConvertToClientSize();
 
@@ -28,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     ManagerCommandAllocator commandAllocatorManager(&device, &managerUploadBuffer);
     DeviceCommandModule commandModule(&device, &commandAllocatorManager, 0, 0, 1);
 
-    BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetHandle(), application.GetWindowWidth(), application.GetWindowHeight());
+    BaseSwapChain swapChain(device.GetInterface(), device.GetNodeMask(), commandModule.GetCommandQueueInterface(D3D12_COMMAND_LIST_TYPE_DIRECT, 0), application.GetWindowHandle(), application.GetWindowWidth(), application.GetWindowHeight());
     if (!swapChain.GetInterface())
         return 1;
 
@@ -183,6 +181,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		{
 			clock.Tick();
 
+            std::chrono::milliseconds chronoTime = clock.GetChronoDeltaTime<std::chrono::milliseconds>();
             float time = clock.GetDeltaTime<float>();
             //quat.r = 2.0f;
             //quat.k = 2.0f;
@@ -220,23 +219,4 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	}
 
 	return 0;
-}
-
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	//WinApp* pWinApp = reinterpret_cast<WinApp*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-	switch (uMsg)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE)
-		{
-			if (MessageBox(0, L"Are you sure you want to exit?", L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
-				DestroyWindow(hwnd);
-		}
-		break;
-	}
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

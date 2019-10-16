@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\EventManager\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\EventManager\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -124,7 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\EventManager\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\EventManager\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -153,13 +153,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Modules\WinApp.cpp" />
     <ClCompile Include="Source\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\PlatformClock.cpp" />
+    <ClCompile Include="Source\Modules\Game.cpp" />
+    <ClCompile Include="Source\Modules\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\MathLib\MathConstants.h" />
@@ -169,10 +171,16 @@
     <ClInclude Include="Headers\MathLib\Vector2.h" />
     <ClInclude Include="Headers\MathLib\Vector3.h" />
     <ClInclude Include="Headers\MathLib\Vector4.h" />
+    <ClInclude Include="Headers\Modules\EventManager.h" />
+    <ClInclude Include="Headers\Modules\Game.h" />
+    <ClInclude Include="Headers\Modules\Renderer.h" />
+    <ClInclude Include="Headers\Modules\WinApp.h" />
     <ClInclude Include="Headers\PCH.h" />
-    <ClInclude Include="Headers\PlatformClock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EventManager\EventManager.vcxproj">
+      <Project>{d6e513b6-aa5d-4624-948e-77d52f334cd6}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\RendererDX12\RendererDX12.vcxproj">
       <Project>{84180b38-63c3-4e6b-af30-019a212eced9}</Project>
     </ProjectReference>

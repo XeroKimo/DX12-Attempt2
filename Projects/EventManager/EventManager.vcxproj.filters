@@ -15,33 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\WinAppHelpers.h">
+    <ClInclude Include="Headers\EventManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Window.h">
+    <ClInclude Include="Headers\IEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Application.h">
+    <ClInclude Include="Headers\EventDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\WndProc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\PlatformClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\WinApplication.h">
+    <ClInclude Include="Headers\EventManagerLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Window.cpp">
+    <ClCompile Include="Source\EventManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PlatformClock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Application.cpp">
+    <ClCompile Include="Source\EventDispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
