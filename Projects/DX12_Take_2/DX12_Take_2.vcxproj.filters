@@ -27,6 +27,9 @@
     <ClCompile Include="Source\Modules\WinApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Modules\ModuleManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\PCH.h">
@@ -62,7 +65,7 @@
     <ClInclude Include="Headers\Modules\WinApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Modules\EventManager.h">
+    <ClInclude Include="Headers\Modules\ModuleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

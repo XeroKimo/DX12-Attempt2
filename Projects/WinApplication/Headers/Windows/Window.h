@@ -1,5 +1,6 @@
 #pragma once
 #include "WinAppHelpers.h"
+#include "EventManager/EventManager.h"
 #include <Windows.h>
 
 namespace WinApplication
@@ -34,6 +35,8 @@ namespace WinApplication
         HWND InitWindow(CreateWindowHelperEX windowOptions);
 
         //WNDPROC definiton
+        //LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 
     private:
         HWND m_windowHandle = nullptr;

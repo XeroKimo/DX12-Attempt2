@@ -1,15 +1,26 @@
 #pragma once
-#include <Application.h>
-#include <EventDispatcher.h>
+#include <WinApplication.h>
+#include "ModuleManager.h"
 
-class WinApp : public EventManagerLib::EventDispatcher
+class WinApp : public WinApplication::EventDispatcher, public IModule
 {
 private:
-    WinApplication::Application m_application;
+    ModuleManager* m_moduleManager = nullptr;
+
+    WinApplication::Window m_window = { };
+    WinApplication::Application m_application = { };
 
 public:
-    void Run(WinApplication::IApp* app, WinApplication::Window* window) { m_application.Run(app, window); }
+    WinApp();
+    void Initialize(HINSTANCE hInstance, WNDPROC wndFunc);
+    void Run(WinApplication::IApp* app) { m_application.Run(app, &m_window); }
 
+    WinApplication::Application* GetApplication() { return &m_application; }
+    WinApplication::Window* GetWindow() { return &m_window; }
     // Inherited via EventDispatcher
-    virtual void OnEvent(EventManagerLib::IEvent* pEvent) override;
+    virtual void OnEvent(WinApplication::IEvent* pEvent) override;
+
+    // Inherited via IModule
+    virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
+    virtual const ModuleType GetModuleType() override;
 };

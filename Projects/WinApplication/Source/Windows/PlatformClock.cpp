@@ -1,4 +1,4 @@
-#include "PlatformClock.h"
+#include "Windows/PlatformClock.h"
 
 using namespace std::chrono;
 
@@ -8,7 +8,6 @@ namespace WinApplication
     {
         m_initialTick = m_previousTick = m_currentTick = high_resolution_clock::now();
         Tick();
-
     }
 
     void PlatformClock::Tick()

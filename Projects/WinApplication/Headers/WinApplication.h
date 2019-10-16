@@ -1,7 +1,5 @@
 #pragma once
 
 #include "WinAppHelpers.h"
-#include "Window.h"
-#include "PlatformClock.h"
-#include "WndProc.h"
-#include "Application.h"
+#include "EventManager/!Header.h"
+#include "Windows/!Header.h"

@@ -1,6 +1,10 @@
 #include "PCH.h"
 #include "Modules/Renderer.h"
 
+Renderer::Renderer()
+{
+}
+
 bool Renderer::Initialize(WinApplication::Window* window)
 {
     using namespace RendererDX12;
@@ -18,6 +22,16 @@ bool Renderer::Initialize(WinApplication::Window* window)
     return true;
 }
 
-void Renderer::OnEvent(EventManagerLib::IEvent* pEvent)
+void Renderer::OnEvent(WinApplication::IEvent* pEvent)
 {
+}
+
+void Renderer::OnModuleRegisterChanged(ModuleManager* moduleManager)
+{
+    m_moduleManager = moduleManager;
+}
+
+const ModuleType Renderer::GetModuleType()
+{
+    return ModuleType::Renderer;
 }

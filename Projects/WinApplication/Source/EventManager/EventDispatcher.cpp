@@ -1,10 +1,12 @@
-#include "EventDispatcher.h"
+#include "EventManager/EventDispatcher.h"
+#include <assert.h>
 
-namespace EventManagerLib
+
+namespace WinApplication
 {
     EventDispatcher::EventDispatcher()
     {
-        RegisterListener(this);
+
     }
 
     void EventDispatcher::DispatchEvents()
@@ -21,6 +23,14 @@ namespace EventManagerLib
 
     void EventDispatcher::RecordEvent(std::shared_ptr<IEvent> pEvent)
     {
+#if _DEBUG
+        if (m_eventKey != pEvent->GetHashKey())
+        {
+            assert(false);
+            return;
+        }
+#endif
+
         m_eventsToDispatch.push_back(std::move(pEvent));
     }
 

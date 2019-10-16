@@ -142,17 +142,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Application.h" />
-    <ClInclude Include="Headers\PlatformClock.h" />
+    <ClInclude Include="Headers\EventManager\EventDispatcher.h" />
+    <ClInclude Include="Headers\EventManager\EventManager.h" />
+    <ClInclude Include="Headers\EventManager\!Header.h" />
+    <ClInclude Include="Headers\EventManager\IEvent.h" />
+    <ClInclude Include="Headers\Windows\!Header.h" />
+    <ClInclude Include="Headers\Windows\Application.h" />
+    <ClInclude Include="Headers\Windows\PlatformClock.h" />
     <ClInclude Include="Headers\WinApplication.h" />
-    <ClInclude Include="Headers\Window.h" />
+    <ClInclude Include="Headers\Windows\Window.h" />
     <ClInclude Include="Headers\WinAppHelpers.h" />
-    <ClInclude Include="Headers\WndProc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\PlatformClock.cpp" />
-    <ClCompile Include="Source\Window.cpp" />
+    <ClCompile Include="Source\EventManager\EventDispatcher.cpp" />
+    <ClCompile Include="Source\EventManager\EventManager.cpp" />
+    <ClCompile Include="Source\Windows\Application.cpp" />
+    <ClCompile Include="Source\Windows\PlatformClock.cpp" />
+    <ClCompile Include="Source\Windows\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

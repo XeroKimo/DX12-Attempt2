@@ -1,6 +1,6 @@
-#include "EventManager.h"
+#include "EventManager/EventManager.h"
 
-namespace EventManagerLib
+namespace WinApplication
 {
     bool EventManager::RegisterEventDispatcher(EventDispatcher* dispatcher, std::shared_ptr<IEvent> eventKey)
     {
@@ -8,6 +8,7 @@ namespace EventManagerLib
         if (it != m_eventDispatchers.end())
             return false;
         m_dispatchIndices[eventKey->GetHashKey()] = m_eventDispatchers.size();
+        dispatcher->RegisterEventKey(eventKey->GetHashKey());
         m_eventDispatchers.push_back(dispatcher);
         return true;
     }

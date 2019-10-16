@@ -4,12 +4,14 @@
 #include "Level 2/ManagerConstantBuffer.h"
 #include "Level 3/ManagerCommandAllocator.h"
 #include "Level 4/DeviceCommandModule.h"
-#include <EventDispatcher.h>
-#include <Window.h>
+#include <WinApplication.h>
+#include "ModuleManager.h"
 
-class Renderer : public EventManagerLib::EventDispatcher
+class Renderer : public WinApplication::EventDispatcher, public IModule
 {
 private:
+    ModuleManager* m_moduleManager = nullptr;
+
     unique_ptr<RendererDX12::BaseDevice> m_device;
     unique_ptr<RendererDX12::BaseSwapChain> m_swapChain;
     unique_ptr<RendererDX12::ManagerConstantBuffer> m_constantBufferManager;
@@ -17,7 +19,7 @@ private:
     unique_ptr<RendererDX12::DeviceCommandModule> m_deviceCommandModule;
 
 public:
-
+    Renderer();
     bool Initialize(WinApplication::Window* window);
 
     RendererDX12::BaseDevice* GetDevice() { return m_device.get(); }
@@ -27,5 +29,9 @@ public:
     RendererDX12::DeviceCommandModule* GetDeviceCommandModule() { return m_deviceCommandModule.get(); }
 
     // Inherited via EventDispatcher
-    virtual void OnEvent(EventManagerLib::IEvent* pEvent) override;
+    virtual void OnEvent(WinApplication::IEvent* pEvent) override;
+
+    // Inherited via IModule
+    virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
+    virtual const ModuleType GetModuleType() override;
 };
