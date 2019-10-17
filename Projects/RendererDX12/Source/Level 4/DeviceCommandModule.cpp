@@ -2,7 +2,7 @@
 
 namespace RendererDX12
 {
-    DeviceCommandModule::DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues)
+    DeviceCommandModule::DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, ManagerConstantBuffer* constantBufferManager, UINT directQueues, UINT computeQueues, UINT copyQueues)
     {
         m_device = device;
         if (directQueues == 0)
@@ -15,23 +15,23 @@ namespace RendererDX12
         {
             D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT;
             for (UINT i = 0; i < directQueues; i++)
-                m_directQueue.push_back(make_unique<CommandQueue>(m_device, type, manager));
-            m_directList = make_unique<ManagerCommandList>(m_device, type, &m_directQueue, manager);
+                m_directQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, constantBufferManager));
+            m_directList = make_unique<ManagerCommandList>(m_device, type, &m_directQueue, manager, constantBufferManager);
         }
 
         if (computeQueues)
         {
             D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
             for (UINT i = 0; i < computeQueues; i++)
-                m_computeQueue.push_back(make_unique<CommandQueue>(m_device, type, manager));
-            m_computeList = make_unique<ManagerCommandList>(m_device, type, &m_computeQueue, manager);
+                m_computeQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, constantBufferManager));
+            m_computeList = make_unique<ManagerCommandList>(m_device, type, &m_computeQueue, manager, constantBufferManager);
         }
         if (copyQueues)
         {
             D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_COPY;
             for (UINT i = 0; i < copyQueues; i++)
-                m_copyQueue.push_back(make_unique<CommandQueue>(m_device, type, manager));
-            m_copyList = make_unique<ManagerCommandList>(m_device, type, &m_copyQueue, manager);
+                m_copyQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, constantBufferManager));
+            m_copyList = make_unique<ManagerCommandList>(m_device, type, &m_copyQueue, manager, constantBufferManager);
         }
     }
 
@@ -186,8 +186,8 @@ namespace RendererDX12
     {
         if (type == D3D12_COMMAND_LIST_TYPE_BUNDLE)
         {
-            unique_ptr<CommandAllocator> allocator = make_unique<CommandAllocator>(m_device->GetInterface(), type, nullptr);
-            return make_unique<CommandList>(m_device->GetInterface(), m_device->GetNodeMask(), type, std::move(allocator));
+            unique_ptr<CommandAllocator> allocator = make_unique<CommandAllocator>(m_device->GetInterface(), type);
+            return make_unique<CommandList>(m_device->GetInterface(), m_device->GetNodeMask(), type, std::move(allocator), nullptr);
         }
         else
         {

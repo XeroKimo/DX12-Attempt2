@@ -11,7 +11,7 @@ void Game::OnEvent(WinApplication::IEvent* pEvent)
 
 void Game::Initialize()
 {
-    m_eventManager = m_moduleManager->GetModule<WinApp, ModuleType::Application>()->GetApplication()->eventManager.get();
+    m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
     //RegisterListener()
     CreateDefaults();
 }
@@ -30,8 +30,8 @@ void Game::Draw()
 {
     using namespace RendererDX12;
     
-    DeviceCommandModule* commandModule = m_moduleManager->GetModule<Renderer, ModuleType::Renderer>()->GetDeviceCommandModule();
-    BaseSwapChain* swapChain = m_moduleManager->GetModule<Renderer, ModuleType::Renderer>()->GetSwapChain();
+    DeviceCommandModule* commandModule = m_moduleManager->GetModule<Renderer>()->GetDeviceCommandModule();
+    BaseSwapChain* swapChain = m_moduleManager->GetModule<Renderer>()->GetSwapChain();
 
     unique_ptr<CommandList> cl = commandModule->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 	ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
@@ -61,17 +61,12 @@ void Game::OnModuleRegisterChanged(ModuleManager* moduleManager)
     m_moduleManager = moduleManager;
 }
 
-const ModuleType Game::GetModuleType()
-{
-    return ModuleType::Game;
-}
-
 void Game::CreateDefaults()
 {
     using namespace RendererDX12;
     using namespace RendererDX12::Helpers;
 
-    Renderer* renderer = m_moduleManager->GetModule<Renderer, ModuleType::Renderer>();
+    Renderer* renderer = m_moduleManager->GetModule<Renderer>();
     BaseDevice* device = renderer->GetDevice();
     DeviceCommandModule* commandModule = renderer->GetDeviceCommandModule();
 	{
@@ -178,7 +173,7 @@ void Game::CreateDefaults()
     //Bottom Square
 };
 
-	void* vertexData = reinterpret_cast<void*>(&vertices);
+	void* vertexData = static_cast<void*>(&vertices);
 
 	unique_ptr<CommandList> cl = commandModule->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 

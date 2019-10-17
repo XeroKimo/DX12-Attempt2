@@ -4,10 +4,11 @@
 
 namespace RendererDX12
 {
+    class ManagerConstantBuffer;
     class DeviceCommandModule
     {
     public:
-        DeviceCommandModule( BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
+        DeviceCommandModule( BaseDevice* device, ManagerCommandAllocator* manager, ManagerConstantBuffer* constantBufferManager, UINT directQueues, UINT computeQueues, UINT copyQueues);
         ~DeviceCommandModule();
 
         void CloseCommandList(unique_ptr<CommandList>& commandList, UINT queueIndex);

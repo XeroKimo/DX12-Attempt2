@@ -68,7 +68,11 @@ namespace RendererDX12
         if (FAILED(hr))
             assert(false);
 
-        hr = wicFrame->GetSize(&outImageWidth, &outImageHeight);
+        ComPtr<IWICBitmapFlipRotator> wicFlipper;
+        wicFactory->CreateBitmapFlipRotator(wicFlipper.GetAddressOf());
+        wicFlipper->Initialize(wicConverter.Get(), WICBitmapTransformFlipVertical);
+
+        hr = wicFlipper->GetSize(&outImageWidth, &outImageHeight);
         if (FAILED(hr))
             assert(false);
 
@@ -76,10 +80,6 @@ namespace RendererDX12
         UINT buffersize = stride * outImageHeight;
 
         outImageData = make_unique<BYTE[]>(buffersize);
-
-        ComPtr<IWICBitmapFlipRotator> wicFlipper;
-        wicFactory->CreateBitmapFlipRotator(wicFlipper.GetAddressOf());
-        wicFlipper->Initialize(wicConverter.Get(), WICBitmapTransformFlipVertical);
 
         hr = wicFlipper->CopyPixels(nullptr, stride, buffersize, outImageData.get());
         if (FAILED(hr))

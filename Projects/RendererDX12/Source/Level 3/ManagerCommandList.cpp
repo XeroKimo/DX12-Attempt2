@@ -2,12 +2,13 @@
 
 namespace RendererDX12
 {
-    ManagerCommandList::ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager) :
+    ManagerCommandList::ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager) :
         m_device(device),
         m_type(type),
         m_pCommandQueues(commandQueues),
         m_allocatorManager(allocatorManager),
-        m_nodeMask(device->GetNodeMask())
+        m_nodeMask(device->GetNodeMask()),
+        m_constantBufferManager(constantBufferManager)
     {
         //The following command list types does not require a manager
         assert(type != D3D12_COMMAND_LIST_TYPE_VIDEO_PROCESS);
@@ -50,7 +51,7 @@ namespace RendererDX12
     unique_ptr<CommandList> ManagerCommandList::GetCommandList()
     {
         if (m_inactiveList.empty())
-            return make_unique<CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)));
+            return make_unique<CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)), m_constantBufferManager);
         else
         {
             unique_ptr<CommandList> list;

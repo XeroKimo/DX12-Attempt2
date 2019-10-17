@@ -33,5 +33,5 @@ public:
 
     // Inherited via IModule
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
-    virtual const ModuleType GetModuleType() override;
+    virtual std::type_index GetHashKey() override { return typeid(*this); };
 };

@@ -6,6 +6,7 @@
 namespace RendererDX12
 {
     class CommandQueue;
+    class ManagerConstantBuffer;
     class ManagerCommandList
     {
     private:
@@ -21,7 +22,7 @@ namespace RendererDX12
         };
 
     public:
-        ManagerCommandList( BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager);
+        ManagerCommandList( BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager);
 
         void CloseCommandList(unique_ptr<CommandList>& list, UINT queueIndex);
         void ExecuteCommandList(unique_ptr<CommandList>& list, UINT queueIndex);
@@ -30,8 +31,9 @@ namespace RendererDX12
 
         unique_ptr<CommandList> GetCommandList();
     private:
-         BaseDevice* m_device;
+        BaseDevice* m_device;
         ManagerCommandAllocator* m_allocatorManager;
+        ManagerConstantBuffer* m_constantBufferManager;
         std::vector<unique_ptr<CommandQueue>>* m_pCommandQueues;
         std::vector<unique_ptr<CommandList>> m_inactiveList;
         std::vector<WaitingList> m_waitingLists;
