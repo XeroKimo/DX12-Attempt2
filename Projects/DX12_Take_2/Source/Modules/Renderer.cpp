@@ -19,10 +19,13 @@ bool Renderer::Initialize(WinApplication::Window* window)
     if (!m_swapChain->GetInterface())
         return false;
 
+
+    RegisterListener(static_cast<IEventListenerRenderer*>(this));
+
     return true;
 }
 
-void Renderer::OnEvent(WinApplication::IEvent* pEvent)
+void Renderer::IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent)
 {
 }
 

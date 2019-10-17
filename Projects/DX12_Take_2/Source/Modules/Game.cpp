@@ -5,14 +5,10 @@ Game::Game()
 {
 }
 
-void Game::OnEvent(WinApplication::IEvent* pEvent)
-{
-}
-
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp, ModuleType::Application>()->GetApplication()->eventManager.get();
-    //RegisterListener()
+    RegisterListener(static_cast<IEventListenerGame*>(this));
     CreateDefaults();
 }
 
@@ -198,4 +194,8 @@ void Game::CreateDefaults()
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, viewMatrix, projMatrix };
+}
+
+void Game::IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent)
+{
 }

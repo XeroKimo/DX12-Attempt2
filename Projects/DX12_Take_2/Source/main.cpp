@@ -1,5 +1,35 @@
 #include "PCH.h"
 
+__interface callBack
+{
+    void func();
+};
+
+__interface ext1 : public callBack
+{
+public:
+    void func() override { ; }
+};
+
+__interface ext2 : public callBack
+{
+public:
+    void func() override { ; }
+};
+
+class foo : public ext1, public ext2
+{
+public:
+    void ext1::func() override { int i = 0; }
+    void ext2::func() override { int i = 0; }
+};
+
+class holder
+{
+public:
+    callBack* func;
+};
+
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {

@@ -10,8 +10,7 @@ namespace WinApplication
         void OnEvent(IEvent* pEvent);
     };
 
-
-    class EventDispatcher : public IEventListener
+    class EventDispatcher
     {
     protected:
     private:
@@ -23,9 +22,7 @@ namespace WinApplication
 
         void DispatchEvents();
         void RecordEvent(std::shared_ptr<IEvent> pEvent);
-        bool RegisterListener(IEventListener* callbackFunc);
-        virtual void OnEvent(IEvent* pEvent) = 0;
-        void EventTest(IEvent* pEvent) {}
+        bool RegisterListener(IEventListener* listener);
 
         void RegisterEventKey(std::string eventKey) { m_eventKey = eventKey; }
         const std::string GetEventHashKey() { return m_eventKey; }

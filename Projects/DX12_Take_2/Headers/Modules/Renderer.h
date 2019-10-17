@@ -7,7 +7,12 @@
 #include <WinApplication.h>
 #include "ModuleManager.h"
 
-class Renderer : public WinApplication::EventDispatcher, public IModule
+__interface IEventListenerRenderer : public WinApplication::IEventListener
+{
+    void OnEvent(WinApplication::IEvent* pEvent);
+};
+
+class Renderer : public WinApplication::EventDispatcher, public IModule, public IEventListenerRenderer
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
@@ -28,10 +33,10 @@ public:
     RendererDX12::ManagerCommandAllocator* GetCommandAllocatorManager() { return m_commandAllocatorManager.get(); }
     RendererDX12::DeviceCommandModule* GetDeviceCommandModule() { return m_deviceCommandModule.get(); }
 
-    // Inherited via EventDispatcher
-    virtual void OnEvent(WinApplication::IEvent* pEvent) override;
-
     // Inherited via IModule
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
     virtual const ModuleType GetModuleType() override;
+
+    // Inherited via IEventListenerRenderer
+    virtual void IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent) override;
 };

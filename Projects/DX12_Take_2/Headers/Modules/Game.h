@@ -5,7 +5,12 @@
 
 struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 
-class Game : public WinApplication::EventDispatcher, public WinApplication::IApp, public IModule
+__interface IEventListenerGame : public WinApplication::IEventListener
+{
+    void OnEvent(WinApplication::IEvent* pEvent);
+};
+
+class Game : public WinApplication::EventDispatcher, public WinApplication::IApp, public IModule, public IEventListenerGame
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
@@ -17,8 +22,6 @@ private:
     cBuffer buffer;
 public:
     Game();
-    // Inherited via EventDispatcher
-    virtual void OnEvent(WinApplication::IEvent* pEvent) override;
 
     // Inherited via IApp
     virtual void Initialize() override;
@@ -29,6 +32,9 @@ public:
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
     virtual const ModuleType GetModuleType() override;
 
+    // Inherited via IEventListenerGame
+    virtual void IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent) override;
 private:
     void CreateDefaults();
+
 };

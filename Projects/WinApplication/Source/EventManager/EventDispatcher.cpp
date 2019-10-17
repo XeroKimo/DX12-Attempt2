@@ -34,13 +34,13 @@ namespace WinApplication
         m_eventsToDispatch.push_back(std::move(pEvent));
     }
 
-    bool EventDispatcher::RegisterListener(IEventListener* callbackFunc)
+    bool EventDispatcher::RegisterListener(IEventListener* listener)
     {
-        auto it = std::find(m_eventListeners.begin(), m_eventListeners.end(), callbackFunc);
+        auto it = std::find(m_eventListeners.begin(), m_eventListeners.end(), listener);
         if (it != m_eventListeners.end())
             return false;
 
-        m_eventListeners.push_back(callbackFunc);
+        m_eventListeners.push_back(listener);
         return true;
     }
 }

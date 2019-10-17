@@ -15,6 +15,8 @@ void WinApp::Initialize(HINSTANCE hInstance, WNDPROC wndFunc)
 
     m_window.Initialize(wc, helper);
     m_application.eventManager = std::make_shared<EventManager>();
+
+    RegisterListener(static_cast<IEventListenerApplication*>(this));
 }
 
 void WinApp::OnEvent(WinApplication::IEvent* pEvent)
