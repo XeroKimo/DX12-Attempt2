@@ -17,7 +17,7 @@ class EventGame : public WinApplication::IEvent
     virtual const std::type_index GetHashKey() override final { return typeid(*this); }
 };
 
-class Game : public WinApplication::EventDispatcher, public WinApplication::IApp, public IModule, public IEventListenerGame
+class Game : public WinApplication::IApp, public IModule, public IEventListenerGame
 {
 private:
     ModuleManager* m_moduleManager = nullptr;

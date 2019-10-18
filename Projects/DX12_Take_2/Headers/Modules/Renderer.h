@@ -12,7 +12,7 @@ __interface IEventListenerRenderer : public WinApplication::IEventListener
     void OnEvent(WinApplication::IEvent* pEvent);
 };
 
-class Renderer : public WinApplication::EventDispatcher, public IModule, public IEventListenerRenderer
+class Renderer : public IModule, public IEventListenerRenderer
 {
 private:
     ModuleManager* m_moduleManager = nullptr;

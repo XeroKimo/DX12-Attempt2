@@ -20,7 +20,7 @@ bool Renderer::Initialize(WinApplication::Window* window)
         return false;
 
 
-    RegisterListener(static_cast<IEventListenerRenderer*>(this));
+    //RegisterListener(static_cast<IEventListenerRenderer*>(this));
 
     return true;
 }

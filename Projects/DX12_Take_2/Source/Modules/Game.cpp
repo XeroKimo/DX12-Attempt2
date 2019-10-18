@@ -8,7 +8,11 @@ Game::Game()
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
-    m_eventManager->RegisterEventDispatcher(this, make_unique<EventGame>());
+    WinApplication::EventDispatcher<EventGame, IEventListenerGame> test;
+
+    m_eventManager->RegisterEventDispatcher<EventGame,IEventListenerGame>();
+    m_eventManager->RegisterListener<IEventListenerGame>(static_cast<IEventListenerGame*>(this));
+    m_eventManager->RecordEvent(make_unique<EventGame>());
     CreateDefaults();
 }
 
@@ -193,4 +197,10 @@ void Game::CreateDefaults()
 
 void Game::IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent)
 {
+    int i = 0;
+}
+
+void Game::IEventListenerGame2::OnEvent(WinApplication::IEvent* pEvent)
+{
+    int i = 0;
 }

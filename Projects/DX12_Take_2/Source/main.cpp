@@ -20,7 +20,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         return 1;
     if (!renderer.Initialize(app.GetWindow()))
         return 1;
-
     app.Run(&game);
 
 	return 0;

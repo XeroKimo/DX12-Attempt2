@@ -7,7 +7,7 @@ __interface IEventListenerApplication : public WinApplication::IEventListener
     void OnEvent(WinApplication::IEvent* pEvent);
 };
 
-class WinApp : public WinApplication::EventDispatcher, public IModule, public IEventListenerApplication
+class WinApp : public IModule, public IEventListenerApplication
 {
 private:
     ModuleManager* m_moduleManager = nullptr;

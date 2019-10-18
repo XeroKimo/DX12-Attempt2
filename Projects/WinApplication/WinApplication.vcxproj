@@ -154,7 +154,6 @@
     <ClInclude Include="Headers\WinAppHelpers.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\EventManager\EventDispatcher.cpp" />
     <ClCompile Include="Source\EventManager\EventManager.cpp" />
     <ClCompile Include="Source\Windows\Application.cpp" />
     <ClCompile Include="Source\Windows\PlatformClock.cpp" />

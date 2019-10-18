@@ -59,8 +59,5 @@
     <ClCompile Include="Source\EventManager\EventManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EventManager\EventDispatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
