@@ -40,6 +40,10 @@ namespace WinApplication
             Listener* cast = dynamic_cast<Listener*>(listener);
             if (!cast)
                 return false;
+
+            auto it = m_registeredListenerTypes.find(typeid(cast));
+            if (it != m_registeredListenerTypes.end())
+                return false;
 #elif
             Listener* cast = static_cast<Listener*>(listener);
 #endif
@@ -52,6 +56,10 @@ namespace WinApplication
 #if _DEBUG
             BaseEvent* cast = dynamic_cast<BaseEvent*>(pEvent.get());
             if (!cast)
+                return;
+
+            auto it = m_registeredEventTypes.find(typeid(cast));
+            if (it != m_registeredEventTypes.end())
                 return;
 #elif
             BaseEvent* cast = static_cast<BaseEvent*>(pEvent.get());
