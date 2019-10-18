@@ -8,7 +8,7 @@ Game::Game()
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
-    //RegisterListener()
+    m_eventManager->RegisterEventDispatcher(this, make_unique<EventGame>());
     CreateDefaults();
 }
 

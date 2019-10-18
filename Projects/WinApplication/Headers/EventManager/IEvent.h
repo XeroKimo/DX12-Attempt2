@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
+#include <typeindex>
 
 namespace WinApplication
 {
     __interface IEvent
     {
-        const std::string GetHashKey();
+        const std::type_index GetHashKey();
     };
 }

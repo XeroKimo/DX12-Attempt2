@@ -11,7 +11,7 @@ namespace WinApplication
 
     void EventDispatcher::DispatchEvents()
     {
-        for (const std::shared_ptr<IEvent>& pEvent : m_eventsToDispatch)
+        for (const std::unique_ptr<IEvent>& pEvent : m_eventsToDispatch)
         {
             for (IEventListener* listener : m_eventListeners)
             {
@@ -21,16 +21,8 @@ namespace WinApplication
         m_eventsToDispatch.clear();
     }
 
-    void EventDispatcher::RecordEvent(std::shared_ptr<IEvent> pEvent)
+    void EventDispatcher::RecordEvent(std::unique_ptr<IEvent> pEvent)
     {
-#if _DEBUG
-        if (m_eventKey != pEvent->GetHashKey())
-        {
-            assert(false);
-            return;
-        }
-#endif
-
         m_eventsToDispatch.push_back(std::move(pEvent));
     }
 

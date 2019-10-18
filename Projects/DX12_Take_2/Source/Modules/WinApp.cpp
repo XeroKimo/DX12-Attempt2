@@ -22,7 +22,7 @@ bool WinApp::Initialize(HINSTANCE hInstance, WNDPROC wndFunc)
     return true;
 }
 
-void WinApp::OnEvent(WinApplication::IEvent* pEvent)
+void WinApp::IEventListenerApplication::OnEvent(WinApplication::IEvent* pEvent)
 {
 }
 

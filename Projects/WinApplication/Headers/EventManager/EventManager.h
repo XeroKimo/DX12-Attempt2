@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <typeindex>
 #include "EventDispatcher.h"
 
 namespace WinApplication
@@ -8,12 +9,14 @@ namespace WinApplication
     {
     private:
         std::vector<EventDispatcher*> m_eventDispatchers;
-        std::unordered_map<std::string, int> m_dispatchIndices;
+        std::unordered_map<std::type_index, int> m_dispatchIndices;
     public:
-        bool RegisterEventDispatcher(EventDispatcher* dispatcher, std::shared_ptr<IEvent> eventKey);
+        bool RegisterEventDispatcher(EventDispatcher* dispatcher, std::unique_ptr<IEvent> eventKey);
         bool RegisterListener(IEventListener* callbackFunc, std::shared_ptr<IEvent> eventKey);
-        void RecordEvent(std::shared_ptr<IEvent> pEvent);
+        void RecordEvent(std::unique_ptr<IEvent> pEvent);
         void DispatchEvents();
 
+    private:
+        bool IsKeyRegistered(IEvent* pEvent);
     };
 }
