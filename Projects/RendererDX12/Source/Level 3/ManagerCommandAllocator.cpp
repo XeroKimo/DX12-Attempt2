@@ -2,9 +2,8 @@
 
 namespace RendererDX12
 {
-    ManagerCommandAllocator::ManagerCommandAllocator(BaseDevice* device, ManagerConstantBuffer* bufferManager) :
-        m_device(device),
-        m_bufferManager(bufferManager)
+    ManagerCommandAllocator::ManagerCommandAllocator(BaseDevice* device) :
+        m_device(device)
     {
     }
 
@@ -68,6 +67,6 @@ namespace RendererDX12
 
     unique_ptr<CommandAllocator> ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
-        return make_unique<CommandAllocator>(m_device->GetInterface(), type, m_bufferManager);
+        return make_unique<CommandAllocator>(m_device->GetInterface(), type);
     }
 }

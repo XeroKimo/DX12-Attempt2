@@ -4,10 +4,11 @@
 
 namespace RendererDX12
 {
+    class ManagerConstantBuffer;
     class CommandList
     {
     public:
-        CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator);
+        CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager);
         void Reset(unique_ptr<CommandAllocator> allocator);
 
         void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);
@@ -21,5 +22,8 @@ namespace RendererDX12
         unique_ptr<CommandAllocator> m_allocator;
         BaseCommandList m_commandList;
         UINT m_nodeMask;
+
+        ManagerConstantBuffer* m_constantBufferManager;
+        std::vector<UploadBuffer*> m_constantBuffers;
     };
 }

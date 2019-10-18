@@ -2,10 +2,11 @@
 
 namespace RendererDX12
 {
-    CommandQueue::CommandQueue(BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, ManagerCommandAllocator* allocatorManager) :
+    CommandQueue::CommandQueue(BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager) :
         m_commandQueue(device->GetInterface(), device->GetNodeMask(), commandListType),
         m_allocatorManager(allocatorManager),
-        m_allocatorSizeHistory()
+        m_allocatorSizeHistory(),
+        m_constantBufferManager(constantBufferManager)
     {
         m_allocatorSizeHistory.fill(0);
     }
@@ -38,6 +39,7 @@ namespace RendererDX12
         if (fenceValue == FENCE_MAX_SIGNAL_VALUE || fenceValue == m_commandQueue.GetFence()->fenceValue)
         {
             m_commandQueue.SyncQueue(milliseconds, fenceValue);
+            TransferUploadBuffers(m_runningAllocators.begin(), m_runningAllocators.end());
             m_allocatorManager->ResetAllocators(m_runningAllocators);
             m_runningAllocators.clear();
             Reset();
@@ -57,8 +59,10 @@ namespace RendererDX12
 
         std::vector<unique_ptr<CommandAllocator>> allocatorsToReset;
         auto it = m_runningAllocators.begin() + iteratorOffset;
-
         std::move(m_runningAllocators.begin(), it, std::back_inserter(allocatorsToReset));
+
+        TransferUploadBuffers(allocatorsToReset.begin(), allocatorsToReset.end());
+
         m_allocatorManager->ResetAllocators(allocatorsToReset);
         m_runningAllocators.erase(m_runningAllocators.begin(), it);
 
@@ -74,5 +78,15 @@ namespace RendererDX12
     {
         m_commandQueue.Reset();
         m_highestSignaledSize = 0;
+    }
+
+    void CommandQueue::TransferUploadBuffers(std::vector<unique_ptr<CommandAllocator>>::iterator begin, std::vector<unique_ptr<CommandAllocator>>::iterator end)
+    {
+        auto it = begin;
+        while (it != end)
+        {
+            m_constantBufferManager->ResetBuffers((*it)->GetConstantBuffers());
+            it++;
+        }
     }
 }

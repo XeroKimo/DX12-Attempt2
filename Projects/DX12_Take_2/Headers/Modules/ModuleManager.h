@@ -1,35 +1,38 @@
 #pragma once
 #include <unordered_map>
-
-enum class ModuleType
-{
-    Game,
-    Renderer,
-    Application,
-};
+#include <typeindex>
 
 class ModuleManager;
 
 __interface IModule
 {
     void OnModuleRegisterChanged(ModuleManager* moduleManager);
-    const ModuleType GetModuleType();
+    std::type_index GetHashKey();
 };
 
 class ModuleManager
 {
 private:
-    std::unordered_map<ModuleType, IModule*> m_modules;
+    std::unordered_map<std::type_index, IModule*> m_modules;
 public:
-    bool RegisterModule(IModule* module);
+    bool RegisterModule(IModule* module)
+    {
+        auto it = m_modules.find(module->GetHashKey());
+        if (it != m_modules.end())
+            return false;
 
-    template<class T, ModuleType type>
+        m_modules[module->GetHashKey()] = module;
+        module->OnModuleRegisterChanged(this);
+        return true;
+    }
+
+    template<class T>
     T* GetModule() 
     {
 #if _DEBUG
-        return dynamic_cast<T*>(m_modules[type]);
+        return dynamic_cast<T*>(m_modules[typeid(T)]);
 #else
-        return reinterpret_cast<T*>(m_modules[type]);
+        return static_cast<T*>(m_modules[typeid(T)]);
 #endif
     }
 };
