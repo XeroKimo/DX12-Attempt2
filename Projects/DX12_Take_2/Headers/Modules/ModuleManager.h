@@ -35,9 +35,9 @@ public:
     T* GetModule() 
     {
 #if _DEBUG
-        return dynamic_cast<T*>(m_modules[typeid(T)]);
+        return dynamic_cast<T*>(m_modules[typeid(T*)]);
 #else
-        return static_cast<T*>(m_modules[typeid(T)]);
+        return static_cast<T*>(m_modules[typeid(T*)]);
 #endif
     }
 };
