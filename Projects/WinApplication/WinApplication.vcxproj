@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\EventManager\BaseEventDispatcher.h" />
     <ClInclude Include="Headers\EventManager\EventDispatcher.h" />
     <ClInclude Include="Headers\EventManager\EventManager.h" />
     <ClInclude Include="Headers\EventManager\!Header.h" />

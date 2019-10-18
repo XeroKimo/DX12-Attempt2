@@ -42,6 +42,9 @@
     <ClInclude Include="Headers\EventManager\!Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\EventManager\BaseEventDispatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Windows\Application.cpp">

@@ -19,6 +19,7 @@ bool WinApp::Initialize(HINSTANCE hInstance, WNDPROC wndFunc)
         return false;
 
     m_application.eventManager = std::make_shared<EventManager>();
+    m_window.SetUserData((LONG_PTR)(m_application.eventManager.get()));
     return true;
 }
 

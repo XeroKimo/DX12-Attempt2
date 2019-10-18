@@ -12,8 +12,7 @@ __interface IEventListenerGame : public WinApplication::IEventListener
 
 class EventGame : public WinApplication::IEvent
 {
-
-    void IsEvent() override final {}
+    std::type_index GetTypeIndex() override final { return typeid(this); }
 };
 
 class Game : public WinApplication::IApp, public IModule, public IEventListenerGame
@@ -36,7 +35,7 @@ public:
 
     // Inherited via IModule
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
-    virtual std::type_index GetHashKey() override final { return typeid(*this); };
+    virtual std::type_index GetHashKey() override final { return typeid(this); };
 
     // Inherited via IEventListenerGame
     virtual void IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent) override;

@@ -35,7 +35,7 @@ public:
 
     // Inherited via IModule
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
-    virtual std::type_index GetHashKey() override { return typeid(*this); };
+    virtual std::type_index GetHashKey() override final { return typeid(this); };
 
     // Inherited via IEventListenerRenderer
     virtual void IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent) override;

@@ -15,13 +15,18 @@ class ModuleManager
 private:
     std::unordered_map<std::type_index, IModule*> m_modules;
 public:
+
+    template<class T, class = std::enable_if_t<std::is_base_of_v<IModule,T>>>
     bool RegisterModule(IModule* module)
     {
-        auto it = m_modules.find(module->GetHashKey());
+        if (std::type_index(typeid(T*)) != module->GetHashKey())
+            return false;
+
+        auto it = m_modules.find(typeid(T*));
         if (it != m_modules.end())
             return false;
 
-        m_modules[module->GetHashKey()] = module;
+        m_modules[typeid(T*)] = module;
         module->OnModuleRegisterChanged(this);
         return true;
     }

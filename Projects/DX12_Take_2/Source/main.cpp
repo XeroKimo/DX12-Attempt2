@@ -8,13 +8,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     using namespace RendererDX12::Helpers;
 
     ModuleManager moduleManager;
+
+    WinApp app;
     Renderer renderer;
     Game game;
-    WinApp app;
 
-    moduleManager.RegisterModule(&renderer);
-    moduleManager.RegisterModule(&game);
-    moduleManager.RegisterModule(&app);
+    moduleManager.RegisterModule<WinApp>(&app);
+    moduleManager.RegisterModule<Renderer>(&renderer);
+    moduleManager.RegisterModule<Game>(&game);
 
     if (!app.Initialize(hInstance, WindowProcMain))
         return 1;
@@ -27,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    //WinApp* pWinApp = reinterpret_cast<WinApp*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    WinApplication::EventManager* pWinApp = reinterpret_cast<WinApplication::EventManager*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     switch (uMsg)
     {
     case WM_DESTROY:
