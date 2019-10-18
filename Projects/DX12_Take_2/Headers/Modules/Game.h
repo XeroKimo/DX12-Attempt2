@@ -13,8 +13,7 @@ __interface IEventListenerGame : public WinApplication::IEventListener
 class EventGame : public WinApplication::IEvent
 {
 
-    // Inherited via IEvent
-    virtual const std::type_index GetHashKey() override final { return typeid(*this); }
+    void IsEvent() override final {}
 };
 
 class Game : public WinApplication::IApp, public IModule, public IEventListenerGame

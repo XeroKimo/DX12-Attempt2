@@ -33,9 +33,6 @@
     <ClInclude Include="Headers\Windows\!Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\EventManager\IEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\EventManager\EventDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>

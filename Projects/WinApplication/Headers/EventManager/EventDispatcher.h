@@ -1,10 +1,14 @@
 #pragma once
-#include "IEvent.h"
 #include <vector>
 #include <memory>
 
 namespace WinApplication
 {
+    __interface IEvent
+    {
+        void IsEvent();
+    };
+
     __interface IEventListener
     {
         void OnEvent(IEvent* pEvent);
@@ -41,8 +45,12 @@ namespace WinApplication
         void RecordEvent(std::unique_ptr<IEvent> pEvent) override final
         {
 #if _DEBUG
-            if (pEvent->GetHashKey() != typeid(Event))
+            Event* cast = dynamic_cast<Event*>(pEvent.get());
+            if (!cast)
                 return;
+
+            //if (pEvent->GetHashKey() != typeid(Event))
+            //    return;
 #endif
             m_eventsToDispatch.push_back(std::move(pEvent));
         }

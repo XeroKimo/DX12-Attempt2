@@ -145,7 +145,6 @@
     <ClInclude Include="Headers\EventManager\EventDispatcher.h" />
     <ClInclude Include="Headers\EventManager\EventManager.h" />
     <ClInclude Include="Headers\EventManager\!Header.h" />
-    <ClInclude Include="Headers\EventManager\IEvent.h" />
     <ClInclude Include="Headers\Windows\!Header.h" />
     <ClInclude Include="Headers\Windows\Application.h" />
     <ClInclude Include="Headers\Windows\PlatformClock.h" />
