@@ -23,11 +23,15 @@ bool WinApp::Initialize(HINSTANCE hInstance, WNDPROC wndFunc)
     return true;
 }
 
-void WinApp::IEventListenerApplication::OnEvent(WinApplication::IEvent* pEvent)
-{
-}
+//void WinApp::IEventListenerApplication::OnEvent(WinApplication::IEvent* pEvent)
+//{
+//}
 
 void WinApp::OnModuleRegisterChanged(ModuleManager* moduleManager)
 {
     m_moduleManager = moduleManager;
+}
+
+void WinApp::InitializeEventDispatchers()
+{
 }

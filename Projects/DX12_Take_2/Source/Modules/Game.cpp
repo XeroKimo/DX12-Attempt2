@@ -9,9 +9,13 @@ void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
 
-    m_eventManager->RegisterEventDispatcher<EventGame, IEventListenerGame>();
-    m_eventManager->RegisterListener<IEventListenerGame>(this);
+    m_eventManager->RegisterEventDispatcher<EventGame>();
+    m_eventManager->RegisterListener<EventGame>(this);
     m_eventManager->RecordEvent<EventGame>(make_unique<EventGame>());
+
+    m_eventManager->RegisterEventDispatcher<EventGame2>();
+    m_eventManager->RegisterListener<EventGame2>(this);
+    m_eventManager->RecordEvent<EventGame2>(make_unique<EventGame2>());
     CreateDefaults();
 }
 
@@ -58,6 +62,16 @@ void Game::Draw()
 void Game::OnModuleRegisterChanged(ModuleManager* moduleManager)
 {
     m_moduleManager = moduleManager;
+}
+
+void Game::OnEvent(EventGame* pEvent)
+{
+    int i = 0;
+}
+
+void Game::OnEvent(EventGame2* pEvent)
+{
+    int i = 2;
 }
 
 void Game::CreateDefaults()
@@ -121,56 +135,56 @@ void Game::CreateDefaults()
     Vertex topRightBack = { Vector3(0.5f, 0.5f, -0.5f), Vector4(0,0,0,0), Vector2(0.0f,1.0f) };
 
     Vertex vertices[] =
-{
-    bottomLeftFront,
-	topLeftFront,
-	bottomRightFront,
+    {
+        bottomLeftFront,
+	    topLeftFront,
+	    bottomRightFront,
 
-	topLeftFront,
-	topRightFront,
-	bottomRightFront,
-    //Front square
-    bottomRightFront,
-    topRightFront,
-    bottomRightBack,
+	    topLeftFront,
+	    topRightFront,
+	    bottomRightFront,
+        //Front square
+        bottomRightFront,
+        topRightFront,
+        bottomRightBack,
 
-    topRightFront,
-    topRightBack,
-    bottomRightBack,
-    //Right Square
-    topLeftFront,
-    bottomLeftFront,
-    bottomLeftBack,
+        topRightFront,
+        topRightBack,
+        bottomRightBack,
+        //Right Square
+        topLeftFront,
+        bottomLeftFront,
+        bottomLeftBack,
 
-    topLeftBack,
-    topLeftFront,
-    bottomLeftBack,
-    //LeftSquare
-    topLeftBack,
-    bottomLeftBack,
-    bottomRightBack,
+        topLeftBack,
+        topLeftFront,
+        bottomLeftBack,
+        //LeftSquare
+        topLeftBack,
+        bottomLeftBack,
+        bottomRightBack,
 
-    topRightBack,
-    topLeftBack,
-    bottomRightBack,
-    //Back Square
-    topLeftFront,
-    topLeftBack,
-    topRightFront,
+        topRightBack,
+        topLeftBack,
+        bottomRightBack,
+        //Back Square
+        topLeftFront,
+        topLeftBack,
+        topRightFront,
 
-    topRightFront,
-    topLeftBack,
-    topRightBack,
-    //Top Square
-    bottomLeftBack,
-    bottomLeftFront,
-    bottomRightFront,
+        topRightFront,
+        topLeftBack,
+        topRightBack,
+        //Top Square
+        bottomLeftBack,
+        bottomLeftFront,
+        bottomRightFront,
 
-    bottomLeftBack,
-    bottomRightFront,
-    bottomRightBack,
-    //Bottom Square
-};
+        bottomLeftBack,
+        bottomRightFront,
+        bottomRightBack,
+        //Bottom Square
+    };
 
 	void* vertexData = static_cast<void*>(&vertices);
 
@@ -192,9 +206,4 @@ void Game::CreateDefaults()
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, viewMatrix, projMatrix };
-}
-
-void Game::IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent)
-{
-    int i = 0;
 }

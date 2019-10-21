@@ -65,6 +65,9 @@
     <ClInclude Include="Headers\Modules\ModuleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Events\Events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\VertexShader.hlsl" />

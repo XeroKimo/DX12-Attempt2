@@ -7,12 +7,12 @@
 #include <WinApplication.h>
 #include "ModuleManager.h"
 
-__interface IEventListenerRenderer : public WinApplication::IEventListener
-{
-    void OnEvent(WinApplication::IEvent* pEvent);
-};
+//__interface IEventListenerRenderer : public WinApplication::IEventListener
+//{
+//    void OnEvent(WinApplication::IEvent* pEvent);
+//};
 
-class Renderer : public IModule, public IEventListenerRenderer
+class Renderer : public IModule
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
@@ -38,5 +38,5 @@ public:
     virtual std::type_index GetHashKey() override final { return typeid(this); };
 
     // Inherited via IEventListenerRenderer
-    virtual void IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent) override;
+    //virtual void IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent) override;
 };

@@ -11,36 +11,30 @@ namespace WinApplication
     private:
         std::vector<std::unique_ptr<EventDispatcherBase>> m_eventDispatchers;
         std::unordered_map<std::type_index, unsigned int> m_registeredEventTypes;
-        std::unordered_map<std::type_index, unsigned int> m_registeredListenerTypes;
 
     public:
         void DispatchEvents();
 
-        template<class BaseEvent, class Listener, class = std::enable_if_t<std::is_base_of_v<IEvent, BaseEvent>>, class = std::enable_if_t<std::is_base_of_v<IEventListener, Listener>>>
+        template<class BaseEvent, class = std::enable_if_t<std::is_base_of_v<IEvent, BaseEvent>>>
         bool RegisterEventDispatcher()
         {
             auto it = m_registeredEventTypes.find(typeid(BaseEvent*));
             if (it != m_registeredEventTypes.end())
                 return false;
 
-            it = m_registeredListenerTypes.find(typeid(Listener*));
-            if (it != m_registeredListenerTypes.end())
-                return false;
-
             m_registeredEventTypes[typeid(BaseEvent*)] = static_cast<unsigned int>(m_eventDispatchers.size());
-            m_registeredListenerTypes[typeid(Listener*)] = static_cast<unsigned int>(m_eventDispatchers.size());
-            m_eventDispatchers.push_back(std::make_unique<EventDispatcher<BaseEvent, Listener>>());
+            m_eventDispatchers.push_back(std::make_unique<EventDispatcher<BaseEvent>>());
             return true;
         }
 
-        template<class Listener, class = std::enable_if_t<std::is_base_of_v<IEventListener, Listener>>>
-        bool RegisterListener(Listener* listener)
+        template<class BaseEvent, class = std::enable_if_t<std::is_base_of_v<IEvent, BaseEvent>>>
+        bool RegisterListener(IEventListener<BaseEvent>* listener)
         {
-            auto it = m_registeredListenerTypes.find(typeid(Listener*));
-            if (it == m_registeredListenerTypes.end())
+            auto it = m_registeredEventTypes.find(typeid(BaseEvent*));
+            if (it == m_registeredEventTypes.end())
                 return false;
 
-            return m_eventDispatchers[m_registeredListenerTypes[typeid(Listener*)]]->RegisterListener(listener);
+            return static_cast<EventDispatcher<BaseEvent, void>*>(m_eventDispatchers[m_registeredEventTypes[typeid(BaseEvent*)]].get())->RegisterListener(listener);
         }
 
         template<class BaseEvent, class = std::enable_if_t<std::is_base_of_v<IEvent, BaseEvent>>>
@@ -50,7 +44,7 @@ namespace WinApplication
             if (it == m_registeredEventTypes.end())
                 return;
 
-            m_eventDispatchers[m_registeredEventTypes[typeid(BaseEvent*)]]->RecordEvent(std::move(pEvent));
+            static_cast<EventDispatcher<BaseEvent, void>*>(m_eventDispatchers[m_registeredEventTypes[typeid(BaseEvent*)]].get())->RecordEvent(std::move(pEvent));
         }
     };
 }

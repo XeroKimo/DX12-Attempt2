@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\CppDelegates\CppDelegates</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\CppDelegates\CppDelegates</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -124,7 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\CppDelegates\CppDelegates</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\CppDelegates\CppDelegates</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -164,6 +164,7 @@
     <ClCompile Include="Source\Modules\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\Events\Events.h" />
     <ClInclude Include="Headers\MathLib\MathConstants.h" />
     <ClInclude Include="Headers\MathLib\MathLib.h" />
     <ClInclude Include="Headers\MathLib\Matrix4x4.h" />

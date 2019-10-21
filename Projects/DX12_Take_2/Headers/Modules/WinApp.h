@@ -2,12 +2,12 @@
 #include <WinApplication.h>
 #include "ModuleManager.h"
 
-__interface IEventListenerApplication : public WinApplication::IEventListener
-{
-    void OnEvent(WinApplication::IEvent* pEvent);
-};
+//__interface IEventListenerApplication : public WinApplication::IEventListener
+//{
+//    void OnEvent(WinApplication::IEvent* pEvent);
+//};
 
-class WinApp : public IModule, public IEventListenerApplication
+class WinApp : public IModule
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
@@ -28,5 +28,8 @@ public:
     virtual std::type_index GetHashKey() override final { return typeid(this); };
 
     // Inherited via IEventListenerApplication
-    virtual void IEventListenerApplication::OnEvent(WinApplication::IEvent* pEvent) override;
+    //virtual void IEventListenerApplication::OnEvent(WinApplication::IEvent* pEvent) override;
+
+private:
+    void InitializeEventDispatchers();
 };

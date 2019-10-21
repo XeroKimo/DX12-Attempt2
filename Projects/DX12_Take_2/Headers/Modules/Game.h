@@ -5,17 +5,17 @@
 
 struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 
-__interface IEventListenerGame : public WinApplication::IEventListener
-{
-    void OnEvent(WinApplication::IEvent* pEvent);
-};
-
 class EventGame : public WinApplication::IEvent
 {
-    std::type_index GetTypeIndex() override final { return typeid(this); }
+    std::type_index GetBaseTypeIndex() override final { return typeid(this); }
 };
 
-class Game : public WinApplication::IApp, public IModule, public IEventListenerGame
+class EventGame2 : public WinApplication::IEvent
+{
+    std::type_index GetBaseTypeIndex() override final { return typeid(this); }
+};
+
+class Game : public WinApplication::IApp, public IModule, public WinApplication::IEventListener<EventGame>, public WinApplication::IEventListener<EventGame2>
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
@@ -37,9 +37,12 @@ public:
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
     virtual std::type_index GetHashKey() override final { return typeid(this); };
 
-    // Inherited via IEventListenerGame
-    virtual void IEventListenerGame::OnEvent(WinApplication::IEvent* pEvent) override;
+    // Inherited via IEventListener
+    virtual void OnEvent(EventGame* pEvent) override final;
+    virtual void OnEvent(EventGame2* pEvent) override final;
 private:
     void CreateDefaults();
+
+
 
 };

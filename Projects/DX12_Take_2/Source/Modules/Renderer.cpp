@@ -25,9 +25,9 @@ bool Renderer::Initialize(WinApplication::Window* window)
     return true;
 }
 
-void Renderer::IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent)
-{
-}
+//void Renderer::IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent)
+//{
+//}
 
 void Renderer::OnModuleRegisterChanged(ModuleManager* moduleManager)
 {

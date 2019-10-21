@@ -6,18 +6,23 @@ namespace WinApplication
 {
     __interface IEvent
     {
-        std::type_index GetTypeIndex();
+        //When implemented, make it final so inherited classes can't override it
+        std::type_index GetBaseTypeIndex();
     };
 
+
+
+    template<class Event, class = std::enable_if_t<std::is_base_of_v<IEvent, Event>>>
     __interface IEventListener
     {
-        void OnEvent(IEvent* pEvent);
+        void OnEvent(Event* pEvent);
     };
 
-    __interface EventDispatcherBase
+
+
+    class EventDispatcherBase
     {
-        void DispatchEvents();
-        void RecordEvent(std::unique_ptr<IEvent> pEvent);
-        bool RegisterListener(IEventListener* listener);
+    public:
+        virtual void DispatchEvents() = 0;
     };
 }
