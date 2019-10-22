@@ -1,10 +1,36 @@
 #pragma once
 #include "WinAppHelpers.h"
-#include "EventManager/EventManager.h"
+#include "../Events/Delegate.h"
 #include <Windows.h>
+#include <unordered_map>
 
 namespace WinApplication
 {
+    class WNDProcPassthrough
+    {
+    private:
+        std::unordered_map<unsigned int, Event<void(WPARAM, LPARAM)>> m_mappedEvents;
+    public:
+        void SubscribeEvent(unsigned int windowMessage, Delegate<void(WPARAM, LPARAM)> delegate)
+        {
+            m_mappedEvents[windowMessage] += delegate;
+        }
+
+        void UnsubscribeEvent(unsigned int windowMessage, Delegate<void(WPARAM, LPARAM)> delegate)
+        {
+            m_mappedEvents[windowMessage] -= delegate;
+            if (m_mappedEvents[windowMessage].Empty())
+                m_mappedEvents.erase(windowMessage);
+        }
+
+        LRESULT Invoke(HWND hwnd, unsigned int message, WPARAM wParam, LPARAM lParam)
+        {
+            if (m_mappedEvents.find(message) == m_mappedEvents.end())
+                return DefWindowProc(hwnd, message, wParam, lParam);
+            m_mappedEvents[message](wParam, lParam);
+        }
+    };
+
     class Window
     {
     public:
@@ -37,7 +63,8 @@ namespace WinApplication
         //WNDPROC definiton
         //LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-
+    public:
+        WNDProcPassthrough passThrough;
     private:
         HWND m_windowHandle = nullptr;
         HINSTANCE m_hInstance = nullptr;

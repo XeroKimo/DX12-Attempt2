@@ -8,7 +8,7 @@ Game::Game()
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
-
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
     m_eventManager->RegisterEventDispatcher<EventGame>();
     m_eventManager->RegisterListener<EventGame>(this);
     m_eventManager->RecordEvent<EventGame>(make_unique<EventGame>());
@@ -72,6 +72,11 @@ void Game::OnEvent(EventGame* pEvent)
 void Game::OnEvent(EventGame2* pEvent)
 {
     int i = 2;
+}
+
+void Game::OnWindowDestory(WPARAM wParam, LPARAM lParam)
+{
+    int i = 0;
 }
 
 void Game::CreateDefaults()

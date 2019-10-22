@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
-#include "Window.h"
 #include "PlatformClock.h"
+#include "Window.h"
+#include "Events/EventManager.h"
 
 namespace WinApplication
 {

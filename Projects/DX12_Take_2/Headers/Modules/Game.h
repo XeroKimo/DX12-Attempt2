@@ -40,6 +40,8 @@ public:
     // Inherited via IEventListener
     virtual void OnEvent(EventGame* pEvent) override final;
     virtual void OnEvent(EventGame2* pEvent) override final;
+    
+    void OnWindowDestory(WPARAM wParam, LPARAM lParam);
 private:
     void CreateDefaults();
 

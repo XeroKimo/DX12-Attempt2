@@ -1,5 +1,4 @@
 #include "PCH.h"
-#include <stdarg.h>
 
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
@@ -29,12 +28,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    WinApplication::EventManager* pWinApp = reinterpret_cast<WinApplication::EventManager*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    WinApplication::WNDProcPassthrough* pWinApp = reinterpret_cast<WinApplication::WNDProcPassthrough*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     switch (uMsg)
     {
     case WM_DESTROY:
         PostQuitMessage(0);
-        return 0;
+        break;
     case WM_KEYDOWN:
         if (wParam == VK_ESCAPE)
         {
@@ -43,5 +42,7 @@ LRESULT CALLBACK WindowProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         break;
     }
+    if (pWinApp)
+        return pWinApp->Invoke(hwnd, uMsg, wParam, lParam);
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

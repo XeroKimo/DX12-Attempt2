@@ -27,6 +27,7 @@ namespace WinApplication
             return false;
         }
 
+        SetUserData(reinterpret_cast<LONG_PTR>(&passThrough));
         ShowWindow(m_windowHandle, SW_SHOW);
         SetForegroundWindow(m_windowHandle);
         SetFocus(m_windowHandle);

@@ -1,4 +1,4 @@
-#include "EventManager/EventManager.h"
+#include "Events/EventManager.h"
 
 namespace WinApplication
 {
