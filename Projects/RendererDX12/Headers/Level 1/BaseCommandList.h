@@ -7,9 +7,9 @@ namespace RendererDX12
     class BaseCommandList
     {
     public:
-        inline BaseCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, ID3D12CommandAllocator* allocator)
+        inline BaseCommandList(BaseDevice* device, BaseCommandAllocator* allocator)
         {
-            device->GetInterface()->CreateCommandList(device->GetNodeMask(), static_cast<D3D12_COMMAND_LIST_TYPE>(type), allocator, nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
+            device->GetInterface()->CreateCommandList(device->GetNodeMask(), allocator->GetType(), allocator->GetInterface(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
             m_device = device;
         }
 

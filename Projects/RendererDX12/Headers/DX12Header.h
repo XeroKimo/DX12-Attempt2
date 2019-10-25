@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 #include <assert.h>
 #include <vector>
+#include <unordered_map>
 #include <array>
 #include <memory>
 #include <string>

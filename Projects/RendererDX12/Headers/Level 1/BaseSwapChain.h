@@ -9,8 +9,8 @@ namespace RendererDX12
     public:
         BaseSwapChain(BaseDevice* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
-        void ClearBackBuffer(ID3D12GraphicsCommandList* commandList);
-        void ReadyBackBuffer(ID3D12GraphicsCommandList* commandList);
+        void ClearBackBuffer(BaseCommandList* commandList);
+        void ReadyBackBuffer(BaseCommandList* commandList);
         inline IDXGISwapChain3* GetInterface() { return m_swapChain.Get(); }
     private:
         ComPtr<IDXGISwapChain3> m_swapChain;

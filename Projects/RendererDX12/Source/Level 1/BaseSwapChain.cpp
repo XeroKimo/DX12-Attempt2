@@ -76,39 +76,23 @@ namespace RendererDX12
         m_rect.right = windowWidth;
     }
 
-    void BaseSwapChain::ClearBackBuffer(ID3D12GraphicsCommandList* commandList)
+    void BaseSwapChain::ClearBackBuffer(BaseCommandList* commandList)
     {
         D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
         handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
         //float color[4] = { 0.1f,0.0f,0.6f,1.0f };
         float color[4] = { 0.5f,0.5f,0.5f,1.0f };
-        commandList->RSSetViewports(1, &m_viewPort);
-        commandList->RSSetScissorRects(1, &m_rect);
+        commandList->GetInterface()->RSSetViewports(1, &m_viewPort);
+        commandList->GetInterface()->RSSetScissorRects(1, &m_rect);
 
-        D3D12_RESOURCE_BARRIER barrier;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get();
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        commandList->GetInterface()->ResourceBarrier(1, &Helpers::ResourceBarrierTransition(m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-        commandList->ResourceBarrier(1, &barrier);
-
-        commandList->ClearRenderTargetView(handle, color, 0, nullptr);
-        commandList->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+        commandList->GetInterface()->ClearRenderTargetView(handle, color, 0, nullptr);
+        commandList->GetInterface()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
     }
 
-    void BaseSwapChain::ReadyBackBuffer(ID3D12GraphicsCommandList* commandList)
+    void BaseSwapChain::ReadyBackBuffer(BaseCommandList* commandList)
     {
-        D3D12_RESOURCE_BARRIER barrier;
-        barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-        barrier.Transition.pResource = m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get();
-        barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-        barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-        barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-        barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-
-        commandList->ResourceBarrier(1, &barrier);
+        commandList->GetInterface()->ResourceBarrier(1, &Helpers::ResourceBarrierTransition(m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
     }
 }

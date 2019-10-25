@@ -183,10 +183,10 @@ inline Matrix4x4 Quaternion::GetRotation()
 
     matrix.vY.x = 2 * (i * j +  r * k);
     matrix.vY.y = 1 - 2 * (i * i + k * k);
-    matrix.vY.z = 2 * (k * j - r * i);
+    matrix.vY.z = 2 * (k * j + r * i);
 
     matrix.vZ.x = 2 * (i * k - r * j);
-    matrix.vZ.y = 2 * (j * k + r * i);
+    matrix.vZ.y = 2 * (j * k - r * i);
     matrix.vZ.z = 1 - 2 * (i * i + j * j);
 
     return matrix;

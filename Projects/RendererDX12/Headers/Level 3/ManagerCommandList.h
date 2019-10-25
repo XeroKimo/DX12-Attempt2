@@ -22,7 +22,7 @@ namespace RendererDX12
         };
 
     public:
-        ManagerCommandList( BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager);
+        ManagerCommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, std::vector<unique_ptr<CommandQueue>>* commandQueues, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager);
 
         void CloseCommandList(unique_ptr<CommandList>& list, UINT queueIndex);
         void ExecuteCommandList(unique_ptr<CommandList>& list, UINT queueIndex);

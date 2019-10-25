@@ -3,37 +3,15 @@
 namespace RendererDX12
 {
     DeviceCommandModule::DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues) :
-        m_constantBufferManager(device, 1<<16 - 1)
+        m_constantBufferManager(device, (1 << 16) - 1)
     {
         m_device = device;
         if (directQueues == 0)
             directQueues = 1;
-        m_directQueue.reserve(directQueues);
-        m_copyQueue.reserve(copyQueues);
-        m_computeQueue.reserve(computeQueues);
 
-        if (directQueues)
-        {
-            D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-            for (UINT i = 0; i < directQueues; i++)
-                m_directQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, &m_constantBufferManager));
-            m_directList = make_unique<ManagerCommandList>(m_device, type, &m_directQueue, manager, &m_constantBufferManager);
-        }
-
-        if (computeQueues)
-        {
-            D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
-            for (UINT i = 0; i < computeQueues; i++)
-                m_computeQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, &m_constantBufferManager));
-            m_computeList = make_unique<ManagerCommandList>(m_device, type, &m_computeQueue, manager, &m_constantBufferManager);
-        }
-        if (copyQueues)
-        {
-            D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_COPY;
-            for (UINT i = 0; i < copyQueues; i++)
-                m_copyQueue.push_back(make_unique<CommandQueue>(m_device, type, manager, &m_constantBufferManager));
-            m_copyList = make_unique<ManagerCommandList>(m_device, type, &m_copyQueue, manager, &m_constantBufferManager);
-        }
+        CreateCommandModule(directQueues, D3D12_COMMAND_LIST_TYPE_DIRECT, manager);
+        CreateCommandModule(computeQueues, D3D12_COMMAND_LIST_TYPE_COMPUTE, manager);
+        CreateCommandModule(copyQueues, D3D12_COMMAND_LIST_TYPE_COPY, manager);
     }
 
     DeviceCommandModule::~DeviceCommandModule()
@@ -72,12 +50,8 @@ namespace RendererDX12
 
     void DeviceCommandModule::ExecuteAllWaitingLists()
     {
-        if (m_directList)
-            m_directList->ExecuteAllWaitingLists();
-        if (m_computeList)
-            m_computeList->ExecuteAllWaitingLists();
-        if (m_copyList)
-            m_copyList->ExecuteAllWaitingLists();
+        for (auto& commandModule : m_commandModules)
+            commandModule.second->GetCommandListManager()->ExecuteAllWaitingLists();
     }
 
     UINT64 DeviceCommandModule::SignalQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
@@ -129,50 +103,20 @@ namespace RendererDX12
 
     void DeviceCommandModule::SignalAllQueues()
     {
-        for (const unique_ptr<CommandQueue>& queue : m_directQueue)
-        {
-            queue->Signal();
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_computeQueue)
-        {
-            queue->Signal();
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_copyQueue)
-        {
-            queue->Signal();
-        }
+        for (const auto& commandModule : m_commandModules)
+            commandModule.second->SignalAllQueues();
     }
 
     void DeviceCommandModule::SyncAllQueues()
     {
-        for (const unique_ptr<CommandQueue>& queue : m_directQueue)
-        {
-            queue->SyncQueue(INFINITE);
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_computeQueue)
-        {
-            queue->SyncQueue(INFINITE);
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_copyQueue)
-        {
-            queue->SyncQueue(INFINITE);
-        }
+        for (const auto& commandModule : m_commandModules)
+            commandModule.second->SyncAllQueues(INFINITE);
     }
 
     void DeviceCommandModule::ResetAllQueues()
     {
-        for (const unique_ptr<CommandQueue>& queue : m_directQueue)
-        {
-            queue->Reset();
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_computeQueue)
-        {
-            queue->Reset();
-        }
-        for (const unique_ptr<CommandQueue>& queue : m_copyQueue)
-        {
-            queue->Reset();
-        }
+        for (const auto& commandModule : m_commandModules)
+            commandModule.second->ResetAllQueues();
     }
 
     UINT64 DeviceCommandModule::GetFenceValue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
@@ -188,7 +132,7 @@ namespace RendererDX12
         if (type == D3D12_COMMAND_LIST_TYPE_BUNDLE)
         {
             unique_ptr<CommandAllocator> allocator = make_unique<CommandAllocator>(m_device, type);
-            return make_unique<CommandList>(m_device, type, std::move(allocator), nullptr);
+            return make_unique<CommandList>(m_device, std::move(allocator), nullptr);
         }
         else
         {
@@ -208,38 +152,26 @@ namespace RendererDX12
 
     CommandQueue* DeviceCommandModule::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex)
     {
-        switch (type)
-        {
-        case D3D12_COMMAND_LIST_TYPE_DIRECT:
-            if (queueIndex < m_directQueue.size())
-                return m_directQueue[queueIndex].get();
-            return m_directQueue[0].get();
-        case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-            if (queueIndex < m_computeQueue.size())
-                return m_computeQueue[queueIndex].get();
-            return nullptr;
-        case D3D12_COMMAND_LIST_TYPE_COPY:
-            if (queueIndex < m_copyQueue.size())
-                return m_copyQueue[queueIndex].get();
-            return nullptr;
-        default:
-            return nullptr;
-        }
-
+        if (m_commandModules.find(type) != m_commandModules.end())
+            return m_commandModules[type]->GetCommandQueue(queueIndex);
+        assert(false);
+        return nullptr;
     }
 
     ManagerCommandList* DeviceCommandModule::GetCommandListManager(D3D12_COMMAND_LIST_TYPE type)
     {
-        switch (type)
-        {
-        case D3D12_COMMAND_LIST_TYPE_DIRECT:
-            return m_directList.get();
-        case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-            return m_computeList.get();
-        case D3D12_COMMAND_LIST_TYPE_COPY:
-            return m_copyList.get();
-        default:
-            return m_directList.get();
-        }
+        if (m_commandModules.find(type) != m_commandModules.end())
+            return m_commandModules[type]->GetCommandListManager();
+
+        assert(false);
+        return nullptr;
+    }
+
+    void DeviceCommandModule::CreateCommandModule(const UINT& queueAmount, D3D12_COMMAND_LIST_TYPE type, ManagerCommandAllocator* commandAllocatorManager)
+    {
+        if (queueAmount == 0)
+            return;
+
+        m_commandModules[type] = make_unique<CommandModule>(queueAmount, m_device, type, commandAllocatorManager, &m_constantBufferManager);
     }
 }

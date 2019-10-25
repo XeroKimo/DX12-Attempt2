@@ -27,13 +27,16 @@ void Game::Update(float deltaTime)
     quat.Normalize();
 
     buffer.worldMatrix *= quat.GetRotation();
-    quat.Identity();
 
-    quat *= Quaternion(1 - deltaTime * 2, 0, -deltaTime, deltaTime);
+    quat.Identity();
+    quat *= Quaternion(1 - 2 * deltaTime, 0, deltaTime, -deltaTime);
     quat.Normalize();
-    //buffer2.worldMatrix.Identity();
-    //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
+
+    ////buffer2.worldMatrix.Identity();
+    ////buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2.worldMatrix *= quat.GetRotation();
+
+    //buffer2.worldMatrix.RotateX(30 * deltaTime);
 }
 
 void Game::Draw()
@@ -44,13 +47,12 @@ void Game::Draw()
     BaseSwapChain* swapChain = m_moduleManager->GetModule<Renderer>()->GetSwapChain();
 
     unique_ptr<CommandList> cl = commandModule->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
-	ID3D12GraphicsCommandList* commandList = cl->GetBase()->GetInterface();
 
-    swapChain->ClearBackBuffer(commandList);
+    swapChain->ClearBackBuffer(cl->GetBase());
 
-	m_pipelineState->SetPipelineState(commandList);
-    m_pipelineState->SetGraphicsRootSignature(commandList);
-	commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pipelineState->SetPipelineState(cl->GetBase());
+    m_pipelineState->SetGraphicsRootSignature(cl->GetBase());
+	cl->GetInterface()->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cl->SetConstantBuffer(0, &buffer, sizeof(buffer));
     m_texture.Set(cl->GetBase(), 1);
 	m_mesh.Set(cl->GetBase());
@@ -58,7 +60,7 @@ void Game::Draw()
     cl->SetConstantBuffer(0, &buffer2, sizeof(buffer2));
     m_mesh.Draw(cl->GetBase());
 
-    swapChain->ReadyBackBuffer(commandList);
+    swapChain->ReadyBackBuffer(cl->GetBase());
 
     commandModule->ExecuteCommandList(cl, 0);
     commandModule->SignalAllQueues();
@@ -206,8 +208,10 @@ void Game::CreateDefaults()
     cl->UploadData(m_texture.InitializeTexture2D(cl->GetBase(), textureData));
 
     commandModule->ExecuteCommandList(cl,0);
-    commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
-    commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
+    commandModule->SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
+    //commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    //commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;

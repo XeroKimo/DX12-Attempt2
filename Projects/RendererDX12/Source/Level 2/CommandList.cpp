@@ -2,8 +2,8 @@
 
 namespace RendererDX12
 {
-    CommandList::CommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager) :
-        m_commandList(device, type, allocator->GetBase()->GetInterface()),
+    CommandList::CommandList(BaseDevice* device, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager) :
+        m_commandList(device, allocator->GetBase()),
         m_allocator(),
         m_constantBufferManager(constantBufferManager),
         m_currentConstantBuffer(nullptr)

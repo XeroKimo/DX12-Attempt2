@@ -7,6 +7,52 @@ namespace RendererDX12
     class ManagerConstantBuffer;
     class DeviceCommandModule
     {
+        class CommandModule
+        {
+        private:
+            std::vector<unique_ptr<CommandQueue>> m_commandQueues;
+            unique_ptr<ManagerCommandList> m_commandListManager;
+
+        public:
+            CommandModule(const UINT& queueAmount, BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, ManagerCommandAllocator* commandAllocatorManager, ManagerConstantBuffer* constantBufferManager)
+            {
+                m_commandQueues.reserve(static_cast<size_t>(queueAmount));
+                while (m_commandQueues.size() != static_cast<size_t>(queueAmount))
+                {
+                    m_commandQueues.push_back(make_unique<CommandQueue>(device, type, commandAllocatorManager, constantBufferManager));
+                }
+                m_commandListManager = make_unique<ManagerCommandList>(device, type, &m_commandQueues, commandAllocatorManager, constantBufferManager);
+            }
+
+            CommandQueue* GetCommandQueue(UINT queueIndex)
+            {
+                if (queueIndex < m_commandQueues.size())
+                    return m_commandQueues[queueIndex].get();
+                assert(false);
+                return nullptr;
+            }
+
+            ManagerCommandList* GetCommandListManager()
+            {
+                return m_commandListManager.get();
+            }
+
+            void SignalAllQueues()
+            {
+                for (const auto& commandQueue : m_commandQueues)
+                    commandQueue->Signal();
+            }
+            void SyncAllQueues(DWORD milliseconds)
+            {
+                for (const auto& commandQueue : m_commandQueues)
+                    commandQueue->SyncQueue(milliseconds);
+            }
+            void ResetAllQueues()
+            {
+                for (const auto& commandQueue : m_commandQueues)
+                    commandQueue->Reset();
+            }
+        };
     public:
         DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
         ~DeviceCommandModule();
@@ -39,17 +85,12 @@ namespace RendererDX12
         void StallQueue(CommandQueue* queueToStall,  Fence* fenceToWait, UINT64 valueToWait);
         CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
         ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
+        void CreateCommandModule(const UINT& queueAmount, D3D12_COMMAND_LIST_TYPE type, ManagerCommandAllocator* commandAllocatorManager);
     private:
         BaseDevice* m_device;
 
         ManagerConstantBuffer m_constantBufferManager;
 
-        std::vector<unique_ptr<CommandQueue>> m_directQueue;
-        std::vector<unique_ptr<CommandQueue>> m_computeQueue;
-        std::vector<unique_ptr<CommandQueue>> m_copyQueue;
-
-        unique_ptr<ManagerCommandList> m_directList;
-        unique_ptr<ManagerCommandList> m_computeList;
-        unique_ptr<ManagerCommandList> m_copyList;
+        std::unordered_map<D3D12_COMMAND_LIST_TYPE, unique_ptr<CommandModule>> m_commandModules;
     };
 }

@@ -8,7 +8,7 @@ namespace RendererDX12
     class CommandList
     {
     public:
-        CommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager);
+        CommandList(BaseDevice* device, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager);
         void Reset(unique_ptr<CommandAllocator> allocator);
 
         void SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size);
