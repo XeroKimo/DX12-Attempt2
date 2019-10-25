@@ -27,6 +27,13 @@ void Game::Update(float deltaTime)
     quat.Normalize();
 
     buffer.worldMatrix *= quat.GetRotation();
+    quat.Identity();
+
+    quat *= Quaternion(1 - deltaTime * 2, 0, -deltaTime, deltaTime);
+    quat.Normalize();
+    //buffer2.worldMatrix.Identity();
+    //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
+    buffer2.worldMatrix *= quat.GetRotation();
 }
 
 void Game::Draw()
@@ -45,9 +52,11 @@ void Game::Draw()
     m_pipelineState->SetGraphicsRootSignature(commandList);
 	commandList->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	cl->SetConstantBuffer(0, &buffer, sizeof(buffer));
-    m_texture.Set(cl.get(), 1);
-	m_mesh.Set(cl.get());
-	m_mesh.Draw(cl.get());
+    m_texture.Set(cl->GetBase(), 1);
+	m_mesh.Set(cl->GetBase());
+	m_mesh.Draw(cl->GetBase());
+    cl->SetConstantBuffer(0, &buffer2, sizeof(buffer2));
+    m_mesh.Draw(cl->GetBase());
 
     swapChain->ReadyBackBuffer(commandList);
 
@@ -189,12 +198,12 @@ void Game::CreateDefaults()
 
 	unique_ptr<CommandList> cl = commandModule->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
 
-	m_mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
+    cl->UploadData(m_mesh.CreateVertexBuffer(cl->GetBase(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex)));
 
     RendererDX12::TextureData textureData;
     ParseImage(L"Resources/test.jpg", textureData.imageData, textureData.imageHeight, textureData.imageWidth);
 
-    m_texture.InitializeTexture2D(device->GetInterface(), cl.get(), textureData);
+    cl->UploadData(m_texture.InitializeTexture2D(cl->GetBase(), textureData));
 
     commandModule->ExecuteCommandList(cl,0);
     commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
@@ -203,9 +212,11 @@ void Game::CreateDefaults()
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
-	worldMatrix.SetPosition(Vector3(0, 0, -3));
+	worldMatrix.SetPosition(Vector3(-2, 0, -3));
 	projMatrix.SetOrtho(16,9, 0.0f, 100);
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, viewMatrix, projMatrix };
+    worldMatrix.SetPosition(Vector3(2, 0, -3));
+    buffer2 = { worldMatrix, viewMatrix, projMatrix };
 }

@@ -15,12 +15,12 @@ namespace RendererDX12
         inline UINT GetNodeMask() { return 1 << m_nodeID; }
 
     private:
-        void CreateNodeMask();
-        void DeleteNode();
+        void RegisterNode();
+        void UnregisterNode();
     private:
         ComPtr<ID3D12Device2> m_device;
         ComPtr<IDXGIAdapter3> m_adapter;
         UINT m_nodeID = 0;
-        static UINT m_activeNodes;
+        static UINT m_registeredNodes;
     };
 }

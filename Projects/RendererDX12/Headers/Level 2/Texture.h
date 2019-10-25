@@ -7,6 +7,10 @@ namespace RendererDX12
 
     struct TextureData
     {
+        unique_ptr<unsigned char[]> imageData;
+        unsigned int imageWidth = 0;
+        unsigned int imageHeight = 0;
+
         TextureData() = default;
         TextureData(TextureData& other)
         {
@@ -14,17 +18,14 @@ namespace RendererDX12
             imageWidth = other.imageWidth;
             imageHeight = other.imageHeight;
         }
-        unique_ptr<unsigned char[]> imageData;
-        unsigned int imageWidth;
-        unsigned int imageHeight;
     };
     class Texture
     {
     public:
 
-        void InitializeTexture2D(ID3D12Device* device, CommandList* commandList, TextureData textureData);
+        shared_ptr<UploadBuffer> InitializeTexture2D(BaseCommandList* commandList, TextureData textureData);
 
-        void Set(CommandList* commandList, const UINT& paramIndex);
+        void Set(BaseCommandList* commandList, const UINT& paramIndex);
         ID3D12DescriptorHeap* GetResourceHeap() { return m_heap.Get(); }
         ID3D12Resource* GetResource() { return m_resource.Get(); }
 

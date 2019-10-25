@@ -8,10 +8,10 @@ namespace RendererDX12
     public:
         Mesh();
 
-        void CreateVertexBuffer(CommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
+        shared_ptr<UploadBuffer> CreateVertexBuffer(BaseCommandList* commandList, void* vertexData, UINT sizeOfVertex, UINT vertexCount);
 
-        void Set(CommandList* commandList);
-        void Draw(CommandList* commandList);
+        void Set(BaseCommandList* commandList);
+        void Draw(BaseCommandList* commandList);
 
         ID3D12Resource* GetVertexBuffer() { return m_vertexBuffer.Get(); }
         ID3D12Resource* GetIndexBuffer() { return m_indexBuffer.Get(); }

@@ -107,20 +107,23 @@ inline UINT64 UpdateSubresources(
 	}
 	pIntermediate->Unmap(0, nullptr);
 
-	if (DestinationDesc.Dimension == D3D12_RESOURCE_DIMENSION_BUFFER)
-	{
-		pCmdList->CopyBufferRegion(
-			pDestinationResource, 0, pIntermediate, pLayouts[0].Offset, pLayouts[0].Footprint.Width);
-	}
-	else
-	{
-		for (UINT i = 0; i < NumSubresources; ++i)
-		{
-			CD3DX12_TEXTURE_COPY_LOCATION Dst(pDestinationResource, i + FirstSubresource);
-			CD3DX12_TEXTURE_COPY_LOCATION Src(pIntermediate, pLayouts[i]);
-			pCmdList->CopyTextureRegion(&Dst, 0, 0, 0, &Src, nullptr);
-		}
-	}
+    if (pCmdList)
+    {
+        if (DestinationDesc.Dimension == D3D12_RESOURCE_DIMENSION_BUFFER)
+        {
+            pCmdList->CopyBufferRegion(
+                pDestinationResource, 0, pIntermediate, pLayouts[0].Offset, pLayouts[0].Footprint.Width);
+        }
+        else
+        {
+            for (UINT i = 0; i < NumSubresources; ++i)
+            {
+                CD3DX12_TEXTURE_COPY_LOCATION Dst(pDestinationResource, i + FirstSubresource);
+                CD3DX12_TEXTURE_COPY_LOCATION Src(pIntermediate, pLayouts[i]);
+                pCmdList->CopyTextureRegion(&Dst, 0, 0, 0, &Src, nullptr);
+            }
+        }
+    }
 	return RequiredSize;
 }
 

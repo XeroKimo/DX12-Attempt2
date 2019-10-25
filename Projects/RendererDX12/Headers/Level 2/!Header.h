@@ -5,6 +5,6 @@
 #include "BaseCommandQueue.h"
 #include "CommandAllocator.h"
 #include "CommandList.h"
-#include "ManagerConstantBuffer.h"
+#include "DynamicConstantBuffer.h"
 #include "Mesh.h"
 #include "Texture.h"

@@ -2,7 +2,7 @@
 
 namespace RendererDX12
 {
-    BaseSwapChain::BaseSwapChain(ID3D12Device* device, UINT nodeMask, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
+    BaseSwapChain::BaseSwapChain(BaseDevice* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
     {
         HRESULT hr;
         ComPtr<IDXGIFactory2> factory;
@@ -39,13 +39,13 @@ namespace RendererDX12
         rtvHeapDesc.NumDescriptors = desc.BufferCount;
         rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
         rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-        rtvHeapDesc.NodeMask = nodeMask;
+        rtvHeapDesc.NodeMask = device->GetNodeMask();
 
-        hr = device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
+        hr = device->GetInterface()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(m_renderTargetHeap.GetAddressOf()));
         assert(SUCCEEDED(hr));
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
-        m_descriptorHeapSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        m_descriptorHeapSize = device->GetInterface()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
         rtvDesc.Format = desc.Format;
@@ -59,7 +59,7 @@ namespace RendererDX12
             hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_frameBuffers[i].GetAddressOf()));
             assert(SUCCEEDED(hr));
 
-            device->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
+            device->GetInterface()->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
             rtvHandle.ptr += m_descriptorHeapSize;
         }
 

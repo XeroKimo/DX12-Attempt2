@@ -2,20 +2,20 @@
 
 namespace RendererDX12
 {
-    BaseCommandQueue::BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType) :
+    BaseCommandQueue::BaseCommandQueue(BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType) :
         m_fence(device)
     {
         HRESULT hr;
 
         D3D12_COMMAND_QUEUE_DESC cqDesc;
         cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-        cqDesc.NodeMask = nodeMask;
+        cqDesc.NodeMask = device->GetNodeMask();
         cqDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
         cqDesc.Type = static_cast<D3D12_COMMAND_LIST_TYPE>(commandListType);
 
         m_type = commandListType;
 
-        hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
+        hr = device->GetInterface()->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_commandQueue.GetAddressOf()));
         assert(SUCCEEDED(hr));
 
         m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);

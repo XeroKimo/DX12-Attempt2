@@ -2,7 +2,7 @@
 
 namespace RendererDX12
 {
-    UINT BaseDevice::m_activeNodes = 0;
+    UINT BaseDevice::m_registeredNodes = 0;
     BaseDevice::BaseDevice(D3D_FEATURE_LEVEL featureLevel, UINT adapterID)
     {
         HRESULT hr;
@@ -20,30 +20,30 @@ namespace RendererDX12
         hr = D3D12CreateDevice(m_adapter.Get(), featureLevel, IID_PPV_ARGS(m_device.GetAddressOf()));
         assert(SUCCEEDED(hr));
 
-        CreateNodeMask();
+        RegisterNode();
     }
 
     BaseDevice::~BaseDevice()
     {
-        DeleteNode();
+        UnregisterNode();
     }
 
-    void BaseDevice::CreateNodeMask()
+    void BaseDevice::RegisterNode()
     {
         for (UINT i = 0; i < 32; i++)
         {
             UINT checkMask = 1 << i;
-            if (checkMask & (~m_activeNodes))
+            if (checkMask & (~m_registeredNodes))
             {
                 m_nodeID = i;
-                m_activeNodes |= checkMask;
+                m_registeredNodes |= checkMask;
                 break;
             }
         }
     }
 
-    void BaseDevice::DeleteNode()
+    void BaseDevice::UnregisterNode()
     {
-        m_activeNodes ^= GetNodeMask();
+        m_registeredNodes ^= GetNodeMask();
     }
 }

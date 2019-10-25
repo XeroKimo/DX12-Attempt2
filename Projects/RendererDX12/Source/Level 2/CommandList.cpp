@@ -2,11 +2,11 @@
 
 namespace RendererDX12
 {
-    CommandList::CommandList(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager) :
-        m_commandList(device, nodeMask, type, allocator->GetBase()->GetInterface()),
+    CommandList::CommandList(BaseDevice* device, D3D12_COMMAND_LIST_TYPE type, unique_ptr<CommandAllocator> allocator, ManagerConstantBuffer* constantBufferManager) :
+        m_commandList(device, type, allocator->GetBase()->GetInterface()),
         m_allocator(),
-        m_nodeMask(nodeMask),
-        m_constantBufferManager(constantBufferManager)
+        m_constantBufferManager(constantBufferManager),
+        m_currentConstantBuffer(nullptr)
     {
         m_allocator.swap(allocator);
     }
@@ -15,32 +15,36 @@ namespace RendererDX12
     {
         m_commandList.GetInterface()->Reset(allocator->GetBase()->GetInterface(), nullptr);
         m_allocator.swap(allocator);
-        m_constantBuffers.clear();
+        m_currentConstantBuffer = nullptr;
     }
 
     void CommandList::SetConstantBuffer(UINT rootParamIndex, void* data, UINT64 size)
     {
         if (!m_constantBufferManager)
             return;
-        unique_ptr<UploadBuffer> buffer;
-        if (m_constantBuffers.empty())
+
+        if (!m_currentConstantBuffer)
         {
-            buffer = m_constantBufferManager->GetConstBuffer();
-            m_constantBuffers.push_back(buffer.get());
-            m_allocator->AttachConstantBuffer(std::move(buffer));
+            AttachNewConstantBuffer();
         }
-        if (!m_constantBuffers.back()->HasSpace(size))
+        if (!m_currentConstantBuffer->HasSpace(size))
         {
-            buffer = m_constantBufferManager->GetConstBuffer();
-            m_constantBuffers.push_back(buffer.get());
-            m_allocator->AttachConstantBuffer(std::move(buffer));
+            AttachNewConstantBuffer();
         }
 
-        m_commandList.GetInterface()->SetGraphicsRootConstantBufferView(rootParamIndex, m_constantBuffers.back()->UploadCBVSRVUAV(data, size));
+        m_commandList.GetInterface()->SetGraphicsRootConstantBufferView(rootParamIndex, m_currentConstantBuffer->Upload(data, size));
     }
 
     void CommandList::UploadData(ID3D12Resource* destination, D3D12_SUBRESOURCE_DATA* data)
     {
-        m_allocator->UploadData(m_commandList.GetInterface(), m_nodeMask, destination, data);
+        m_allocator->UploadData(&m_commandList, destination, data);
+    }
+
+    void CommandList::AttachNewConstantBuffer()
+    {
+        unique_ptr<DynamicConstantBuffer> buffer;
+        buffer = m_constantBufferManager->GetConstBuffer();
+        m_currentConstantBuffer = buffer.get();
+        m_allocator->AttachConstantBuffer(std::move(buffer));
     }
 }

@@ -1,12 +1,13 @@
 #pragma once
 #include "DX12Header.h"
+#include "Level 0/!Header.h"
 
 namespace RendererDX12
 {
     class BaseSwapChain
     {
     public:
-        BaseSwapChain(ID3D12Device* device, UINT nodeMask, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
+        BaseSwapChain(BaseDevice* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight);
 
         void ClearBackBuffer(ID3D12GraphicsCommandList* commandList);
         void ReadyBackBuffer(ID3D12GraphicsCommandList* commandList);

@@ -51,7 +51,7 @@ namespace RendererDX12
     unique_ptr<CommandList> ManagerCommandList::GetCommandList()
     {
         if (m_inactiveList.empty())
-            return make_unique<CommandList>(m_device->GetInterface(), m_nodeMask, m_type, std::move(m_allocatorManager->GetAllocator(m_type)), m_constantBufferManager);
+            return make_unique<CommandList>(m_device, m_type, std::move(m_allocatorManager->GetAllocator(m_type)), m_constantBufferManager);
         else
         {
             unique_ptr<CommandList> list;

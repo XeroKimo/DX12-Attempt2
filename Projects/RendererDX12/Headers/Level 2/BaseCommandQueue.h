@@ -4,10 +4,11 @@
 
 namespace RendererDX12
 {
+    class BaseDevice;
     class BaseCommandQueue
     {
     public:
-        BaseCommandQueue(ID3D12Device* device, UINT nodeMask, D3D12_COMMAND_LIST_TYPE commandListType);
+        BaseCommandQueue(BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType);
 
         UINT64 Signal();
         UINT64 Signal(Fence* fence);

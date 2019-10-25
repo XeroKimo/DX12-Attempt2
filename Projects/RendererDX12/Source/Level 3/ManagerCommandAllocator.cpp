@@ -67,6 +67,6 @@ namespace RendererDX12
 
     unique_ptr<CommandAllocator> ManagerCommandAllocator::CreateCommandAllocator(const D3D12_COMMAND_LIST_TYPE& type)
     {
-        return make_unique<CommandAllocator>(m_device->GetInterface(), type);
+        return make_unique<CommandAllocator>(m_device, type);
     }
 }

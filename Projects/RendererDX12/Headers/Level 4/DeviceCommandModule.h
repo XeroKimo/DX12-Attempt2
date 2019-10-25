@@ -8,7 +8,7 @@ namespace RendererDX12
     class DeviceCommandModule
     {
     public:
-        DeviceCommandModule( BaseDevice* device, ManagerCommandAllocator* manager, ManagerConstantBuffer* constantBufferManager, UINT directQueues, UINT computeQueues, UINT copyQueues);
+        DeviceCommandModule(BaseDevice* device, ManagerCommandAllocator* manager, UINT directQueues, UINT computeQueues, UINT copyQueues);
         ~DeviceCommandModule();
 
         void CloseCommandList(unique_ptr<CommandList>& commandList, UINT queueIndex);
@@ -40,7 +40,9 @@ namespace RendererDX12
         CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type, UINT queueIndex);
         ManagerCommandList* GetCommandListManager(D3D12_COMMAND_LIST_TYPE type);
     private:
-         BaseDevice* m_device;
+        BaseDevice* m_device;
+
+        ManagerConstantBuffer m_constantBufferManager;
 
         std::vector<unique_ptr<CommandQueue>> m_directQueue;
         std::vector<unique_ptr<CommandQueue>> m_computeQueue;

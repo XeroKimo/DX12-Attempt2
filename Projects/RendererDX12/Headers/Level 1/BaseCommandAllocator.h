@@ -1,15 +1,16 @@
 #pragma once
 #include "DX12Header.h"
+#include "Level 0/!Header.h"
 
 namespace RendererDX12
 {
     class BaseCommandAllocator
     {
     public:
-        inline BaseCommandAllocator(ID3D12Device* device, const D3D12_COMMAND_LIST_TYPE& type)
+        inline BaseCommandAllocator(BaseDevice* device, const D3D12_COMMAND_LIST_TYPE& type)
         {
             m_type = type;
-            HRESULT hr = device->CreateCommandAllocator(type, IID_PPV_ARGS(m_allocator.GetAddressOf()));
+            HRESULT hr = device->GetInterface()->CreateCommandAllocator(type, IID_PPV_ARGS(m_allocator.GetAddressOf()));
             assert(SUCCEEDED(hr));
         }
 

@@ -3,7 +3,7 @@
 namespace RendererDX12
 {
     CommandQueue::CommandQueue(BaseDevice* device, D3D12_COMMAND_LIST_TYPE commandListType, ManagerCommandAllocator* allocatorManager, ManagerConstantBuffer* constantBufferManager) :
-        m_commandQueue(device->GetInterface(), device->GetNodeMask(), commandListType),
+        m_commandQueue(device, commandListType),
         m_allocatorManager(allocatorManager),
         m_allocatorSizeHistory(),
         m_constantBufferManager(constantBufferManager)

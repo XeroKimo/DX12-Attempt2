@@ -4,8 +4,9 @@
 namespace RendererDX12
 {
     using namespace Helpers;
-    void Texture::InitializeTexture2D(ID3D12Device* device, CommandList* commandList, TextureData textureData)
+    shared_ptr<UploadBuffer> Texture::InitializeTexture2D(BaseCommandList* commandList, TextureData textureData)
     {
+        ID3D12Device* device = commandList->GetDevice()->GetInterface();
         device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &ResourceTexture2D(textureData.imageWidth, textureData.imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
@@ -31,12 +32,14 @@ namespace RendererDX12
         data.RowPitch = static_cast<LONG_PTR>(textureData.imageWidth) * 4;
         data.SlicePitch = textureData.imageHeight * data.RowPitch;
 
-        commandList->UploadData(m_resource.Get(), &data);
+        shared_ptr<UploadBuffer> uploadBuffer = make_shared <UploadBuffer>(commandList, m_resource.Get(), &data);
 
         commandList->GetInterface()->ResourceBarrier(1, &ResourceBarrierTransition(m_resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
+
+        return uploadBuffer;
     }
 
-    void Texture::Set(CommandList* commandList, const UINT& paramIndex)
+    void Texture::Set(BaseCommandList* commandList, const UINT& paramIndex)
     {
         commandList->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
         commandList->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());

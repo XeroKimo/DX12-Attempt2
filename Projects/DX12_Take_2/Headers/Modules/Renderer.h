@@ -1,7 +1,7 @@
 #pragma once
-#include "Level 1/BaseDevice.h"
+#include "Level 0/BaseDevice.h"
 #include "Level 1/BaseSwapChain.h"
-#include "Level 2/ManagerConstantBuffer.h"
+#include "Level 3/ManagerConstantBuffer.h"
 #include "Level 3/ManagerCommandAllocator.h"
 #include "Level 4/DeviceCommandModule.h"
 #include <WinApplication.h>

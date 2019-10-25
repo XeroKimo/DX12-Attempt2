@@ -1,5 +1,6 @@
 #pragma once
 #include "DX12Header.h"
+#include "Level 0/!Header.h"
 
 namespace RendererDX12
 {
@@ -7,9 +8,9 @@ namespace RendererDX12
     class Fence
     {
     public:
-        Fence(ID3D12Device* device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE)
+        Fence(BaseDevice* device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE)
         {
-            device->CreateFence(0, flags, IID_PPV_ARGS(m_fence.GetAddressOf()));
+            device->GetInterface()->CreateFence(0, flags, IID_PPV_ARGS(m_fence.GetAddressOf()));
         }
 
         void Reset()
