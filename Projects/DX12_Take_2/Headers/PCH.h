@@ -3,6 +3,7 @@
 #include <WinApplication.h>
 #include <RendererDX12.h>
 
+#include "Parsers.h"
 #include "MathLib/MathLib.h"
 #include "Modules/Game.h"
 #include "Modules/Renderer.h"

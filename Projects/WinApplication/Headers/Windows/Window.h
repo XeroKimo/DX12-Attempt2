@@ -28,6 +28,7 @@ namespace WinApplication
             if (m_mappedEvents.find(message) == m_mappedEvents.end())
                 return DefWindowProc(hwnd, message, wParam, lParam);
             m_mappedEvents[message](wParam, lParam);
+            return 0;
         }
     };
 

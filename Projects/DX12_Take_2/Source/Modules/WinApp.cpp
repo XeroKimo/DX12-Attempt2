@@ -18,7 +18,7 @@ bool WinApp::Initialize(HINSTANCE hInstance, WNDPROC wndFunc)
     if (!m_window.GetWindowHandle())
         return false;
 
-    m_application.eventManager = std::make_shared<EventManager>();
+    m_application.eventManager = std::make_shared<MessageManager>();
     //m_window.SetUserData((LONG_PTR)(m_application.eventManager.get()));
     return true;
 }

@@ -1,5 +1,5 @@
 #pragma once
 
 #include "Delegate.h"
-#include "EventDispatcher.h"
-#include "EventManager.h"
+#include "MessageDispatcher.h"
+#include "MessageManager.h"

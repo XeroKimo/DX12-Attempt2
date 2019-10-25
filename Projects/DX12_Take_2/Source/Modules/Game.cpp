@@ -9,13 +9,11 @@ void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
     m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
+
     m_eventManager->RegisterEventDispatcher<EventGame>();
-    m_eventManager->RegisterListener<EventGame>(this);
+    m_eventManager->RegisterListener<EventGame>(Delegate<void(EventGame*)>::Generate<Game, &Game::OnEvent>(this));
     m_eventManager->RecordEvent<EventGame>(make_unique<EventGame>());
 
-    m_eventManager->RegisterEventDispatcher<EventGame2>();
-    m_eventManager->RegisterListener<EventGame2>(this);
-    m_eventManager->RecordEvent<EventGame2>(make_unique<EventGame2>());
     CreateDefaults();
 }
 
@@ -23,8 +21,10 @@ void Game::Update(float deltaTime)
 {
     Quaternion quat;
 
-    float rotateSpeed = 60.0f;
-    quat.Rotate(Vector3(1, 1, 1).GetNormalized(), rotateSpeed * deltaTime);
+    //float rotateSpeed = 60.0f;
+    //quat.Rotate(Vector3(1, 1, 1).GetNormalized(), rotateSpeed * deltaTime);
+    quat *= Quaternion(1- deltaTime* 2, 0, deltaTime, deltaTime);
+    quat.Normalize();
 
     buffer.worldMatrix *= quat.GetRotation();
 }
@@ -53,7 +53,6 @@ void Game::Draw()
 
     commandModule->ExecuteCommandList(cl, 0);
     commandModule->SignalAllQueues();
-    //renderer.SyncAllQueues();
 	commandModule->SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
 
     swapChain->GetInterface()->Present(0, 0);
@@ -64,12 +63,7 @@ void Game::OnModuleRegisterChanged(ModuleManager* moduleManager)
     m_moduleManager = moduleManager;
 }
 
-void Game::OnEvent(EventGame* pEvent)
-{
-    int i = 0;
-}
-
-void Game::OnEvent(EventGame2* pEvent)
+void Game::OnEvent(EventGame* event)
 {
     int i = 2;
 }
@@ -197,11 +191,14 @@ void Game::CreateDefaults()
 
 	m_mesh.CreateVertexBuffer(cl.get(), &vertices, sizeof(Vertex), sizeof(vertices) / sizeof(Vertex));
 
-	m_texture.InitializeTexture2D(device->GetInterface(), cl.get(), L"Resources/test.jpg");
+    RendererDX12::TextureData textureData;
+    ParseImage(L"Resources/test.jpg", textureData.imageData, textureData.imageHeight, textureData.imageWidth);
+
+    m_texture.InitializeTexture2D(device->GetInterface(), cl.get(), textureData);
 
     commandModule->ExecuteCommandList(cl,0);
-    //commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
-    //commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
+    commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;

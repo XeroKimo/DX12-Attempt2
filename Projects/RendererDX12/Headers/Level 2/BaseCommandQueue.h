@@ -12,8 +12,8 @@ namespace RendererDX12
         UINT64 Signal();
         UINT64 Signal(Fence* fence);
         void StallQueue(Fence* fence, UINT64 fenceValue);
-        void SyncQueue(DWORD milliseconds, UINT64 fenceValue = FENCE_MAX_SIGNAL_VALUE);
-        void SyncFence(DWORD milliseconds, Fence* fence, UINT64 fenceValue = FENCE_MAX_SIGNAL_VALUE);
+        void SyncQueue(DWORD milliseconds, UINT64 fenceValue);
+        void SyncFence(DWORD milliseconds, Fence* fence, UINT64 fenceValue);
 
         inline bool FenceSyncable(Fence* fence, UINT64 fenceValue) { return (fenceValue < m_fence.fenceValue || fenceValue > m_fence.highestSyncedValue); }
         inline void Reset() { m_fence.Reset(); }

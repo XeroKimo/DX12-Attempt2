@@ -2,7 +2,7 @@
 #include <memory>
 #include "PlatformClock.h"
 #include "Window.h"
-#include "Events/EventManager.h"
+#include "Events/MessageManager.h"
 
 namespace WinApplication
 {
@@ -16,7 +16,7 @@ namespace WinApplication
     class Application
     {
     public:
-        std::shared_ptr<EventManager> eventManager;
+        std::shared_ptr<MessageManager> eventManager;
     private:
         PlatformClock m_clock = {};
         bool m_isRunning = false;

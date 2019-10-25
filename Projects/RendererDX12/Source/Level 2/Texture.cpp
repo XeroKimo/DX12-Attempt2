@@ -4,15 +4,9 @@
 namespace RendererDX12
 {
     using namespace Helpers;
-    void Texture::InitializeTexture2D(ID3D12Device* device, CommandList* commandList, std::wstring filename)
+    void Texture::InitializeTexture2D(ID3D12Device* device, CommandList* commandList, TextureData textureData)
     {
-        unique_ptr<BYTE[]> imageData;
-        unsigned int imageWidth;
-        unsigned int imageHeight;
-
-        ParseImage(filename, imageData, imageWidth, imageHeight);
-
-        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &ResourceTexture2D(imageWidth, imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
+        device->CreateCommittedResource(&HeapDefault(0), D3D12_HEAP_FLAG_NONE, &ResourceTexture2D(textureData.imageWidth, textureData.imageHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 1), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_resource.GetAddressOf()));
 
         D3D12_DESCRIPTOR_HEAP_DESC heapDesc;
         heapDesc.NodeMask = 0;
@@ -33,9 +27,9 @@ namespace RendererDX12
 
         device->CreateShaderResourceView(m_resource.Get(), &m_resourceView, m_heap->GetCPUDescriptorHandleForHeapStart());
         D3D12_SUBRESOURCE_DATA data;
-        data.pData = imageData.get();
-        data.RowPitch = static_cast<LONG_PTR>(imageWidth) * 4;
-        data.SlicePitch = imageHeight * data.RowPitch;
+        data.pData = textureData.imageData.get();
+        data.RowPitch = static_cast<LONG_PTR>(textureData.imageWidth) * 4;
+        data.SlicePitch = textureData.imageHeight * data.RowPitch;
 
         commandList->UploadData(m_resource.Get(), &data);
 
@@ -46,43 +40,5 @@ namespace RendererDX12
     {
         commandList->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
         commandList->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
-    }
-
-    void Texture::ParseImage(std::wstring fileName, unique_ptr<BYTE[]>& outImageData, unsigned int& outImageWidth, unsigned int& outImageHeight)
-    {
-        ComPtr<IWICImagingFactory> wicFactory = nullptr;
-        if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(wicFactory.GetAddressOf()))))
-            assert(false);
-
-        ComPtr<IWICBitmapDecoder> wicDecoder;
-        HRESULT hr = wicFactory->CreateDecoderFromFilename(fileName.c_str(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, wicDecoder.GetAddressOf());
-        if (FAILED(hr))
-            assert(false);
-
-        ComPtr<IWICBitmapFrameDecode> wicFrame;
-        wicDecoder->GetFrame(0, wicFrame.GetAddressOf());
-
-        ComPtr<IWICFormatConverter> wicConverter;
-        wicFactory->CreateFormatConverter(wicConverter.GetAddressOf());
-        hr = wicConverter->Initialize(wicFrame.Get(), GUID_WICPixelFormat32bppRGBA, WICBitmapDitherTypeNone, nullptr, 1.0, WICBitmapPaletteTypeCustom);
-        if (FAILED(hr))
-            assert(false);
-
-        ComPtr<IWICBitmapFlipRotator> wicFlipper;
-        wicFactory->CreateBitmapFlipRotator(wicFlipper.GetAddressOf());
-        wicFlipper->Initialize(wicConverter.Get(), WICBitmapTransformFlipVertical);
-
-        hr = wicFlipper->GetSize(&outImageWidth, &outImageHeight);
-        if (FAILED(hr))
-            assert(false);
-
-        UINT stride = (outImageWidth * 4);
-        UINT buffersize = stride * outImageHeight;
-
-        outImageData = make_unique<BYTE[]>(buffersize);
-
-        hr = wicFlipper->CopyPixels(nullptr, stride, buffersize, outImageData.get());
-        if (FAILED(hr))
-            assert(false);
     }
 }
