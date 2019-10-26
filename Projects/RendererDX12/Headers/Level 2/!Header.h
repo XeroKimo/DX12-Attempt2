@@ -6,5 +6,3 @@
 #include "CommandAllocator.h"
 #include "CommandList.h"
 #include "DynamicConstantBuffer.h"
-#include "Mesh.h"
-#include "Texture.h"

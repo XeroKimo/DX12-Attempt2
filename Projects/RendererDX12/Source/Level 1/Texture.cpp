@@ -39,7 +39,7 @@ namespace RendererDX12
         return uploadBuffer;
     }
 
-    void Texture::Set(BaseCommandList* commandList, const UINT& paramIndex)
+    void Texture::SetForDraw(BaseCommandList* commandList, const UINT& paramIndex)
     {
         commandList->GetInterface()->SetDescriptorHeaps(1, m_heap.GetAddressOf());
         commandList->GetInterface()->SetGraphicsRootDescriptorTable(paramIndex, m_heap->GetGPUDescriptorHandleForHeapStart());
