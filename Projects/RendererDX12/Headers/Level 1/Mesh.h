@@ -9,23 +9,23 @@ namespace RendererDX12
     public:
         Mesh();
 
-        shared_ptr<UploadBuffer> CreateVertexBuffer(BaseCommandList* commandList, void* vertexData, UINT sizeOfVerteType, UINT vertexCount);
-        shared_ptr<UploadBuffer> CreateIndexBuffer(BaseCommandList* commandList, UINT* indexData, UINT amountOfIndices);
+        shared_ptr<UploadBuffer> CreateVertexBuffer(const BaseCommandList* const commandList, const void* const vertexData, const UINT& sizeOfVerteType, const UINT& vertexCount);
+        shared_ptr<UploadBuffer> CreateIndexBuffer(const BaseCommandList* const commandList, const UINT* const indexData, const UINT& amountOfIndices);
 
         void ChangeDefaultTopology(D3D_PRIMITIVE_TOPOLOGY topology) { m_defaultTopology = topology; }
-        void SetTopology(BaseCommandList* commandList);
-        void SetForDraw(BaseCommandList* commandList);
-        void DrawInstance(BaseCommandList* commandList);
-        void DrawIndexedInstance(BaseCommandList* commandList);
+        void SetTopology(BaseCommandList* commandList) const;
+        void SetForDraw(BaseCommandList* commandList) const;
+        void DrawInstance(BaseCommandList* commandList) const;
+        void DrawIndexedInstance(BaseCommandList* commandList) const;
 
-        ID3D12Resource* GetVertexBuffer() { return m_vertexBuffer.Get(); }
-        ID3D12Resource* GetIndexBuffer() { return m_indexBuffer.Get(); }
+        ID3D12Resource* GetVertexBuffer() const noexcept { return m_vertexBuffer.Get(); }
+        ID3D12Resource* GetIndexBuffer() const noexcept { return m_indexBuffer.Get(); }
 
-        D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() { return m_vertexView; }
-        D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() { return m_indexView; }
+        D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const noexcept { return m_vertexView; }
+        D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() const noexcept { return m_indexView; }
 
-        UINT GetVertexCount() { return m_vertexCount; }
-        UINT GetIndexCount() { return m_indexCount; }
+        UINT GetVertexCount() const noexcept { return m_vertexCount; }
+        UINT GetIndexCount() const noexcept { return m_indexCount; }
     private:
         ComPtr<ID3D12Resource> m_vertexBuffer;
         ComPtr<ID3D12Resource> m_indexBuffer;

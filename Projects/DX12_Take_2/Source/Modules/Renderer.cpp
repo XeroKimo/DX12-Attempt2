@@ -18,7 +18,7 @@ bool Renderer::Initialize(WinApplication::Window* window)
     if (!m_swapChain->GetInterface())
         return false;
 
-
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_WINDOWPOSCHANGED, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Renderer, &Renderer::OnWindowSizeChange>(this));
     //RegisterListener(static_cast<IEventListenerRenderer*>(this));
 
     return true;
@@ -27,6 +27,19 @@ bool Renderer::Initialize(WinApplication::Window* window)
 //void Renderer::IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent)
 //{
 //}
+
+void Renderer::OnWindowSizeChange(WPARAM wParam, LPARAM lParam)
+{
+    WINDOWPOS* pos = reinterpret_cast<WINDOWPOS*>(lParam);
+
+    if (!(pos->flags & SWP_NOSIZE))
+    {
+        int width, height;
+        m_moduleManager->GetModule<WinApp>()->GetWindow()->GetWindowSize(width, height);
+        m_deviceCommandModule->SyncAllQueues();
+        m_swapChain->ResizeSwapChain();
+    }
+}
 
 void Renderer::OnModuleRegisterChanged(ModuleManager* moduleManager)
 {

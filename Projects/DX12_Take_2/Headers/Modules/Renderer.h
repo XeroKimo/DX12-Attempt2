@@ -7,21 +7,16 @@
 #include <WinApplication.h>
 #include "ModuleManager.h"
 
-//__interface IEventListenerRenderer : public WinApplication::IEventListener
-//{
-//    void OnEvent(WinApplication::IEvent* pEvent);
-//};
-
 class Renderer : public IModule
 {
 private:
     ModuleManager* m_moduleManager = nullptr;
 
-    unique_ptr<RendererDX12::BaseDevice> m_device;
-    unique_ptr<RendererDX12::BaseSwapChain> m_swapChain;
-    unique_ptr<RendererDX12::ManagerConstantBuffer> m_constantBufferManager;
-    unique_ptr<RendererDX12::ManagerCommandAllocator> m_commandAllocatorManager;
-    unique_ptr<RendererDX12::DeviceCommandModule> m_deviceCommandModule;
+    std::unique_ptr<RendererDX12::BaseDevice> m_device;
+    std::unique_ptr<RendererDX12::BaseSwapChain> m_swapChain;
+    std::unique_ptr<RendererDX12::ManagerConstantBuffer> m_constantBufferManager;
+    std::unique_ptr<RendererDX12::ManagerCommandAllocator> m_commandAllocatorManager;
+    std::unique_ptr<RendererDX12::DeviceCommandModule> m_deviceCommandModule;
 
 public:
     Renderer();
@@ -33,10 +28,11 @@ public:
     RendererDX12::ManagerCommandAllocator* GetCommandAllocatorManager() { return m_commandAllocatorManager.get(); }
     RendererDX12::DeviceCommandModule* GetDeviceCommandModule() { return m_deviceCommandModule.get(); }
 
+    void OnWindowSizeChange(WPARAM wParam, LPARAM lParam);
+
     // Inherited via IModule
     virtual void OnModuleRegisterChanged(ModuleManager* moduleManager) override;
     virtual std::type_index GetHashKey() override final { return typeid(this); };
 
-    // Inherited via IEventListenerRenderer
-    //virtual void IEventListenerRenderer::OnEvent(WinApplication::IEvent* pEvent) override;
+
 };

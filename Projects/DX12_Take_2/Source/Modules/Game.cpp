@@ -8,11 +8,11 @@ Game::Game()
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
-    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
 
     m_eventManager->RegisterEventDispatcher<EventGame>();
-    m_eventManager->RegisterListener<EventGame>(Delegate<void(EventGame*)>::Generate<Game, &Game::OnEvent>(this));
-    m_eventManager->RecordEvent<EventGame>(make_unique<EventGame>());
+    m_eventManager->RegisterListener<EventGame>(Delegates::Delegate<void(EventGame*)>::Generate<Game, &Game::OnEvent>(this));
+    m_eventManager->RecordEvent<EventGame>(std::make_unique<EventGame>());
 
     CreateDefaults();
 }
@@ -23,17 +23,20 @@ void Game::Update(float deltaTime)
 
     //float rotateSpeed = 60.0f;
     //quat.Rotate(Vector3(1, 1, 1).GetNormalized(), rotateSpeed * deltaTime);
-    quat *= Quaternion(1- deltaTime* 2, 0, deltaTime, deltaTime);
+    quat *= Quaternion(1 - deltaTime, -deltaTime, -deltaTime, deltaTime);
     quat.Normalize();
 
+    Matrix4x4 test1 = quat.GetRotation();
     buffer.worldMatrix *= quat.GetRotation();
 
     quat.Identity();
-    quat *= Quaternion(1 - 2 * deltaTime, 0, deltaTime, -deltaTime);
+    //quat *= Quaternion(1 - deltaTime * 3, deltaTime, deltaTime, deltaTime);
+    quat *= Quaternion(1 - deltaTime, deltaTime, deltaTime, deltaTime);
     quat.Normalize();
 
-    ////buffer2.worldMatrix.Identity();
-    ////buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
+    Matrix4x4 test2 = quat.GetRotation();
+    //buffer2.worldMatrix.Identity();
+    //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2.worldMatrix *= quat.GetRotation();
 
     //buffer2.worldMatrix.RotateX(30 * deltaTime);
@@ -67,7 +70,7 @@ void Game::Draw()
     commandModule->SignalAllQueues();
 	commandModule->SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
 
-    swapChain->GetInterface()->Present(0, 0);
+    swapChain->GetInterface()->Present(1, 0);
 }
 
 void Game::OnModuleRegisterChanged(ModuleManager* moduleManager)

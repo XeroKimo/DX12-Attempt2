@@ -88,43 +88,49 @@ inline void Matrix4x4::SetOrtho(float width, float height, float near, float far
 	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, posZIn = true
 	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, posZIn = false
 	Identity();
-#if USE_USE_LEFT_HANDED_MATRIXS
-		vX.x = 2 / width;
-		vY.y = 2 / height;
-		vZ.z = 1 / (far - near);
-		vZ.w = -near / (far - near);
-#else
-		vX.x = 2 / width;
-		vY.y = 2 / height;
-		vZ.z = 1 / (near - far);
-		vZ.w = near / (near - far);
-#endif
+    if constexpr (USE_LEFT_HANDED_MATRICES)
+    {
+        vX.x = 2 / width;
+        vY.y = 2 / height;
+        vZ.z = 1 / (far - near);
+        vZ.w = -near / (far - near);
+    }
+    else
+    {
+        vX.x = 2 / width;
+        vY.y = 2 / height;
+        vZ.z = 1 / (near - far);
+        vZ.w = near / (near - far);
+    }
 }
 
 inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float near, float far)
 {
-	//The following docs are in row major, this matrix uses column major
-	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovlh Left Handed, posZIn = true
-	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovrh Right handed, posZIn = false
-	float yScale = 1 / tanf(fovAngleY * 3.14f / 180.0f * 0.5f);
-	float xScale = yScale / aspectRatio;
+    //The following docs are in row major, this matrix uses column major
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovlh Left Handed, posZIn = true
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixperspectivefovrh Right handed, posZIn = false
+    float yScale = 1 / tanf(fovAngleY * 3.14f / 180.0f * 0.5f);
+    float xScale = yScale / aspectRatio;
 
-	Identity();
-#if USE_USE_LEFT_HANDED_MATRIXS
-		vX.x = xScale;
-		vY.y = yScale;
-		vZ.z = far / (far - near);
-		vZ.w = (-near * far) / (far - near);
-		vW.z = 1;
-		vW.w = 0;
-#else
-		vX.x = xScale;
-		vY.y = yScale;
-		vZ.z = far / (near - far);
-		vZ.w = (near * far) / (near - far);
-		vW.z = -1;
-		vW.w = 0;
-#endif
+    Identity();
+    if constexpr (USE_LEFT_HANDED_MATRICES)
+    {
+        vX.x = xScale;
+        vY.y = yScale;
+        vZ.z = far / (far - near);
+        vZ.w = (-near * far) / (far - near);
+        vW.z = 1;
+        vW.w = 0;
+    }
+    else
+    {
+        vX.x = xScale;
+        vY.y = yScale;
+        vZ.z = far / (near - far);
+        vZ.w = (near * far) / (near - far);
+        vW.z = -1;
+        vW.w = 0;
+    }
 }
 
 inline void Matrix4x4::SetPosition(Vector3 position)

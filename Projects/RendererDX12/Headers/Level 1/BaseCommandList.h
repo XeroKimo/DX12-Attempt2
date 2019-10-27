@@ -7,16 +7,16 @@ namespace RendererDX12
     class BaseCommandList
     {
     public:
-        inline BaseCommandList(BaseDevice* device, BaseCommandAllocator* allocator)
+        inline BaseCommandList(const BaseDevice* const device, const BaseCommandAllocator* const allocator)
         {
             device->GetInterface()->CreateCommandList(device->GetNodeMask(), allocator->GetType(), allocator->GetInterface(), nullptr, IID_PPV_ARGS(m_commandList.GetAddressOf()));
             m_device = device;
         }
 
-        inline ID3D12GraphicsCommandList* GetInterface() { return m_commandList.Get(); }
-        inline BaseDevice* GetDevice() { return m_device; }
+        inline ID3D12GraphicsCommandList* GetInterface() const noexcept { return m_commandList.Get(); }
+        inline const BaseDevice* GetDevice() const noexcept { return m_device; }
     private:
         ComPtr<ID3D12GraphicsCommandList> m_commandList;
-        BaseDevice* m_device;
+        const BaseDevice* m_device;
     };
 }

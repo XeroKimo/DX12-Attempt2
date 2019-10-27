@@ -12,11 +12,11 @@ namespace RendererDX12
     {
     }
 
-    shared_ptr<UploadBuffer> Mesh::CreateVertexBuffer(BaseCommandList* commandList, void* vertexData, UINT sizeOfVertexType, UINT vertexCount)
+    shared_ptr<UploadBuffer> Mesh::CreateVertexBuffer(const BaseCommandList* const commandList, const void* const vertexData, const UINT& sizeOfVertexType, const UINT& vertexCount)
     {
         LONG_PTR totalVertexSize = static_cast<LONG_PTR>(sizeOfVertexType) * static_cast<LONG_PTR>(vertexCount);
 
-        BaseDevice* device = commandList->GetDevice();
+        const BaseDevice* device = commandList->GetDevice();
         device->GetInterface()->CreateCommittedResource(&HeapDefault(device->GetNodeMask()), D3D12_HEAP_FLAG_NONE, &ResourceBuffer(totalVertexSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_vertexBuffer.GetAddressOf()));
 
         D3D12_SUBRESOURCE_DATA data;
@@ -35,9 +35,9 @@ namespace RendererDX12
         return uploadBuffer;
     }
 
-    shared_ptr<UploadBuffer> Mesh::CreateIndexBuffer(BaseCommandList* commandList, UINT* indexData, UINT amountOfIndices)
+    shared_ptr<UploadBuffer> Mesh::CreateIndexBuffer(const BaseCommandList* const commandList, const UINT* const indexData, const UINT& amountOfIndices)
     {
-        BaseDevice* device = commandList->GetDevice();
+        const BaseDevice* device = commandList->GetDevice();
         device->GetInterface()->CreateCommittedResource(&HeapDefault(device->GetNodeMask()), D3D12_HEAP_FLAG_NONE, &ResourceBuffer(sizeof(UINT) * amountOfIndices), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(m_indexBuffer.GetAddressOf()));
 
         D3D12_SUBRESOURCE_DATA data;
@@ -56,24 +56,24 @@ namespace RendererDX12
         return uploadBuffer;
     }
 
-    void Mesh::SetTopology(BaseCommandList* commandList)
+    void Mesh::SetTopology(BaseCommandList* commandList) const
     {
         commandList->GetInterface()->IASetPrimitiveTopology(m_defaultTopology);
     }
 
-    void Mesh::SetForDraw(BaseCommandList* commandList)
+    void Mesh::SetForDraw(BaseCommandList* commandList) const
     {
         if (m_indexBuffer)
             commandList->GetInterface()->IASetIndexBuffer(&m_indexView);
         commandList->GetInterface()->IASetVertexBuffers(0, 1, &m_vertexView);
     }
 
-    void Mesh::DrawInstance(BaseCommandList* commandList)
+    void Mesh::DrawInstance(BaseCommandList* commandList) const
     {
         commandList->GetInterface()->DrawInstanced(m_vertexCount, 1, 0, 0);
     }
 
-    void Mesh::DrawIndexedInstance(BaseCommandList* commandList)
+    void Mesh::DrawIndexedInstance(BaseCommandList* commandList) const
     {
         commandList->GetInterface()->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
     }

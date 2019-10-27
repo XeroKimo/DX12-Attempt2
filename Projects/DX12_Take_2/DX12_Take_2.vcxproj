@@ -153,7 +153,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\Modules\ResourceManager.cpp" />
     <ClCompile Include="Source\Modules\WinApp.cpp" />
     <ClCompile Include="Source\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -174,7 +173,6 @@
     <ClInclude Include="Headers\MathLib\Vector4.h" />
     <ClInclude Include="Headers\Modules\Game.h" />
     <ClInclude Include="Headers\Modules\Renderer.h" />
-    <ClInclude Include="Headers\Modules\ResourceManager.h" />
     <ClInclude Include="Headers\Modules\WinApp.h" />
     <ClInclude Include="Headers\PCH.h" />
     <ClInclude Include="Headers\Modules\ModuleManager.h" />

@@ -3,7 +3,7 @@
 namespace RendererDX12
 {
     UINT BaseDevice::m_registeredNodes = 0;
-    BaseDevice::BaseDevice(D3D_FEATURE_LEVEL featureLevel, UINT adapterID)
+    BaseDevice::BaseDevice(const D3D_FEATURE_LEVEL& featureLevel, const UINT& adapterID)
     {
         HRESULT hr;
         ComPtr<IDXGIFactory2> factory;

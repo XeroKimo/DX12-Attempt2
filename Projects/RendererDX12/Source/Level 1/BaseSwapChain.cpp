@@ -2,8 +2,9 @@
 
 namespace RendererDX12
 {
-    BaseSwapChain::BaseSwapChain(BaseDevice* device, ID3D12CommandQueue* commandQueue, HWND windowHandle, UINT windowWidth, UINT windowHeight)
+    BaseSwapChain::BaseSwapChain(BaseDevice* const device, ID3D12CommandQueue* const commandQueue, const HWND& windowHandle, const UINT& windowWidth, const UINT& windowHeight)
     {
+        m_device = device;
         HRESULT hr;
         ComPtr<IDXGIFactory2> factory;
         hr = CreateDXGIFactory1(IID_PPV_ARGS(factory.GetAddressOf()));
@@ -76,7 +77,7 @@ namespace RendererDX12
         m_rect.right = windowWidth;
     }
 
-    void BaseSwapChain::ClearBackBuffer(BaseCommandList* commandList)
+    void BaseSwapChain::ClearBackBuffer(const BaseCommandList* const commandList) const
     {
         D3D12_CPU_DESCRIPTOR_HANDLE handle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
         handle.ptr += (static_cast<size_t>(m_descriptorHeapSize) * static_cast<size_t>(m_swapChain->GetCurrentBackBufferIndex()));
@@ -91,8 +92,47 @@ namespace RendererDX12
         commandList->GetInterface()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
     }
 
-    void BaseSwapChain::ReadyBackBuffer(BaseCommandList* commandList)
+    void BaseSwapChain::ReadyBackBuffer(const BaseCommandList* const commandList) const
     {
         commandList->GetInterface()->ResourceBarrier(1, &Helpers::ResourceBarrierTransition(m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+    }
+
+    void BaseSwapChain::ResizeSwapChain()
+    {
+        for (auto& frameBuffer : m_frameBuffers)
+        {
+            frameBuffer.ReleaseAndGetAddressOf();
+        }
+
+        //m_swapChain->SetFullscreenState(true, nullptr);
+
+        m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_renderTargetHeap->GetCPUDescriptorHandleForHeapStart();
+
+        DXGI_SWAP_CHAIN_DESC1 desc;
+        m_swapChain->GetDesc1(&desc);
+
+        D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
+        rtvDesc.Format = desc.Format;
+        rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+        rtvDesc.Texture2D.MipSlice = 0;
+        rtvDesc.Texture2D.PlaneSlice = 0;
+
+        m_frameBuffers.resize(desc.BufferCount);
+        for (UINT i = 0; i < desc.BufferCount; i++)
+        {
+            HRESULT hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_frameBuffers[i].GetAddressOf()));
+            assert(SUCCEEDED(hr));
+
+            m_device->GetInterface()->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
+            rtvHandle.ptr += m_descriptorHeapSize;
+        }
+
+        m_viewPort.Width = static_cast<float>(desc.Width);
+        m_viewPort.Height = static_cast<float>(desc.Height);
+
+        m_rect.bottom = desc.Height;
+        m_rect.right = desc.Width;
     }
 }

@@ -28,7 +28,7 @@ namespace WinApplication
         }
 
         template<class Message, class = std::enable_if_t<std::is_base_of_v<IMessage, Message>>>
-        void RegisterListener(Delegate<void(Message*)> delegate)
+        void RegisterListener(Delegates::Delegate<void(Message*)> delegate)
         {
             auto it = m_registeredEventTypes.find(typeid(Message*));
             if (it == m_registeredEventTypes.end())

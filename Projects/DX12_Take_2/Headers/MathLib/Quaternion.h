@@ -178,39 +178,16 @@ inline Matrix4x4 Quaternion::GetRotation()
 {
     Matrix4x4 matrix;
     matrix.vX.x = 1 - 2 * (j * j + k * k);
-    matrix.vX.y = 2 * (i * j -  r * k);
-    matrix.vX.z = 2 * (i * k + r * j);
+    matrix.vX.y = -2 * (r * k + i * j);
+    matrix.vX.z = 2 * (r * j - i * k);
 
-    matrix.vY.x = 2 * (i * j +  r * k);
+    matrix.vY.x = 2 * (r * k - i * j);
     matrix.vY.y = 1 - 2 * (i * i + k * k);
-    matrix.vY.z = 2 * (k * j + r * i);
+    matrix.vY.z = 2 * (r * i + j * k);
 
-    matrix.vZ.x = 2 * (i * k - r * j);
-    matrix.vZ.y = 2 * (j * k - r * i);
+    matrix.vZ.x = -2 * (r * j + k * i);
+    matrix.vZ.y = 2 * (-r * i + j * k);
     matrix.vZ.z = 1 - 2 * (i * i + j * j);
 
     return matrix;
 }
-
-//struct Quaternion
-//{
-//    Vector4 va;
-//    Vector4 vY;
-//    Vector4 vZ;
-//    Vector4 vW;
-//
-//public:
-//    Quaternion();
-//
-//    void Identity();
-//};
-//
-//inline Quaternion::Quaternion()
-//{
-//    Identity();
-//}
-//
-//inline void Quaternion::Identity()
-//{
-//
-//}

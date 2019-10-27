@@ -23,7 +23,7 @@ private:
     
     RendererDX12::Texture m_texture = { };
     RendererDX12::Mesh m_mesh = { };
-    unique_ptr<RendererDX12::PipelineState> m_pipelineState = { };
+    std::unique_ptr<RendererDX12::PipelineState> m_pipelineState = { };
     cBuffer buffer;
     cBuffer buffer2;
 

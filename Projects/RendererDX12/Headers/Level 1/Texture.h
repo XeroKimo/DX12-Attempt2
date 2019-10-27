@@ -23,11 +23,11 @@ namespace RendererDX12
     {
     public:
 
-        shared_ptr<UploadBuffer> InitializeTexture2D(BaseCommandList* commandList, TextureData textureData);
+        shared_ptr<UploadBuffer> InitializeTexture2D(const BaseCommandList* const commandList, const TextureData& textureData);
 
-        void SetForDraw(BaseCommandList* commandList, const UINT& paramIndex);
-        ID3D12DescriptorHeap* GetResourceHeap() { return m_heap.Get(); }
-        ID3D12Resource* GetResource() { return m_resource.Get(); }
+        void SetForDraw(const BaseCommandList* const commandList, const UINT& paramIndex);
+        ID3D12DescriptorHeap* GetResourceHeap() const noexcept { return m_heap.Get(); }
+        ID3D12Resource* GetResource() const noexcept { return m_resource.Get(); }
 
     private:
         ComPtr<ID3D12DescriptorHeap> m_heap;

@@ -48,6 +48,9 @@
     <ClInclude Include="Headers\Events\MessageManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Events\FunctionPointers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Windows\Application.cpp">

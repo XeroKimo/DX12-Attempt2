@@ -6,6 +6,7 @@
 
 namespace WinApplication
 {
+    using namespace Delegates;
     template<class Message, class = std::enable_if_t<std::is_base_of_v<IMessage, Message>>>
     class MessageDispatcher : public MessageDispatcherBase
     {

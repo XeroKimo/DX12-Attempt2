@@ -6,10 +6,11 @@
 
 namespace WinApplication
 {
+    using namespace Delegates;
     class WNDProcPassthrough
     {
     private:
-        std::unordered_map<unsigned int, Event<void(WPARAM, LPARAM)>> m_mappedEvents;
+        std::unordered_map<unsigned int, Delegates::Event<void(WPARAM, LPARAM)>> m_mappedEvents;
     public:
         void SubscribeEvent(unsigned int windowMessage, Delegate<void(WPARAM, LPARAM)> delegate)
         {

@@ -8,7 +8,7 @@ namespace RendererDX12
     class Fence
     {
     public:
-        Fence(BaseDevice* device, D3D12_FENCE_FLAGS flags = D3D12_FENCE_FLAG_NONE)
+        Fence(const BaseDevice* const device, const D3D12_FENCE_FLAGS& flags = D3D12_FENCE_FLAG_NONE)
         {
             device->GetInterface()->CreateFence(0, flags, IID_PPV_ARGS(m_fence.GetAddressOf()));
         }
@@ -19,7 +19,7 @@ namespace RendererDX12
             m_fence->Signal(fenceValue);
         }
 
-        inline ID3D12Fence* GetInterface() { return m_fence.Get(); }
+        inline ID3D12Fence* GetInterface() const noexcept { return m_fence.Get(); }
     public:
         UINT64 fenceValue = 0;
         UINT64 highestSyncedValue = 0;

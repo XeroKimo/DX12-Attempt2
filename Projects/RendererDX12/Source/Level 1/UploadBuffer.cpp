@@ -9,9 +9,9 @@ namespace RendererDX12
         assert(SUCCEEDED(hr));
     }
 
-    UploadBuffer::UploadBuffer(BaseCommandList* commandList, ID3D12Resource* targetResource, D3D12_SUBRESOURCE_DATA* data)
+    UploadBuffer::UploadBuffer(const BaseCommandList* const commandList, ID3D12Resource* const targetResource, const D3D12_SUBRESOURCE_DATA* const data)
     {
-        BaseDevice* device = commandList->GetDevice();
+        const BaseDevice* device = commandList->GetDevice();
         UINT64 sizeRequired;
         device->GetInterface()->GetCopyableFootprints(&targetResource->GetDesc(), 0, 1, 0, nullptr, nullptr, nullptr, &sizeRequired);
 
