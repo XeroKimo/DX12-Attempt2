@@ -14,93 +14,93 @@ struct Matrix4x4
 {
 public:
 
-	Matrix4x4();
-	Matrix4x4(Vector4 x, Vector4 y, Vector4 z, Vector4 w);
+    Matrix4x4();
+    Matrix4x4(Vector4 x, Vector4 y, Vector4 z, Vector4 w);
 
-	void Identity();
-	void Transpose();
-	void SetOrtho(float width, float height, float near, float far);
-	void SetPerspective(float fovAngleY, float aspectRatio, float near, float far);
+    void Identity();
+    void Transpose();
+    void SetOrtho(float width, float height, float near, float far);
+    void SetPerspective(float fovAngleY, float aspectRatio, float near, float far);
 
-	void SetPosition(Vector3 position);
-	void Translate(Vector3 position);
-	void RotateX(float degrees);
-	void RotateY(float degrees);
-	void RotateZ(float degrees);
-	void SetScale(Vector3 scale);
-	void Scale(Vector3 scale);
+    void SetPosition(Vector3 position);
+    void Translate(Vector3 position);
+    void RotateX(float degrees);
+    void RotateY(float degrees);
+    void RotateZ(float degrees);
+    void SetScale(Vector3 scale);
+    void Scale(Vector3 scale);
 
-	Vector3 GetPosition() { return Vector3(vX.w, vY.w, vZ.w); }
-	Vector3 GetScale() { return Vector3(vX.x, vY.y, vZ.z); }
-	Vector3 GetEulerAngles();
+    Vector3 GetPosition() { return Vector3(vX.value[3], vY.value[3], vZ.value[3]); }
+    Vector3 GetScale() { return Vector3(vX.value[0], vY.value[1], vZ.value[2]); }
+    Vector3 GetEulerAngles();
 
-	Matrix4x4 GetTransposed();
+    Matrix4x4 GetTransposed();
 
-	Matrix4x4 operator+(const Matrix4x4& other);
-	Matrix4x4 operator-(const Matrix4x4& other);
-	Matrix4x4 operator*(const Matrix4x4& other);
+    Matrix4x4 operator+(const Matrix4x4& other);
+    Matrix4x4 operator-(const Matrix4x4& other);
+    Matrix4x4 operator*(const Matrix4x4& other);
 
-	Vector4 operator*(const Vector4& other);
+    Vector4 operator*(const Vector4& other);
 
-	void operator+=(const Matrix4x4& other);
-	void operator-=(const Matrix4x4& other);
-	void operator*=(const Matrix4x4& other);
+    void operator+=(const Matrix4x4& other);
+    void operator-=(const Matrix4x4& other);
+    void operator*=(const Matrix4x4& other);
 public:
-	Vector4 vX;
-	Vector4 vY;
-	Vector4 vZ;
-	Vector4 vW;
+    Vector4 vX;
+    Vector4 vY;
+    Vector4 vZ;
+    Vector4 vW;
 };
 
 inline Matrix4x4::Matrix4x4()
 {
-	Identity();
+    Identity();
 }
 
 inline Matrix4x4::Matrix4x4(Vector4 x, Vector4 y, Vector4 z, Vector4 w)
 {
-	vX = x;
-	vY = y;
-	vZ = z;
-	vW = w;
+    vX = x;
+    vY = y;
+    vZ = z;
+    vW = w;
 }
 
 void inline Matrix4x4::Identity()
 {
-	vX = { 1.0f, 0.0f, 0.0f, 0.0f };
-	vY = { 0.0f, 1.0f, 0.0f, 0.0f };
-	vZ = { 0.0f, 0.0f, 1.0f, 0.0f };
-	vW = { 0.0f, 0.0f, 0.0f, 1.0f };
+    vX = { 1.0f, 0.0f, 0.0f, 0.0f };
+    vY = { 0.0f, 1.0f, 0.0f, 0.0f };
+    vZ = { 0.0f, 0.0f, 1.0f, 0.0f };
+    vW = { 0.0f, 0.0f, 0.0f, 1.0f };
 }
 
 void inline Matrix4x4::Transpose()
 {
-	Matrix4x4 temp = *this;
-	vX = { temp.vX.x, temp.vY.x, temp.vZ.x, temp.vW.x };
-	vY = { temp.vX.y, temp.vY.y, temp.vZ.y, temp.vW.y };
-	vZ = { temp.vX.z, temp.vY.z, temp.vZ.z, temp.vW.z };
-	vW = { temp.vX.w, temp.vY.w, temp.vZ.w, temp.vW.w };
+    Matrix4x4 temp = *this;
+    vX = { temp.vX.value[0], temp.vY.value[0], temp.vZ.value[0], temp.vW.value[0] };
+    vY = { temp.vX.value[1], temp.vY.value[1], temp.vZ.value[1], temp.vW.value[1] };
+    vZ = { temp.vX.value[2], temp.vY.value[2], temp.vZ.value[2], temp.vW.value[2] };
+    vW = { temp.vX.value[3], temp.vY.value[3], temp.vZ.value[3], temp.vW.value[3] };
 }
 
 inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
 {
-	//The following docs are in row major, this matrix uses column major
-	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, posZIn = true
-	//https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, posZIn = false
-	Identity();
+    //The following docs are in row major, this matrix uses column major
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, posZIn = true
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, posZIn = false
+    Identity();
     if constexpr (USE_LEFT_HANDED_MATRICES)
     {
-        vX.x = 2 / width;
-        vY.y = 2 / height;
-        vZ.z = 1 / (far - near);
-        vZ.w = -near / (far - near);
+        vX.value[0] = 2 / width;
+        vY.value[1] = 2 / height;
+        vZ.value[2] = 1 / (far - near);
+        vZ.value[3] = -near / (far - near);
     }
     else
     {
-        vX.x = 2 / width;
-        vY.y = 2 / height;
-        vZ.z = 1 / (near - far);
-        vZ.w = near / (near - far);
+        vX.value[0] = 2 / width;
+        vY.value[1] = 2 / height;
+        vZ.value[2] = 1 / (near - far);
+        vZ.value[3] = near / (near - far);
     }
 }
 
@@ -115,235 +115,235 @@ inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float 
     Identity();
     if constexpr (USE_LEFT_HANDED_MATRICES)
     {
-        vX.x = xScale;
-        vY.y = yScale;
-        vZ.z = far / (far - near);
-        vZ.w = (-near * far) / (far - near);
-        vW.z = 1;
-        vW.w = 0;
+        vX.value[0] = xScale;
+        vY.value[1] = yScale;
+        vZ.value[2] = far / (far - near);
+        vZ.value[3] = (-near * far) / (far - near);
+        vW.value[2] = 1;
+        vW.value[3] = 0;
     }
     else
     {
-        vX.x = xScale;
-        vY.y = yScale;
-        vZ.z = far / (near - far);
-        vZ.w = (near * far) / (near - far);
-        vW.z = -1;
-        vW.w = 0;
+        vX.value[0] = xScale;
+        vY.value[1] = yScale;
+        vZ.value[2] = far / (near - far);
+        vZ.value[3] = (near * far) / (near - far);
+        vW.value[2] = -1;
+        vW.value[3] = 0;
     }
 }
 
 inline void Matrix4x4::SetPosition(Vector3 position)
 {
-	vX.w = position.x;
-	vY.w = position.y;
-	vZ.w = position.z;
+    vX.value[3] = position.x;
+    vY.value[3] = position.y;
+    vZ.value[3] = position.z;
 }
 
 inline void Matrix4x4::Translate(Vector3 position)
 {
-	vX.w += position.x;
-	vY.w += position.y;
-	vZ.w += position.z;
+    vX.value[3] += position.x;
+    vY.value[3] += position.y;
+    vZ.value[3] += position.z;
 }
 
 inline void Matrix4x4::RotateX(float degrees)
 {
-	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * static_cast<float>(PI);
+    Matrix4x4 rotMatrix;
+    float radians = degrees / 180.f * static_cast<float>(PI);
 
-	float sinAngle = sinf(radians);
-	float cosAngle = cosf(radians);
+    float sinAngle = sinf(radians);
+    float cosAngle = cosf(radians);
 
-	rotMatrix.vY.y = cosAngle;
-	rotMatrix.vY.z = sinAngle;
-	rotMatrix.vZ.y = -sinAngle;
-	rotMatrix.vZ.z = cosAngle;
+    rotMatrix.vY.value[1] = cosAngle;
+    rotMatrix.vY.value[2] = sinAngle;
+    rotMatrix.vZ.value[1] = -sinAngle;
+    rotMatrix.vZ.value[2] = cosAngle;
 
-	*this *= rotMatrix;
+    *this *= rotMatrix;
 }
 
 inline void Matrix4x4::RotateY(float degrees)
 {
-	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * static_cast<float>(PI);
+    Matrix4x4 rotMatrix;
+    float radians = degrees / 180.f * static_cast<float>(PI);
 
-	float sinAngle = sinf(radians);
-	float cosAngle = cosf(radians);
+    float sinAngle = sinf(radians);
+    float cosAngle = cosf(radians);
 
-	rotMatrix.vX.x = cosAngle;
-	rotMatrix.vX.z = sinAngle;
-	rotMatrix.vZ.x = -sinAngle;
-	rotMatrix.vZ.z = cosAngle;
+    rotMatrix.vX.value[0] = cosAngle;
+    rotMatrix.vX.value[2] = sinAngle;
+    rotMatrix.vZ.value[0] = -sinAngle;
+    rotMatrix.vZ.value[2] = cosAngle;
 
-	*this *= rotMatrix;
+    *this *= rotMatrix;
 }
 
 inline void Matrix4x4::RotateZ(float degrees)
 {
-	Matrix4x4 rotMatrix;
-	float radians = degrees / 180.f * static_cast<float>(PI);
+    Matrix4x4 rotMatrix;
+    float radians = degrees / 180.f * static_cast<float>(PI);
 
-	float sinAngle = sinf(radians);
-	float cosAngle = cosf(radians);
+    float sinAngle = sinf(radians);
+    float cosAngle = cosf(radians);
 
-	rotMatrix.vX.x = cosAngle;
-	rotMatrix.vX.y = -sinAngle;
-	rotMatrix.vY.x = sinAngle;
-	rotMatrix.vY.y = cosAngle;
+    rotMatrix.vX.value[0] = cosAngle;
+    rotMatrix.vX.value[1] = -sinAngle;
+    rotMatrix.vY.value[0] = sinAngle;
+    rotMatrix.vY.value[1] = cosAngle;
 
-	*this *= rotMatrix;
+    *this *= rotMatrix;
 }
 
 inline void Matrix4x4::SetScale(Vector3 scale)
 {
-	vX.x = scale.x;
-	vY.y = scale.y;
-	vZ.z = scale.z;
+    vX.value[0] = scale.x;
+    vY.value[1] = scale.y;
+    vZ.value[2] = scale.z;
 }
 
 inline void Matrix4x4::Scale(Vector3 scale)
 {
-	vX.x += scale.x;
-	vY.y += scale.y;
-	vZ.z += scale.z;
+    vX.value[0] += scale.x;
+    vY.value[1] += scale.y;
+    vZ.value[2] += scale.z;
 }
 
 inline Vector3 Matrix4x4::GetEulerAngles()
 {
-	float radToDeg = 180 / static_cast<float>(PI);
-	if (vY.z > 1.0f)
-	{
-		float x = static_cast<float>(PI) / 2;
-		float y = atan2f(vX.y, vX.x);
-		float z = 0.0f;
-		return Vector3(x, y, z) * radToDeg;
-	}
-	else if (vY.z < -1.0f)
-	{
-		float x = static_cast<float>(PI) / 2;
-		float y = -atan2f(vX.y, vX.x);
-		float z = 0.0f;
-		return Vector3(x, y, z) * radToDeg;
-	}
-	else
-	{
-		float x = asinf(vY.z);
-		float y = atan2f(-vX.z, vZ.z);
-		float z = atan2f(-vY.x, vY.y);
-		return Vector3(x, y, z) * radToDeg;
-	}
+    float radToDeg = 180 / static_cast<float>(PI);
+    if (vY.value[2] > 1.0f)
+    {
+        float x = static_cast<float>(PI) / 2;
+        float y = atan2f(vX.value[1], vX.value[0]);
+        float z = 0.0f;
+        return Vector3(x, y, z) * radToDeg;
+    }
+    else if (vY.value[2] < -1.0f)
+    {
+        float x = static_cast<float>(PI) / 2;
+        float y = -atan2f(vX.value[1], vX.value[0]);
+        float z = 0.0f;
+        return Vector3(x, y, z) * radToDeg;
+    }
+    else
+    {
+        float x = asinf(vY.value[2]);
+        float y = atan2f(-vX.value[2], vZ.value[2]);
+        float z = atan2f(-vY.value[0], vY.value[1]);
+        return Vector3(x, y, z) * radToDeg;
+    }
 }
 
 inline Matrix4x4 Matrix4x4::GetTransposed()
 {
-	Matrix4x4 temp = *this;
-	temp.Transpose();
-	return temp;
+    Matrix4x4 temp = *this;
+    temp.Transpose();
+    return temp;
 }
 
 Matrix4x4 inline Matrix4x4::operator+(const Matrix4x4& other)
 {
-	Matrix4x4 mat;
-	mat.vX = vX + other.vX;
-	mat.vY = vY + other.vY;
-	mat.vZ = vZ + other.vZ;
-	mat.vW = vW + other.vW;
+    Matrix4x4 mat;
+    mat.vX = vX + other.vX;
+    mat.vY = vY + other.vY;
+    mat.vZ = vZ + other.vZ;
+    mat.vW = vW + other.vW;
 
-	return mat;
+    return mat;
 }
 
 Matrix4x4 inline Matrix4x4::operator-(const Matrix4x4& other)
 {
-	Matrix4x4 mat;
-	mat.vX = vX - other.vX;
-	mat.vY = vY - other.vY;
-	mat.vZ = vZ - other.vZ;
-	mat.vW = vW - other.vW;
+    Matrix4x4 mat;
+    mat.vX = vX - other.vX;
+    mat.vY = vY - other.vY;
+    mat.vZ = vZ - other.vZ;
+    mat.vW = vW - other.vW;
 
-	return mat;
+    return mat;
 }
 
 Matrix4x4 inline Matrix4x4::operator*(const Matrix4x4& other)
 {
-	Matrix4x4 mat = other;
-	mat.Transpose();
-	Matrix4x4 output;
+    Matrix4x4 mat = other;
+    mat.Transpose();
+    Matrix4x4 output;
 
-	output.vX.x = vX.Dot(mat.vX);
-	output.vX.y = vX.Dot(mat.vY);
-	output.vX.z = vX.Dot(mat.vZ);
-	output.vX.w = vX.Dot(mat.vW);
+    output.vX.value[0] = vX.Dot(mat.vX);
+    output.vX.value[1] = vX.Dot(mat.vY);
+    output.vX.value[2] = vX.Dot(mat.vZ);
+    output.vX.value[3] = vX.Dot(mat.vW);
 
-	output.vY.x = vY.Dot(mat.vX);
-	output.vY.y = vY.Dot(mat.vY);
-	output.vY.z = vY.Dot(mat.vZ);
-	output.vY.w = vY.Dot(mat.vW);
+    output.vY.value[0] = vY.Dot(mat.vX);
+    output.vY.value[1] = vY.Dot(mat.vY);
+    output.vY.value[2] = vY.Dot(mat.vZ);
+    output.vY.value[3] = vY.Dot(mat.vW);
 
-	output.vZ.x = vZ.Dot(mat.vX);
-	output.vZ.y = vZ.Dot(mat.vY);
-	output.vZ.z = vZ.Dot(mat.vZ);
-	output.vZ.w = vZ.Dot(mat.vW);
+    output.vZ.value[0] = vZ.Dot(mat.vX);
+    output.vZ.value[1] = vZ.Dot(mat.vY);
+    output.vZ.value[2] = vZ.Dot(mat.vZ);
+    output.vZ.value[3] = vZ.Dot(mat.vW);
 
-	output.vW.x = vW.Dot(mat.vX);
-	output.vW.y = vW.Dot(mat.vY);
-	output.vW.z = vW.Dot(mat.vZ);
-	output.vW.w = vW.Dot(mat.vW);
+    output.vW.value[0] = vW.Dot(mat.vX);
+    output.vW.value[1] = vW.Dot(mat.vY);
+    output.vW.value[2] = vW.Dot(mat.vZ);
+    output.vW.value[3] = vW.Dot(mat.vW);
 
-	return output;
+    return output;
 }
 
 Vector4 inline Matrix4x4::operator*(const Vector4& other)
 {
-	float x = vX.Dot(other);
-	float y = vY.Dot(other);
-	float z = vZ.Dot(other);
-	float w = vW.Dot(other);
+    float x = vX.Dot(other);
+    float y = vY.Dot(other);
+    float z = vZ.Dot(other);
+    float w = vW.Dot(other);
 
-	return Vector4(x, y, z, w);
+    return Vector4(x, y, z, w);
 }
 
 void inline Matrix4x4::operator+=(const Matrix4x4& other)
 {
-	vX += other.vX;
-	vY += other.vY;
-	vZ += other.vZ;
-	vW += other.vW;
+    vX += other.vX;
+    vY += other.vY;
+    vZ += other.vZ;
+    vW += other.vW;
 }
 
 void inline Matrix4x4::operator-=(const Matrix4x4& other)
 {
-	vX -= other.vX;
-	vY -= other.vY;
-	vZ -= other.vZ;
-	vW -= other.vW;
+    vX -= other.vX;
+    vY -= other.vY;
+    vZ -= other.vZ;
+    vW -= other.vW;
 }
 
 void inline Matrix4x4::operator*=(const Matrix4x4& other)
 {
-	Matrix4x4 mat = other;
-	mat.Transpose();
-	Matrix4x4 copy = *this;
-	
-    vX.x = copy.vX.Dot(mat.vX);
-    vX.y = copy.vX.Dot(mat.vY);
-    vX.z = copy.vX.Dot(mat.vZ);
-    vX.w = copy.vX.Dot(mat.vW);
+    Matrix4x4 mat = other;
+    mat.Transpose();
+    Matrix4x4 copy = *this;
 
-    vY.x = copy.vY.Dot(mat.vX);
-    vY.y = copy.vY.Dot(mat.vY);
-    vY.z = copy.vY.Dot(mat.vZ);
-    vY.w = copy.vY.Dot(mat.vW);
+    vX.value[0] = copy.vX.Dot(mat.vX);
+    vX.value[1] = copy.vX.Dot(mat.vY);
+    vX.value[2] = copy.vX.Dot(mat.vZ);
+    vX.value[3] = copy.vX.Dot(mat.vW);
 
-    vZ.x = copy.vZ.Dot(mat.vX);
-    vZ.y = copy.vZ.Dot(mat.vY);
-    vZ.z = copy.vZ.Dot(mat.vZ);
-    vZ.w = copy.vZ.Dot(mat.vW);
+    vY.value[0] = copy.vY.Dot(mat.vX);
+    vY.value[1] = copy.vY.Dot(mat.vY);
+    vY.value[2] = copy.vY.Dot(mat.vZ);
+    vY.value[3] = copy.vY.Dot(mat.vW);
 
-    vW.x = copy.vW.Dot(mat.vX);
-    vW.y = copy.vW.Dot(mat.vY);
-    vW.z = copy.vW.Dot(mat.vZ);
-    vW.w = copy.vW.Dot(mat.vW);
+    vZ.value[0] = copy.vZ.Dot(mat.vX);
+    vZ.value[1] = copy.vZ.Dot(mat.vY);
+    vZ.value[2] = copy.vZ.Dot(mat.vZ);
+    vZ.value[3] = copy.vZ.Dot(mat.vW);
+
+    vW.value[0] = copy.vW.Dot(mat.vX);
+    vW.value[1] = copy.vW.Dot(mat.vY);
+    vW.value[2] = copy.vW.Dot(mat.vZ);
+    vW.value[3] = copy.vW.Dot(mat.vW);
 }
 
 

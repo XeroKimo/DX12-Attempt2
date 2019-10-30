@@ -1,6 +1,7 @@
 #pragma once
 #include "MathConstants.h"
 #include "Vector3.h"
+#include <array>
 
 struct Vector4
 {
@@ -18,12 +19,12 @@ public:
 	Vector4 operator+(const Vector4& other);
 	Vector4 operator-(const Vector4& other);
 	Vector4 operator*(const Vector4& other);
-	Vector4 operator/(const Vector4& other);
+    Vector4 operator/(const Vector4& other);
 
 	void operator+=(const Vector4& other);
 	void operator-=(const Vector4& other);
-	void operator*=(const Vector4& other);
-	void operator/=(const Vector4& other);
+    void operator*=(const Vector4& other);
+    void operator/=(const Vector4& other);
 
 	Vector4 operator*(const float& other);
 	Vector4 operator/(const float& other);
@@ -33,10 +34,12 @@ public:
 
 
 public:
-	float x = 0;
-	float y = 0;
-	float z = 0;
-	float w = 0;
+    union
+    {
+        float value[4];
+        struct { float x, y, z, w; };
+        struct { float r, g, b, a; };
+    };
 };
 
 inline Vector4::Vector4(float _x, float _y, float _z, float _w) :

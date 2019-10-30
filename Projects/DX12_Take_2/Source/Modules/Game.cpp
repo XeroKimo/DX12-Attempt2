@@ -20,21 +20,23 @@ void Game::Initialize()
 void Game::Update(float deltaTime)
 {
     Quaternion quat;
-
+    size_t size = sizeof(Vector4);
+    const float amountToRotate = 360.f / 180.f;
     //float rotateSpeed = 60.0f;
     //quat.Rotate(Vector3(1, 1, 1).GetNormalized(), rotateSpeed * deltaTime);
-    quat *= Quaternion(1 - deltaTime, -deltaTime, -deltaTime, deltaTime);
+    quat *= Quaternion(1 - deltaTime * 3, -deltaTime, -deltaTime, -deltaTime);
+    //quat *= Quaternion(1 - amountToRotate * 3, -amountToRotate, -amountToRotate, -amountToRotate);
     quat.Normalize();
 
-    Matrix4x4 test1 = quat.GetRotation();
+    //buffer.worldMatrix.Identity();
+    //buffer.worldMatrix.SetPosition(Vector3(-2, 0, -3));
     buffer.worldMatrix *= quat.GetRotation();
 
     quat.Identity();
-    //quat *= Quaternion(1 - deltaTime * 3, deltaTime, deltaTime, deltaTime);
-    quat *= Quaternion(1 - deltaTime, deltaTime, deltaTime, deltaTime);
+    quat *= Quaternion(1 - deltaTime * 3, deltaTime, deltaTime, deltaTime);
+    //quat *= Quaternion(1 - amountToRotate * 3, amountToRotate, amountToRotate, amountToRotate);
     quat.Normalize();
 
-    Matrix4x4 test2 = quat.GetRotation();
     //buffer2.worldMatrix.Identity();
     //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2.worldMatrix *= quat.GetRotation();
@@ -70,7 +72,7 @@ void Game::Draw()
     commandModule->SignalAllQueues();
 	commandModule->SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
 
-    swapChain->GetInterface()->Present(1, 0);
+    swapChain->GetInterface()->Present(0, 0);
 }
 
 void Game::OnModuleRegisterChanged(ModuleManager* moduleManager)
@@ -257,7 +259,8 @@ void Game::CreateDefaults()
 	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
 	worldMatrix.SetPosition(Vector3(-2, 0, -3));
-	projMatrix.SetOrtho(16,9, 0.0f, 100);
+	//projMatrix.SetPerspective(90,16.f/9.f, 0.0f, 100);
+	projMatrix.SetOrtho(16.f, 9.f, 0.0f, 100);
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, viewMatrix, projMatrix };
