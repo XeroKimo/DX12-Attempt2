@@ -92,12 +92,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)Projects\PhysX\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(SolutionDir)Projects\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -106,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)Projects\PhysX\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -114,6 +115,7 @@
     <Link />
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(SolutionDir)Projects\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,7 +126,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)Projects\PhysX\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -132,6 +134,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)Projects\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)Projects\PhysX\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -150,6 +153,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>$(SolutionDir)Projects\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,6 +182,9 @@
     <ClInclude Include="Headers\Modules\ModuleManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PhysX\PhysX.vcxproj">
+      <Project>{95da3e19-70df-46b1-a5b4-a29f32e3f639}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\RendererDX12\RendererDX12.vcxproj">
       <Project>{84180b38-63c3-4e6b-af30-019a212eced9}</Project>
     </ProjectReference>

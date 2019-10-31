@@ -1,6 +1,6 @@
 #pragma once
 #include "WinAppHelpers.h"
-#include "../Events/Delegate.h"
+#include "../Events/Event.h"
 #include <Windows.h>
 #include <unordered_map>
 

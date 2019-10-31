@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseMessageDispatcher.h"
-#include "Delegate.h"
+#include "Event.h"
 #include <vector>
 #include <memory>
 

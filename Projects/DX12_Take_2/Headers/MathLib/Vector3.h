@@ -32,9 +32,13 @@ public:
 	void operator*=(const float& other);
 	void operator/=(const float& other);
 public:
-	float x = 0;
-	float y = 0;
-	float z = 0;
+    union
+    {
+        float value[3];
+        struct { float x, y, z; };
+        struct { float r, g, b; };
+        struct { float u, v, w; };
+    };
 };
 
 inline Vector3::Vector3(float _x, float _y, float _z) :

@@ -29,8 +29,13 @@ public:
 	void operator*=(const float& other);
 	void operator/=(const float& other);
 public:
-	float x = 0;
-	float y = 0;
+    union
+    {
+        float value[2];
+        struct { float x, y; };
+        struct { float r, g; };
+        struct { float u, v; };
+    };
 };
 
 inline Vector2::Vector2(float _x, float _y) :

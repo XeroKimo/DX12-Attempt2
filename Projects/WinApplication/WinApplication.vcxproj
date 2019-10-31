@@ -145,9 +145,11 @@
     <ClInclude Include="Headers\Events\BaseMessageDispatcher.h" />
     <ClInclude Include="Headers\Events\Delegate.h" />
     <ClInclude Include="Headers\Events\!Header.h" />
+    <ClInclude Include="Headers\Events\Event.h" />
     <ClInclude Include="Headers\Events\FunctionPointers.h" />
     <ClInclude Include="Headers\Events\MessageDispatcher.h" />
     <ClInclude Include="Headers\Events\MessageManager.h" />
+    <ClInclude Include="Headers\Events\MethodPointer.h" />
     <ClInclude Include="Headers\Windows\!Header.h" />
     <ClInclude Include="Headers\Windows\Application.h" />
     <ClInclude Include="Headers\Windows\PlatformClock.h" />
