@@ -41,6 +41,12 @@ void Game::Update(float deltaTime)
     //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2.worldMatrix *= quat.GetRotation();
 
+	quat.Identity();
+	quat *= Quaternion(1 - deltaTime * 0.5, 0, 0, deltaTime/2);
+	quat.Normalize();
+	buffer3.worldMatrix *= quat.GetRotation();
+
+
     //buffer2.worldMatrix.RotateX(30 * deltaTime);
 }
 
@@ -65,6 +71,13 @@ void Game::Draw()
 	m_mesh.DrawIndexedInstance(cl->GetBase());
     cl->SetConstantBuffer(0, &buffer2, sizeof(buffer2));
     m_mesh.DrawIndexedInstance(cl->GetBase());
+
+	m_houseTexture.SetForDraw(cl->GetBase(), 1);
+	m_house.SetForDraw(cl->GetBase());
+
+	cl->SetConstantBuffer(0, &buffer3, sizeof(buffer3));
+	m_house.DrawIndexedInstance(cl->GetBase());
+	
 
     swapChain->ReadyBackBuffer(cl->GetBase());
 
@@ -105,6 +118,7 @@ void Game::CreateDefaults()
             table.AddTable(1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 
             //pipelineDesc.desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+			pipelineDesc.desc.RasterizerState.FrontCounterClockwise = true;
 
             pipelineDesc.rootSignatureDesc.CreateRootDescriptor(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
             pipelineDesc.rootSignatureDesc.CreateRootDescriptorTable(table);
@@ -237,6 +251,18 @@ void Game::CreateDefaults()
     //    //Bottom Square
     //};
 
+
+	FbxNode* fbx = FBXLoader::LoadFBX("Resources/houseA/house");
+	FBXLoader::LoadMeshData data = FBXLoader::LoadMesh(fbx);
+	std::vector<Vertex> fbxVerts;
+	for (int i = 0; i < data.vertices.size(); i++)
+	{
+		Vertex vert;
+		vert.pos = Vector3(data.vertices[i].pos.x, data.vertices[i].pos.y, data.vertices[i].pos.z);
+		vert.UV = Vector2(data.vertices[i].uv.x, data.vertices[i].uv.y);
+		fbxVerts.push_back(vert);
+	}
+
 	void* vertexData = static_cast<void*>(&verts);
 
 	unique_ptr<CommandList> cl = commandModule->GetCommandList(D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -244,10 +270,16 @@ void Game::CreateDefaults()
     cl->UploadData(m_mesh.CreateVertexBuffer(cl->GetBase(), &verts, sizeof(Vertex), sizeof(verts) / sizeof(Vertex)));
     cl->UploadData(m_mesh.CreateIndexBuffer(cl->GetBase(), indices, sizeof(indices) / sizeof(UINT)));
 
+	cl->UploadData(m_house.CreateVertexBuffer(cl->GetBase(), fbxVerts.data(), sizeof(Vertex), fbxVerts.size()));
+	cl->UploadData(m_house.CreateIndexBuffer(cl->GetBase(), data.indices.data(), data.indices.size()));
+
     RendererDX12::TextureData textureData;
     ParseImage(L"Resources/test.jpg", textureData.imageData, textureData.imageHeight, textureData.imageWidth);
 
     cl->UploadData(m_texture.InitializeTexture2D(cl->GetBase(), textureData));
+
+	ParseImage(L"Resources/houseA/houseA.jpg", textureData.imageData, textureData.imageHeight, textureData.imageWidth);
+	cl->UploadData(m_houseTexture.InitializeTexture2D(cl->GetBase(), textureData));
 
     commandModule->ExecuteCommandList(cl,0);
     commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
@@ -259,11 +291,16 @@ void Game::CreateDefaults()
 	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
 	worldMatrix.SetPosition(Vector3(-2, 0, -3));
-	//projMatrix.SetPerspective(90,16.f/9.f, 0.0f, 100);
-	projMatrix.SetOrtho(16.f, 9.f, 0.0f, 100);
+	projMatrix.SetPerspective(90,16.f/9.f, 0.0f, 1000);
+	//projMatrix.SetOrtho(16.f, 9.f, 0.0f, 100);
+	viewMatrix.SetPosition(Vector3(0, 0, -100));
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, viewMatrix, projMatrix };
     worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2 = { worldMatrix, viewMatrix, projMatrix };
+	worldMatrix.Identity();
+	worldMatrix.SetPosition(Vector3(0, -20, 30));
+	worldMatrix.RotateX(90);
+	buffer3 = { worldMatrix, viewMatrix, projMatrix };
 }

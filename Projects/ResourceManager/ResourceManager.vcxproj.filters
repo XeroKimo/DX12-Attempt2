@@ -24,12 +24,15 @@
     <ClInclude Include="Headers\FBXLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\FBXLoaderInternal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\ResourceManager.cpp">
+    <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\Parsers.cpp">
+    <ClCompile Include="Source\Parsers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -22,10 +22,13 @@ private:
     WinApplication::MessageManager* m_eventManager = nullptr;
     
     RendererDX12::Texture m_texture = { };
+	RendererDX12::Texture m_houseTexture = {};
     RendererDX12::Mesh m_mesh = { };
+	RendererDX12::Mesh m_house = { };
     std::unique_ptr<RendererDX12::PipelineState> m_pipelineState = { };
     cBuffer buffer;
     cBuffer buffer2;
+	cBuffer buffer3;
 
 public:
     Game();

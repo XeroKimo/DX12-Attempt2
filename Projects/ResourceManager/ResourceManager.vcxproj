@@ -20,12 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\FBXLoader.h" />
+    <ClInclude Include="Headers\FBXLoaderInternal.h" />
     <ClInclude Include="Headers\Parsers.h" />
     <ClInclude Include="Headers\ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\Parsers.cpp" />
-    <ClCompile Include="Headers\ResourceManager.cpp" />
+    <ClCompile Include="Source\Parsers.cpp" />
+    <ClCompile Include="Source\ResourceManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -108,14 +109,14 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Libraries\Intermediate\FBX_SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)External Libs\FBX_SDK\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)Libraries\Intermediate\FBX_SDK\lib\vs2015\x64\debug\libfbxsdk-md.lib;</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)External Libs\FBX_SDK\lib\vs2015\x64\debug\libfbxsdk-md.lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
