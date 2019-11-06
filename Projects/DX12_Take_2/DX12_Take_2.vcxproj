@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>$(SolutionDir)Projects\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)External Libs\FBX_SDK\lib\vs2015\x64\debug\libfbxsdk-md.lib;$(SolutionDir)External Libs\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)Projects\PhysX\include;$(SolutionDir)External Libs\FBX_SDK\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(SolutionDir)Projects\WinApplication\Headers;$(SolutionDir)Projects\RendererDX12\Headers;$(SolutionDir)Projects\ResourceManager\Headers;$(SolutionDir)External Libs\PhysX\include;$(SolutionDir)External Libs\FBX_SDK\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -115,7 +115,7 @@
     <Link />
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>$(SolutionDir)External Libs\FBX_SDK\lib\vs2015\x64\debug\libfbxsdk-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)External Libs\FBX_SDK\lib\vs2015\x64\debug\libfbxsdk-md.lib;$(SolutionDir)External Libs\PhysX\bin\win.x86_64.vc142.mt\debug\PhysX_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

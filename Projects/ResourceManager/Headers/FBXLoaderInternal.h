@@ -44,15 +44,15 @@ namespace FBXLoader
 		{
 			LoadMeshMetaData vertex;
 			int index = mesh->GetPolygonVertex(polygonIndex, vertexIndex);
-			vertex.pos.x = mesh->GetControlPointAt(index).mData[0];
-			vertex.pos.y = mesh->GetControlPointAt(index).mData[1];
-			vertex.pos.z = mesh->GetControlPointAt(index).mData[2];
+			vertex.pos.x = static_cast<float>(mesh->GetControlPointAt(index).mData[0]);
+			vertex.pos.y = static_cast<float>(mesh->GetControlPointAt(index).mData[1]);
+			vertex.pos.z = static_cast<float>(mesh->GetControlPointAt(index).mData[2]);
 
 			FbxVector4 normal;
 			mesh->GetPolygonVertexNormal(polygonIndex, vertexIndex, normal);
-			vertex.normal.x = normal.mData[0];
-			vertex.normal.y = normal.mData[1];
-			vertex.normal.z = normal.mData[2];
+			vertex.normal.x = static_cast<float>(normal.mData[0]);
+            vertex.normal.y = static_cast<float>(normal.mData[1]);
+            vertex.normal.z = static_cast<float>(normal.mData[2]);
 
 			FbxStringList uvNames;
 			const char* uvName = nullptr;
@@ -66,8 +66,8 @@ namespace FBXLoader
 			bool uvDefined;
 			mesh->GetPolygonVertexUV(polygonIndex, vertexIndex, uvName, uv, uvDefined);
 			
-			vertex.uv.x = uv.mData[0];
-			vertex.uv.y = uv.mData[1];
+			vertex.uv.x = static_cast<float>(uv.mData[0]);
+            vertex.uv.y = static_cast<float>(uv.mData[1]);
 
 			return vertex;
 		}
