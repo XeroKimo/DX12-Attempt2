@@ -21,6 +21,9 @@
     <ClInclude Include="Headers\Parsers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\FBXLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Headers\ResourceManager.cpp">
