@@ -5,23 +5,26 @@
 #include <string>
 #include <unordered_map>
 #include <map>
+#include <fstream>
 
 namespace FBXLoader
 {
+    extern FbxManager* gManager;
 	inline FbxNode* LoadFBX(std::string fileName)
 	{
 		std::string fbxFilename = fileName + ".fbx";
-		FbxManager* manager = FbxManager::Create();
-		FbxIOSettings* ioSettings = FbxIOSettings::Create(manager, IOSROOT);
-		manager->SetIOSettings(ioSettings);
+        if (gManager == nullptr)
+            gManager = FbxManager::Create();
+		FbxIOSettings* ioSettings = FbxIOSettings::Create(gManager, IOSROOT);
+        gManager->SetIOSettings(ioSettings);
 
-		FbxScene* scene = FbxScene::Create(manager, "");
-		FbxImporter* importer = FbxImporter::Create(manager, "");
-		bool success = importer->Initialize(fbxFilename.c_str(), -1, manager->GetIOSettings());
+		FbxScene* scene = FbxScene::Create(gManager, "");
+		FbxImporter* importer = FbxImporter::Create(gManager, "");
+		bool success = importer->Initialize(fbxFilename.c_str(), -1, gManager->GetIOSettings());
 		importer->Import(scene);
 		importer->Destroy();
 
-		FbxGeometryConverter converter(manager);
+		FbxGeometryConverter converter(gManager);
 		converter.Triangulate(scene, true);
 		FbxNode* rootNode = scene->GetRootNode();
 
@@ -29,7 +32,7 @@ namespace FBXLoader
 		return rootNode;
 	}
 
-	inline LoadMeshData LoadMesh(FbxNode* const rootNode)
+	inline LoadMeshData LoadMesh(std::string fileName, FbxNode* const rootNode)
 	{
 		LoadMeshData meshData;
 		std::unordered_map<LoadMeshMetaData, unsigned int> loadedVertices;
@@ -61,6 +64,19 @@ namespace FBXLoader
 				}
 			}
 		}
+
+        std::ofstream fileOut(fileName + ".mesh");
+        for (auto& e : meshData.vertices)
+        {
+            fileOut << "Pos " << e.pos.x << " " << e.pos.y << " " << e.pos.z << "\n";
+            fileOut << "Normal " << e.normal.x << " " << e.normal.y << " " << e.normal.z << "\n";
+            fileOut << "TexC " << e.uv.x << " " << e.uv.y << "\n";
+        }
+        fileOut << "Indices " << "\n";
+        for (uint32_t i = 0; i < meshData.indices.size() / 3; ++i)
+        {
+            fileOut << meshData.indices[3 * i] << " " << meshData.indices[3 * i + 1] << " " << meshData.indices[3 * i + 2] << "\n";
+        }
 		return meshData;
 	}
 

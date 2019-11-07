@@ -1,5 +1,11 @@
 #include "ResourceManager.h"
+#include "FBXLoader.h"
 #include <fstream>
+
+namespace FBXLoader
+{
+    FbxManager* gManager = nullptr;
+}
 
 void ResourceManager::Unload(std::string filePath)
 {

@@ -9,17 +9,17 @@ namespace RendererDX12
         {
             desc = D3D12_GRAPHICS_PIPELINE_STATE_DESC();
             D3D12_RASTERIZER_DESC rasterDesc;
-            rasterDesc.AntialiasedLineEnable = false;
-            rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-            rasterDesc.CullMode = D3D12_CULL_MODE_BACK;
-            rasterDesc.DepthBias = 0;
-            rasterDesc.DepthBiasClamp = 0;
-            rasterDesc.DepthClipEnable = true;
             rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-            rasterDesc.ForcedSampleCount = 0;
+            rasterDesc.CullMode = D3D12_CULL_MODE_BACK;
             rasterDesc.FrontCounterClockwise = false;
+            rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+            rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+            rasterDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+            rasterDesc.DepthClipEnable = true;
             rasterDesc.MultisampleEnable = false;
-            rasterDesc.SlopeScaledDepthBias = 0;
+            rasterDesc.AntialiasedLineEnable = false;
+            rasterDesc.ForcedSampleCount = 0;
+            rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
             D3D12_BLEND_DESC blendDesc;
             blendDesc.AlphaToCoverageEnable = false;
@@ -55,6 +55,7 @@ namespace RendererDX12
             desc.BlendState = blendDesc;
             desc.NumRenderTargets = 1;
             desc.DepthStencilState = depthDesc;
+            desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
         }
 
         void GraphicsPipelineStateDesc::GeneratePipelineState(ID3D12Device* device, D3D12_ROOT_SIGNATURE_FLAGS flags, D3D_ROOT_SIGNATURE_VERSION version)

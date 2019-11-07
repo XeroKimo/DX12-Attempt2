@@ -30,6 +30,12 @@ private:
     cBuffer buffer2;
 	cBuffer buffer3;
 
+    Matrix4x4 camera;
+
+    bool aPressed;
+    bool dPressed;
+    bool wPressed;
+    bool sPressed;
 public:
     Game();
 
@@ -45,6 +51,8 @@ public:
     void OnEvent(EventGame* event);
 
     void OnWindowDestory(WPARAM wParam, LPARAM lParam);
+    void RotateCamera(WPARAM wParam, LPARAM lParam);
+    void StopRotate(WPARAM wParam, LPARAM lParam);
 private:
     void CreateDefaults();
 

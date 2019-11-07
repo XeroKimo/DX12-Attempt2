@@ -9,6 +9,8 @@ void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
     m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_KEYDOWN, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::RotateCamera>(this));
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_KEYUP, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::StopRotate>(this));
 
     m_eventManager->RegisterEventDispatcher<EventGame>();
     m_eventManager->RegisterListener<EventGame>(Delegates::Delegate<void(EventGame*)>::Generate<Game, &Game::OnEvent>(this));
@@ -19,6 +21,22 @@ void Game::Initialize()
 
 void Game::Update(float deltaTime)
 {
+    if (aPressed)
+    {
+        buffer3.worldMatrix.RotateZ(-90.0f * deltaTime);
+    }    
+    if (dPressed)
+    {
+        buffer3.worldMatrix.RotateZ(90.0f * deltaTime);
+    }
+    if (wPressed)
+    {
+        buffer3.worldMatrix.RotateX(90.0f * deltaTime);
+    }
+    if (sPressed)
+    {
+        buffer3.worldMatrix.RotateX(-90.0f * deltaTime);
+    }
     Quaternion quat;
     size_t size = sizeof(Vector4);
     const float amountToRotate = 360.f / 180.f;
@@ -41,13 +59,14 @@ void Game::Update(float deltaTime)
     //buffer2.worldMatrix.SetPosition(Vector3(2, 0, -3));
     buffer2.worldMatrix *= quat.GetRotation();
 
-	quat.Identity();
-	quat *= Quaternion(1 - deltaTime * 0.5, 0, 0, deltaTime/2);
-	quat.Normalize();
-	buffer3.worldMatrix *= quat.GetRotation();
+	//quat.Identity();
+	//quat *= Quaternion(1 - deltaTime * 0.5, deltaTime / 2, 0, 0);
+	//quat.Normalize();
+	//buffer3.worldMatrix *= quat.GetRotation();
 
 
     //buffer2.worldMatrix.RotateX(30 * deltaTime);
+
 }
 
 void Game::Draw()
@@ -103,6 +122,32 @@ void Game::OnWindowDestory(WPARAM wParam, LPARAM lParam)
     int i = 0;
 }
 
+void Game::RotateCamera(WPARAM wParam, LPARAM lParam)
+{
+    if (wParam == 'A')
+    {
+        aPressed = true;
+    }
+    if (wParam == 'D')
+        dPressed = true;
+    if (wParam == 'S')
+        sPressed = true;
+    if (wParam == 'W')
+        wPressed = true;
+}
+void Game::StopRotate(WPARAM wParam, LPARAM lParam)
+{
+    if (wParam == 'A')
+    {
+        aPressed = false;
+    }
+    if (wParam == 'D')
+        dPressed = false;
+    if (wParam == 'S')
+        sPressed = false;
+    if (wParam == 'W')
+        wPressed = false;
+}
 void Game::CreateDefaults()
 {
     using namespace RendererDX12;
@@ -253,7 +298,7 @@ void Game::CreateDefaults()
 
 
 	FbxNode* fbx = FBXLoader::LoadFBX("Resources/houseA/house");
-	FBXLoader::LoadMeshData data = FBXLoader::LoadMesh(fbx);
+	FBXLoader::LoadMeshData data = FBXLoader::LoadMesh("Resources/houseA/house",fbx);
 	std::vector<Vertex> fbxVerts;
 	for (int i = 0; i < data.vertices.size(); i++)
 	{
@@ -288,19 +333,17 @@ void Game::CreateDefaults()
     //commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Matrix4x4 worldMatrix;
-	Matrix4x4 viewMatrix;
 	Matrix4x4 projMatrix;
 	worldMatrix.SetPosition(Vector3(-2, 0, -3));
 	projMatrix.SetPerspective(90,16.f/9.f, 0.0f, 1000);
 	//projMatrix.SetOrtho(16.f, 9.f, 0.0f, 100);
-	viewMatrix.SetPosition(Vector3(0, 0, -100));
 
 	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
-	buffer = { worldMatrix, viewMatrix, projMatrix };
+	buffer = { worldMatrix, camera, projMatrix };
     worldMatrix.SetPosition(Vector3(2, 0, -3));
-    buffer2 = { worldMatrix, viewMatrix, projMatrix };
+    buffer2 = { worldMatrix, camera, projMatrix };
 	worldMatrix.Identity();
-	worldMatrix.SetPosition(Vector3(0, -20, 30));
+	worldMatrix.SetPosition(Vector3(0, -20, -100));
 	worldMatrix.RotateX(90);
-	buffer3 = { worldMatrix, viewMatrix, projMatrix };
+	buffer3 = { worldMatrix, camera, projMatrix };
 }
