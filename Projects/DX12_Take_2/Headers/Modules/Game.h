@@ -23,8 +23,10 @@ private:
     
     RendererDX12::Texture m_texture = { };
 	RendererDX12::Texture m_houseTexture = {};
+    RendererDX12::Texture m_cubeTex = {};
     RendererDX12::Mesh m_mesh = { };
 	RendererDX12::Mesh m_house = { };
+    RendererDX12::Mesh m_cube = { };
     std::unique_ptr<RendererDX12::PipelineState> m_pipelineState = { };
     cBuffer buffer;
     cBuffer buffer2;

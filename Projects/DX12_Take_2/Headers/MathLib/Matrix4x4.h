@@ -85,8 +85,8 @@ void inline Matrix4x4::Transpose()
 inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
 {
     //The following docs are in row major, this matrix uses column major
-    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, posZIn = true
-    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, posZIn = false
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixortholh Left handed, USE_LEFT_HANDED_MATRICES = true
+    //https://docs.microsoft.com/en-us/windows/win32/direct3d9/d3dxmatrixorthorh Right handed, USE_LEFT_HANDED_MATRICES = false
     Identity();
     if constexpr (USE_LEFT_HANDED_MATRICES)
     {

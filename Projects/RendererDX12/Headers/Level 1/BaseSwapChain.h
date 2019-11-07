@@ -18,6 +18,8 @@ namespace RendererDX12
         ComPtr<IDXGISwapChain3> m_swapChain;
         ComPtr<ID3D12DescriptorHeap> m_renderTargetHeap;
         std::vector<ComPtr<ID3D12Resource>> m_frameBuffers;
+        ComPtr<ID3D12DescriptorHeap> m_depthStencilHeap;
+        ComPtr<ID3D12Resource> m_depthStencil;
         BaseDevice* m_device;
         D3D12_VIEWPORT m_viewPort;
         D3D12_RECT m_rect;

@@ -28,6 +28,9 @@ namespace RendererDX12
 
         ComPtr<IDXGISwapChain1> tempSwapChain;
 
+
+
+
         hr = factory->CreateSwapChainForHwnd(commandQueue, windowHandle, &desc, nullptr, nullptr, tempSwapChain.GetAddressOf());
         assert(SUCCEEDED(hr));
         if (FAILED(hr))
@@ -64,12 +67,39 @@ namespace RendererDX12
             rtvHandle.ptr += m_descriptorHeapSize;
         }
 
+        D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc;
+        dsvHeapDesc.NumDescriptors = 1;
+        dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+        dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        dsvHeapDesc.NodeMask = device->GetNodeMask();
+
+        device->GetInterface()->CreateCommittedResource
+        (
+            &Helpers::HeapDefault(device->GetNodeMask()), 
+            D3D12_HEAP_FLAG_NONE, 
+            &Helpers::ResourceTexture2D(windowWidth, windowHeight, DXGI_FORMAT_R24G8_TYPELESS, 0,1,0,1, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL),
+            D3D12_RESOURCE_STATE_DEPTH_WRITE, 
+            nullptr, 
+            IID_PPV_ARGS(m_depthStencil.GetAddressOf())
+        );
+
+        hr = device->GetInterface()->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(m_depthStencilHeap.GetAddressOf()));
+        assert(SUCCEEDED(hr));       
+        
+        D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilView;
+        depthStencilView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilView.ViewDimension = D3D12_DSV_DIMENSION::D3D12_DSV_DIMENSION_TEXTURE2D;
+        depthStencilView.Flags = D3D12_DSV_FLAG_NONE;
+        depthStencilView.Texture2D.MipSlice = 0;
+
+        device->GetInterface()->CreateDepthStencilView(m_depthStencil.Get(), &depthStencilView, m_depthStencilHeap->GetCPUDescriptorHandleForHeapStart());
+
         m_viewPort.Width = static_cast<float>(windowWidth);
         m_viewPort.Height = static_cast<float>(windowHeight);
         m_viewPort.TopLeftX = 0;
         m_viewPort.TopLeftY = 0;
         m_viewPort.MinDepth = 0;
-        m_viewPort.MaxDepth = 0;
+        m_viewPort.MaxDepth = 1.0f;
 
         m_rect.top = 0;
         m_rect.left = 0;
@@ -89,7 +119,8 @@ namespace RendererDX12
         commandList->GetInterface()->ResourceBarrier(1, &Helpers::ResourceBarrierTransition(m_frameBuffers[m_swapChain->GetCurrentBackBufferIndex()].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
         commandList->GetInterface()->ClearRenderTargetView(handle, color, 0, nullptr);
-        commandList->GetInterface()->OMSetRenderTargets(1, &handle, FALSE, nullptr);
+        commandList->GetInterface()->ClearDepthStencilView(m_depthStencilHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 1, &m_rect);
+        commandList->GetInterface()->OMSetRenderTargets(1, &handle, FALSE, &m_depthStencilHeap->GetCPUDescriptorHandleForHeapStart());
     }
 
     void BaseSwapChain::ReadyBackBuffer(const BaseCommandList* const commandList) const
@@ -128,6 +159,28 @@ namespace RendererDX12
             m_device->GetInterface()->CreateRenderTargetView(m_frameBuffers[i].Get(), &rtvDesc, rtvHandle);
             rtvHandle.ptr += m_descriptorHeapSize;
         }
+
+        m_depthStencil.ReleaseAndGetAddressOf();
+
+
+        m_device->GetInterface()->CreateCommittedResource
+        (
+            &Helpers::HeapDefault(m_device->GetNodeMask()),
+            D3D12_HEAP_FLAG_NONE,
+            &Helpers::ResourceTexture2D(desc.Width, desc.Height, DXGI_FORMAT_D24_UNORM_S8_UINT, 0, 1, 0, 1, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL),
+            D3D12_RESOURCE_STATE_DEPTH_WRITE,
+            nullptr,
+            IID_PPV_ARGS(m_depthStencil.GetAddressOf())
+        );
+
+        D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilView;
+        depthStencilView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilView.ViewDimension = D3D12_DSV_DIMENSION::D3D12_DSV_DIMENSION_TEXTURE2D;
+        depthStencilView.Flags = D3D12_DSV_FLAG_NONE;
+        depthStencilView.Texture2D.MipSlice = 0;
+
+        m_device->GetInterface()->CreateDepthStencilView(m_depthStencil.Get(), &depthStencilView, m_depthStencilHeap->GetCPUDescriptorHandleForHeapStart());
+
 
         m_viewPort.Width = static_cast<float>(desc.Width);
         m_viewPort.Height = static_cast<float>(desc.Height);

@@ -28,6 +28,10 @@ namespace FBXLoader
 		converter.Triangulate(scene, true);
 		FbxNode* rootNode = scene->GetRootNode();
 
+        FbxAxisSystem axis = FbxAxisSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
+        axis.ConvertScene(scene, rootNode);
+
+
 		//manager->Destroy();
 		return rootNode;
 	}
