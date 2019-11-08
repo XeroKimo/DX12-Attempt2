@@ -30,8 +30,8 @@ public:
     void SetScale(Vector3 scale);
     void Scale(Vector3 scale);
 
-    Vector3 GetPosition() { return Vector3(vX.value[3], vY.value[3], vZ.value[3]); }
-    Vector3 GetScale() { return Vector3(vX.value[0], vY.value[1], vZ.value[2]); }
+    Vector3 GetPosition() { return Vector3(vX.data[3], vY.data[3], vZ.data[3]); }
+    Vector3 GetScale() { return Vector3(vX.data[0], vY.data[1], vZ.data[2]); }
     Vector3 GetEulerAngles();
 
     Matrix4x4 GetTransposed();
@@ -76,10 +76,10 @@ void inline Matrix4x4::Identity()
 void inline Matrix4x4::Transpose()
 {
     Matrix4x4 temp = *this;
-    vX = { temp.vX.value[0], temp.vY.value[0], temp.vZ.value[0], temp.vW.value[0] };
-    vY = { temp.vX.value[1], temp.vY.value[1], temp.vZ.value[1], temp.vW.value[1] };
-    vZ = { temp.vX.value[2], temp.vY.value[2], temp.vZ.value[2], temp.vW.value[2] };
-    vW = { temp.vX.value[3], temp.vY.value[3], temp.vZ.value[3], temp.vW.value[3] };
+    vX = { temp.vX.data[0], temp.vY.data[0], temp.vZ.data[0], temp.vW.data[0] };
+    vY = { temp.vX.data[1], temp.vY.data[1], temp.vZ.data[1], temp.vW.data[1] };
+    vZ = { temp.vX.data[2], temp.vY.data[2], temp.vZ.data[2], temp.vW.data[2] };
+    vW = { temp.vX.data[3], temp.vY.data[3], temp.vZ.data[3], temp.vW.data[3] };
 }
 
 inline void Matrix4x4::SetOrtho(float width, float height, float near, float far)
@@ -90,17 +90,17 @@ inline void Matrix4x4::SetOrtho(float width, float height, float near, float far
     Identity();
     if constexpr (USE_LEFT_HANDED_MATRICES)
     {
-        vX.value[0] = 2 / width;
-        vY.value[1] = 2 / height;
-        vZ.value[2] = 1 / (far - near);
-        vZ.value[3] = -near / (far - near);
+        vX.data[0] = 2 / width;
+        vY.data[1] = 2 / height;
+        vZ.data[2] = 1 / (far - near);
+        vZ.data[3] = -near / (far - near);
     }
     else
     {
-        vX.value[0] = 2 / width;
-        vY.value[1] = 2 / height;
-        vZ.value[2] = 1 / (near - far);
-        vZ.value[3] = near / (near - far);
+        vX.data[0] = 2 / width;
+        vY.data[1] = 2 / height;
+        vZ.data[2] = 1 / (near - far);
+        vZ.data[3] = near / (near - far);
     }
 }
 
@@ -115,36 +115,36 @@ inline void Matrix4x4::SetPerspective(float fovAngleY, float aspectRatio, float 
     Identity();
     if constexpr (USE_LEFT_HANDED_MATRICES)
     {
-        vX.value[0] = xScale;
-        vY.value[1] = yScale;
-        vZ.value[2] = far / (far - near);
-        vZ.value[3] = (-near * far) / (far - near);
-        vW.value[2] = 1;
-        vW.value[3] = 0;
+        vX.data[0] = xScale;
+        vY.data[1] = yScale;
+        vZ.data[2] = far / (far - near);
+        vZ.data[3] = (-near * far) / (far - near);
+        vW.data[2] = 1;
+        vW.data[3] = 0;
     }
     else
     {
-        vX.value[0] = xScale;
-        vY.value[1] = yScale;
-        vZ.value[2] = far / (near - far);
-        vZ.value[3] = (near * far) / (near - far);
-        vW.value[2] = -1;
-        vW.value[3] = 0;
+        vX.data[0] = xScale;
+        vY.data[1] = yScale;
+        vZ.data[2] = far / (near - far);
+        vZ.data[3] = (near * far) / (near - far);
+        vW.data[2] = -1;
+        vW.data[3] = 0;
     }
 }
 
 inline void Matrix4x4::SetPosition(Vector3 position)
 {
-    vX.value[3] = position.x;
-    vY.value[3] = position.y;
-    vZ.value[3] = position.z;
+    vX.data[3] = position.x;
+    vY.data[3] = position.y;
+    vZ.data[3] = position.z;
 }
 
 inline void Matrix4x4::Translate(Vector3 position)
 {
-    vX.value[3] += position.x;
-    vY.value[3] += position.y;
-    vZ.value[3] += position.z;
+    vX.data[3] += position.x;
+    vY.data[3] += position.y;
+    vZ.data[3] += position.z;
 }
 
 inline void Matrix4x4::RotateX(float degrees)
@@ -155,10 +155,10 @@ inline void Matrix4x4::RotateX(float degrees)
     float sinAngle = sinf(radians);
     float cosAngle = cosf(radians);
 
-    rotMatrix.vY.value[1] = cosAngle;
-    rotMatrix.vY.value[2] = sinAngle;
-    rotMatrix.vZ.value[1] = -sinAngle;
-    rotMatrix.vZ.value[2] = cosAngle;
+    rotMatrix.vY.data[1] = cosAngle;
+    rotMatrix.vY.data[2] = sinAngle;
+    rotMatrix.vZ.data[1] = -sinAngle;
+    rotMatrix.vZ.data[2] = cosAngle;
 
     *this *= rotMatrix;
 }
@@ -171,10 +171,10 @@ inline void Matrix4x4::RotateY(float degrees)
     float sinAngle = sinf(radians);
     float cosAngle = cosf(radians);
 
-    rotMatrix.vX.value[0] = cosAngle;
-    rotMatrix.vX.value[2] = sinAngle;
-    rotMatrix.vZ.value[0] = -sinAngle;
-    rotMatrix.vZ.value[2] = cosAngle;
+    rotMatrix.vX.data[0] = cosAngle;
+    rotMatrix.vX.data[2] = sinAngle;
+    rotMatrix.vZ.data[0] = -sinAngle;
+    rotMatrix.vZ.data[2] = cosAngle;
 
     *this *= rotMatrix;
 }
@@ -187,50 +187,50 @@ inline void Matrix4x4::RotateZ(float degrees)
     float sinAngle = sinf(radians);
     float cosAngle = cosf(radians);
 
-    rotMatrix.vX.value[0] = cosAngle;
-    rotMatrix.vX.value[1] = -sinAngle;
-    rotMatrix.vY.value[0] = sinAngle;
-    rotMatrix.vY.value[1] = cosAngle;
+    rotMatrix.vX.data[0] = cosAngle;
+    rotMatrix.vX.data[1] = -sinAngle;
+    rotMatrix.vY.data[0] = sinAngle;
+    rotMatrix.vY.data[1] = cosAngle;
 
     *this *= rotMatrix;
 }
 
 inline void Matrix4x4::SetScale(Vector3 scale)
 {
-    vX.value[0] = scale.x;
-    vY.value[1] = scale.y;
-    vZ.value[2] = scale.z;
+    vX.data[0] = scale.x;
+    vY.data[1] = scale.y;
+    vZ.data[2] = scale.z;
 }
 
 inline void Matrix4x4::Scale(Vector3 scale)
 {
-    vX.value[0] += scale.x;
-    vY.value[1] += scale.y;
-    vZ.value[2] += scale.z;
+    vX.data[0] += scale.x;
+    vY.data[1] += scale.y;
+    vZ.data[2] += scale.z;
 }
 
 inline Vector3 Matrix4x4::GetEulerAngles()
 {
     float radToDeg = 180 / static_cast<float>(PI);
-    if (vY.value[2] > 1.0f)
+    if (vY.data[2] > 1.0f)
     {
         float x = static_cast<float>(PI) / 2;
-        float y = atan2f(vX.value[1], vX.value[0]);
+        float y = atan2f(vX.data[1], vX.data[0]);
         float z = 0.0f;
         return Vector3(x, y, z) * radToDeg;
     }
-    else if (vY.value[2] < -1.0f)
+    else if (vY.data[2] < -1.0f)
     {
         float x = static_cast<float>(PI) / 2;
-        float y = -atan2f(vX.value[1], vX.value[0]);
+        float y = -atan2f(vX.data[1], vX.data[0]);
         float z = 0.0f;
         return Vector3(x, y, z) * radToDeg;
     }
     else
     {
-        float x = asinf(vY.value[2]);
-        float y = atan2f(-vX.value[2], vZ.value[2]);
-        float z = atan2f(-vY.value[0], vY.value[1]);
+        float x = asinf(vY.data[2]);
+        float y = atan2f(-vX.data[2], vZ.data[2]);
+        float z = atan2f(-vY.data[0], vY.data[1]);
         return Vector3(x, y, z) * radToDeg;
     }
 }
@@ -270,25 +270,25 @@ Matrix4x4 inline Matrix4x4::operator*(const Matrix4x4& other)
     mat.Transpose();
     Matrix4x4 output;
 
-    output.vX.value[0] = vX.Dot(mat.vX);
-    output.vX.value[1] = vX.Dot(mat.vY);
-    output.vX.value[2] = vX.Dot(mat.vZ);
-    output.vX.value[3] = vX.Dot(mat.vW);
+    output.vX.data[0] = vX.Dot(mat.vX);
+    output.vX.data[1] = vX.Dot(mat.vY);
+    output.vX.data[2] = vX.Dot(mat.vZ);
+    output.vX.data[3] = vX.Dot(mat.vW);
 
-    output.vY.value[0] = vY.Dot(mat.vX);
-    output.vY.value[1] = vY.Dot(mat.vY);
-    output.vY.value[2] = vY.Dot(mat.vZ);
-    output.vY.value[3] = vY.Dot(mat.vW);
+    output.vY.data[0] = vY.Dot(mat.vX);
+    output.vY.data[1] = vY.Dot(mat.vY);
+    output.vY.data[2] = vY.Dot(mat.vZ);
+    output.vY.data[3] = vY.Dot(mat.vW);
 
-    output.vZ.value[0] = vZ.Dot(mat.vX);
-    output.vZ.value[1] = vZ.Dot(mat.vY);
-    output.vZ.value[2] = vZ.Dot(mat.vZ);
-    output.vZ.value[3] = vZ.Dot(mat.vW);
+    output.vZ.data[0] = vZ.Dot(mat.vX);
+    output.vZ.data[1] = vZ.Dot(mat.vY);
+    output.vZ.data[2] = vZ.Dot(mat.vZ);
+    output.vZ.data[3] = vZ.Dot(mat.vW);
 
-    output.vW.value[0] = vW.Dot(mat.vX);
-    output.vW.value[1] = vW.Dot(mat.vY);
-    output.vW.value[2] = vW.Dot(mat.vZ);
-    output.vW.value[3] = vW.Dot(mat.vW);
+    output.vW.data[0] = vW.Dot(mat.vX);
+    output.vW.data[1] = vW.Dot(mat.vY);
+    output.vW.data[2] = vW.Dot(mat.vZ);
+    output.vW.data[3] = vW.Dot(mat.vW);
 
     return output;
 }
@@ -325,25 +325,25 @@ void inline Matrix4x4::operator*=(const Matrix4x4& other)
     mat.Transpose();
     Matrix4x4 copy = *this;
 
-    vX.value[0] = copy.vX.Dot(mat.vX);
-    vX.value[1] = copy.vX.Dot(mat.vY);
-    vX.value[2] = copy.vX.Dot(mat.vZ);
-    vX.value[3] = copy.vX.Dot(mat.vW);
+    vX.data[0] = copy.vX.Dot(mat.vX);
+    vX.data[1] = copy.vX.Dot(mat.vY);
+    vX.data[2] = copy.vX.Dot(mat.vZ);
+    vX.data[3] = copy.vX.Dot(mat.vW);
 
-    vY.value[0] = copy.vY.Dot(mat.vX);
-    vY.value[1] = copy.vY.Dot(mat.vY);
-    vY.value[2] = copy.vY.Dot(mat.vZ);
-    vY.value[3] = copy.vY.Dot(mat.vW);
+    vY.data[0] = copy.vY.Dot(mat.vX);
+    vY.data[1] = copy.vY.Dot(mat.vY);
+    vY.data[2] = copy.vY.Dot(mat.vZ);
+    vY.data[3] = copy.vY.Dot(mat.vW);
 
-    vZ.value[0] = copy.vZ.Dot(mat.vX);
-    vZ.value[1] = copy.vZ.Dot(mat.vY);
-    vZ.value[2] = copy.vZ.Dot(mat.vZ);
-    vZ.value[3] = copy.vZ.Dot(mat.vW);
+    vZ.data[0] = copy.vZ.Dot(mat.vX);
+    vZ.data[1] = copy.vZ.Dot(mat.vY);
+    vZ.data[2] = copy.vZ.Dot(mat.vZ);
+    vZ.data[3] = copy.vZ.Dot(mat.vW);
 
-    vW.value[0] = copy.vW.Dot(mat.vX);
-    vW.value[1] = copy.vW.Dot(mat.vY);
-    vW.value[2] = copy.vW.Dot(mat.vZ);
-    vW.value[3] = copy.vW.Dot(mat.vW);
+    vW.data[0] = copy.vW.Dot(mat.vX);
+    vW.data[1] = copy.vW.Dot(mat.vY);
+    vW.data[2] = copy.vW.Dot(mat.vZ);
+    vW.data[3] = copy.vW.Dot(mat.vW);
 }
 
 

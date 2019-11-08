@@ -6,7 +6,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     using namespace RendererDX12;
     using namespace WinApplication;
     using namespace RendererDX12::Helpers;
-
+    
     ModuleManager moduleManager;
 
     WinApp app;

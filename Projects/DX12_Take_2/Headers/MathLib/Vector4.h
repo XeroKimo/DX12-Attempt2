@@ -6,163 +6,125 @@
 struct Vector4
 {
 public:
-	Vector4() = default;
-	Vector4(float _x, float _y, float _z, float _w);
-	Vector4(Vector3 _xyz, float _w = 0);
-
-	float Dot(const Vector4& other);
-	float Magnitude();
-	float MagnitudeSquared();
-	void Normalize();
-	void Absolute();
-
-	Vector4 operator+(const Vector4& other);
-	Vector4 operator-(const Vector4& other);
-	Vector4 operator*(const Vector4& other);
-    Vector4 operator/(const Vector4& other);
-
-	void operator+=(const Vector4& other);
-	void operator-=(const Vector4& other);
-    void operator*=(const Vector4& other);
-    void operator/=(const Vector4& other);
-
-	Vector4 operator*(const float& other);
-	Vector4 operator/(const float& other);
-
-	void operator*=(const float& other);
-	void operator/=(const float& other);
-
-
-public:
     union
     {
-        float value[4];
+        float data[4];
         struct { float x, y, z, w; };
         struct { float r, g, b, a; };
     };
+
+public:
+    Vector4() = default;
+
+    Vector4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w)
+    {
+    }
+
+    Vector4 operator+(const Vector4 & other) const
+    {
+        return Vector4(x + other.x, y + other.y, z + other.z, w + other.w);
+    }
+    Vector4 operator-(const Vector4 & other) const
+    {
+        return Vector4(x - other.x, y - other.y, z - other.z, w - other.w);
+    }
+    Vector4 operator*(const Vector4 & other) const
+    {
+        return Vector4(x * other.x, y * other.y, z * other.z, w * other.w);
+    }
+    Vector4 operator/(const Vector4 & other) const
+    {
+        return Vector4(x / other.x, y / other.y, z / other.z, w / other.w);
+    }
+    Vector4 operator*(const float& other) const
+    {
+        return Vector4(x * other, y * other, z * other, w * other);
+    }
+    Vector4 operator/(const float& other) const
+    {
+        return Vector4(x / other, y / other, z / other, w / other);
+    }
+
+    void operator+=(const Vector4 & other)
+    {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        w += other.w;
+    }
+    void operator-=(const Vector4 & other)
+    {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        w -= other.w;
+    }
+    void operator*=(const Vector4 & other)
+    {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        w *= other.w;
+    }
+    void operator/=(const Vector4 & other)
+    {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
+        w /= other.w;
+    }
+    void operator*=(const float& other)
+    {
+        x *= other;
+        y *= other;
+        z *= other;
+        w *= other;
+    }
+    void operator/=(const float& other)
+    {
+        x /= other;
+        y /= other;
+        z /= other;
+        w /= other;
+    }
+
+    bool operator==(const Vector4& other) const
+    {
+        return (x == other.x && y == other.y && z == other.z && w == other.w);
+    }
+
+public:
+    float Dot(const Vector4& other) const
+    {
+        return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w);
+    }
+    float Magnitude() const
+    {
+        return sqrtf(MagnitudeSquared());
+    }
+    float MagnitudeSquared() const
+    {
+        return (x * x) + (y * y) + (z * z) + (w * w);
+    }
+    void Normalize()
+    {
+        float magnitude = Magnitude();
+        x /= magnitude;
+        y /= magnitude;
+        z /= magnitude;
+        w /= magnitude;
+    }
+    void Absolute()
+    {
+        x = abs(x);
+        y = abs(y);
+        z = abs(z);
+        w = abs(w);
+    }
+    Vector4 GetNormalized() const
+    {
+        Vector4 normalized = *this;
+        normalized.Normalize();
+        return normalized;
+    }
 };
-
-inline Vector4::Vector4(float _x, float _y, float _z, float _w) :
-	x(_x),
-	y(_y),
-	z(_z),
-	w(_w)
-{
-}
-
-inline Vector4::Vector4(Vector3 _xyz, float _w) : Vector4(_xyz.x, _xyz.y, _xyz.z, _w)
-{
-}
-
-float inline Vector4::Dot(const Vector4& other)
-{
-	return (x * other.x) + (y * other.y) + (z * other.z) + (w * other.w);
-}
-
-
-float inline Vector4::Magnitude()
-{
-	return sqrtf(MagnitudeSquared());
-}
-
-inline float Vector4::MagnitudeSquared()
-{
-	return (x * x) + (y * y) + (z * z) + (w * w);
-}
-
-
-void inline Vector4::Normalize()
-{
-	float magnitude = Magnitude();
-	x /= magnitude;
-	y /= magnitude;
-	z /= magnitude;
-	w /= magnitude;
-}
-
-void inline Vector4::Absolute()
-{
-	x = abs(x);
-	y = abs(y);
-	z = abs(z);
-	w = abs(w);
-}
-
-Vector4 inline Vector4::operator+(const Vector4& other)
-{
-	return Vector4(x + other.x, y + other.y, z + other.z, w + other.w);
-}
-
-Vector4 inline Vector4::operator-(const Vector4& other)
-{
-	return Vector4(x - other.x, y - other.y, z - other.z, w - other.w);
-}
-
-Vector4 inline Vector4::operator*(const Vector4& other)
-{
-	return Vector4(x * other.x, y * other.y, z * other.z, w * other.w);
-}
-
-Vector4 inline Vector4::operator/(const Vector4& other)
-{
-	return Vector4(x / other.x, y / other.y, z / other.z, w / other.w);
-}
-
-void inline Vector4::operator+=(const Vector4& other)
-{
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	w += other.w;
-}
-
-void inline Vector4::operator-=(const Vector4& other)
-{
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	w -= other.w;
-}
-
-void inline Vector4::operator*=(const Vector4& other)
-{
-	x *= other.x;
-	y *= other.y;
-	z *= other.z;
-	w *= other.w;
-}
-
-void inline Vector4::operator/=(const Vector4& other)
-{
-	x /= other.x;
-	y /= other.y;
-	z /= other.z;
-	w /= other.w;
-}
-
-Vector4 inline Vector4::operator*(const float& other)
-{
-	return Vector4(x * other, y * other, z * other, w * other);
-}
-
-Vector4 inline Vector4::operator/(const float& other)
-{
-	return Vector4(x / other, y / other, z / other, w / other);
-}
-
-void inline Vector4::operator*=(const float& other)
-{
-	x *= other;
-	y *= other;
-	z *= other;
-	w *= other;
-}
-
-void inline Vector4::operator/=(const float& other)
-{
-	x /= other;
-	y /= other;
-	z /= other;
-	w /= other;
-}
-

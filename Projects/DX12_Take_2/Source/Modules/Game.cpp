@@ -187,21 +187,6 @@ void Game::CreateDefaults()
     }
 
     struct Vertex { Vector3 pos; Vector4 color; Vector2 UV; };
-    //Vertex bottomLeft = { Vector3(-0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 0.0f) };
-    //Vertex bottomRight = { Vector3(0.5f, -0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 0.0f) };
-    //Vertex topLeft = { Vector3(-0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(0.0f, 1.0f) };
-    //Vertex topRight = { Vector3(0.5f, 0.5f, 0), Vector4(0, 0, 0, 0), Vector2(1.0f, 1.0f) };
-
-    //Vertex vertices[] =
-    //{
-    //	bottomLeft,
-    //	topLeft,
-    //	bottomRight,
-
-    //	topLeft,
-    //	topRight,
-    //	bottomRight
-    //};
 
     Vertex bottomLeftFront = { Vector3(-0.5f, -0.5f, 0.5f), Vector4(0,0,0,0), Vector2(0.0f,0.0f) }; //0
     Vertex bottomRightFront = { Vector3(0.5f, -0.5f, 0.5f), Vector4(0,0,0,0), Vector2(1.0f,0.0f) }; //1
@@ -247,59 +232,6 @@ void Game::CreateDefaults()
         4, 5, 1,
         //Bottom Square
     };
-
-    //Vertex vertices[] =
-    //{
-    //    bottomLeftFront,    //0
-	   // topLeftFront,       //2
-	   // bottomRightFront,   //1
-
-	   // topLeftFront,       //2
-	   // topRightFront,      //3
-	   // bottomRightFront,   //1
-    //    //Front square
-    //    bottomRightFront,   //1
-    //    topRightFront,      //3
-    //    bottomRightBack,    //5
-
-    //    topRightFront,      //3
-    //    topRightBack,       //7
-    //    bottomRightBack,    //5
-    //    //Right Square
-    //    topLeftFront,       //2
-    //    bottomLeftFront,    //0
-    //    bottomLeftBack,     //4
-
-    //    topLeftBack,        //6
-    //    topLeftFront,       //2
-    //    bottomLeftBack,     //4
-    //    //LeftSquare
-    //    topLeftBack,        //6
-    //    bottomLeftBack,     //4
-    //    bottomRightBack,    //5
-
-    //    topRightBack,       //7
-    //    topLeftBack,        //6
-    //    bottomRightBack,    //5
-    //    //Back Square
-    //    topLeftFront,       //2
-    //    topLeftBack,        //6
-    //    topRightFront,      //3
-
-    //    topRightFront,      //3
-    //    topLeftBack,        //6
-    //    topRightBack,       //7
-    //    //Top Square
-    //    bottomLeftBack,     //4
-    //    bottomLeftFront,    //0
-    //    bottomRightFront,   //1
-
-    //    bottomLeftBack,     //4
-    //    bottomRightFront,   //1
-    //    bottomRightBack,    //5
-    //    //Bottom Square
-    //};
-
 
 	FbxNode* fbx = FBXLoader::LoadFBX("Resources/houseA/house");
 	FBXLoader::LoadMeshData data = FBXLoader::LoadMesh("Resources/houseA/house",fbx);
@@ -348,8 +280,6 @@ void Game::CreateDefaults()
     commandModule->ExecuteCommandList(cl,0);
     commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
     commandModule->SyncQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0);
-    //commandModule->SignalQueue(D3D12_COMMAND_LIST_TYPE_COPY, 0);
-    //commandModule->StallQueue(D3D12_COMMAND_LIST_TYPE_DIRECT, 0, D3D12_COMMAND_LIST_TYPE_COPY, 0);
 
 	Matrix4x4 worldMatrix;
 	Matrix4x4 projMatrix;
@@ -359,7 +289,6 @@ void Game::CreateDefaults()
 
     camera.SetPosition(Vector3(0, 0, -100.0f));
 
-	//struct cBuffer { Matrix4x4 worldMatrix; Matrix4x4 viewMatrix; Matrix4x4 projMatrix; };
 	buffer = { worldMatrix, camera, projMatrix };
     worldMatrix.SetPosition(Vector3(0, 0, 0));
     worldMatrix.SetScale(Vector3(2, 2, 2));
