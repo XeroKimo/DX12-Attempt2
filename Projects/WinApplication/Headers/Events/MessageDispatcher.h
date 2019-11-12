@@ -29,9 +29,11 @@ namespace WinApplication
             m_messagesToDispatch.push_back(std::move(pEvent));
         }
 
-        void RegisterListener(Delegate<void(Message*)> delegate)
+        template<class T, Delegates::Internal::MethodPtr<T, void, Message*> func>
+        void RegisterListener(T* object)
         {
-            m_messageListeners += delegate;
+            m_messageListeners.Bind<T, func>(object);
+            //m_messageListeners += delegate;
         }
     };
 }

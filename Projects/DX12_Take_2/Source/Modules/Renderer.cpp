@@ -18,7 +18,7 @@ bool Renderer::Initialize(WinApplication::Window* window)
     if (!m_swapChain->GetInterface())
         return false;
 
-    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_WINDOWPOSCHANGED, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Renderer, &Renderer::OnWindowSizeChange>(this));
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.m_mappedEvents[WM_WINDOWPOSCHANGED].Bind<Renderer,&Renderer::OnWindowSizeChange>(this);
     //RegisterListener(static_cast<IEventListenerRenderer*>(this));
 
     return true;

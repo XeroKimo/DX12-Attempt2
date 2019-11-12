@@ -8,12 +8,12 @@ Game::Game()
 void Game::Initialize()
 {
     m_eventManager = m_moduleManager->GetModule<WinApp>()->GetApplication()->eventManager.get();
-    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_DESTROY, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::OnWindowDestory>(this));
-    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_KEYDOWN, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::RotateCamera>(this));
-    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.SubscribeEvent(WM_KEYUP, Delegates::Delegate<void(WPARAM, LPARAM)>::Generate<Game, &Game::StopRotate>(this));
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.m_mappedEvents[WM_DESTROY].Bind<Game,&Game::OnWindowDestory>(this);
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.m_mappedEvents[WM_KEYDOWN].Bind<Game, &Game::RotateCamera>(this);
+    m_moduleManager->GetModule<WinApp>()->GetWindow()->passThrough.m_mappedEvents[WM_KEYUP].Bind<Game, &Game::StopRotate>(this);
 
     m_eventManager->RegisterEventDispatcher<EventGame>();
-    m_eventManager->RegisterListener<EventGame>(Delegates::Delegate<void(EventGame*)>::Generate<Game, &Game::OnEvent>(this));
+    m_eventManager->RegisterListener<EventGame, Game, &Game::OnEvent>(this);
     m_eventManager->RecordEvent<EventGame>(std::make_unique<EventGame>());
 
     CreateDefaults();

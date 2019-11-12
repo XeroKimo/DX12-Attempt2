@@ -7,7 +7,7 @@ namespace Delegates
     class Event;
 
     template <typename ReturnType, typename ...FunctionParameters>
-    class Event<ReturnType(FunctionParameters...)> final
+    class Event<ReturnType(FunctionParameters...)>
     {
         using TDelegate = Delegate<ReturnType(FunctionParameters...)>;
         using TFunctionPtr = Internal::FunctionPtr<ReturnType, FunctionParameters...>;

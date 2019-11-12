@@ -27,14 +27,14 @@ namespace WinApplication
             return true;
         }
 
-        template<class Message, class = std::enable_if_t<std::is_base_of_v<IMessage, Message>>>
-        void RegisterListener(Delegates::Delegate<void(Message*)> delegate)
+        template<class Message, class T, Delegates::Internal::MethodPtr<T, void, Message*> func, class = std::enable_if_t<std::is_base_of_v<IMessage, Message>>>
+        void RegisterListener(T* object)
         {
             auto it = m_registeredEventTypes.find(typeid(Message*));
             if (it == m_registeredEventTypes.end())
                 return;
 
-            static_cast<MessageDispatcher<Message, void>*>(m_eventDispatchers[m_registeredEventTypes[typeid(Message*)]].get())->RegisterListener(delegate);
+            static_cast<MessageDispatcher<Message, void>*>(m_eventDispatchers[m_registeredEventTypes[typeid(Message*)]].get())->RegisterListener<T,func>(object);
         }
 
         template<class Message, class = std::enable_if_t<std::is_base_of_v<IMessage, Message>>>

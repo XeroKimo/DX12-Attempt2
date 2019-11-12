@@ -9,21 +9,10 @@ namespace WinApplication
     using namespace Delegates;
     class WNDProcPassthrough
     {
-    private:
-        std::unordered_map<unsigned int, Delegates::Event<void(WPARAM, LPARAM)>> m_mappedEvents;
+        class WndProcEvent : public Event<void(WPARAM, LPARAM)> {};
     public:
-        void SubscribeEvent(unsigned int windowMessage, Delegate<void(WPARAM, LPARAM)> delegate)
-        {
-            m_mappedEvents[windowMessage] += delegate;
-        }
-
-        void UnsubscribeEvent(unsigned int windowMessage, Delegate<void(WPARAM, LPARAM)> delegate)
-        {
-            m_mappedEvents[windowMessage] -= delegate;
-            if (m_mappedEvents[windowMessage].Empty())
-                m_mappedEvents.erase(windowMessage);
-        }
-
+        std::unordered_map<unsigned int, WndProcEvent> m_mappedEvents;
+    public:
         LRESULT Invoke(HWND hwnd, unsigned int message, WPARAM wParam, LPARAM lParam)
         {
             if (m_mappedEvents.find(message) == m_mappedEvents.end())
